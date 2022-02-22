@@ -37,3 +37,8 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# ZooImage Samples
+ZI_Test_App/www/Samples/
+ZI_Test_App/www/Training\ set/
+ZI_Test_App/__MACOSX/
