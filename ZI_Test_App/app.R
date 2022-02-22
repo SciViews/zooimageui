@@ -6,20 +6,156 @@
 
 
 library(shiny)
+library(ggplot2)
+library(plotly)
+library(zooimage)
 
+
+# GLOBAL ------------------------------------------------------------------
+
+setwd("/home/rstudio/shared/zooimage-ui/ZI_Test_App/")
+smpfiles <- list.files("www/Samples/")
+smps <- smpfiles[!grepl("Description.zis", smpfiles)]
+smps <- smps[!grepl(".zidb", smps)]
+smps_with_path <- paste0("www/Samples/",smps)
+# zidb_files <- smpfiles[grep(".zidb", smpfiles)]
+
+old_stringsAsFactors <- getOption("stringsAsFactors")
+options(stringsAsFactors = TRUE)
+
+
+# UI ----------------------------------------------------------------------
 
 ui <- fluidPage(
 
     titlePanel("ZooImage Test"),
     
+    navbarPage("ZooImage UI",
+        
+        # Pannel dans lequel je fait choisir un échantillon, et je vais l'utiliser pour créer le ZIDB
+        tabPanel("Data Extraction and Exploration",
+            sidebarLayout(
+              
+                # Côté choix d'échantillon, création du zidb, affichage des zidb présents
+                sidebarPanel(
+                    selectInput("sample_folder", "Sample folder :", choices = smps),
+                    actionButton("zidbmake", "Make the ZIDB file"),
+                    tags$br(),
+                    tags$br(),
+                    tags$h5(style = "font-weight: bold;" ,"Already formated :"),
+                    textOutput("zidb_made"),
+                ),
+                
+                # Coté affichage de ce que on peut voir à partir de ces zidb
+                mainPanel(
+                    tabsetPanel(
+                        tabPanel("Samples", verbatimTextOutput("folder_files")),
+                        tabPanel("ZIDB",
+                            tags$br(),
+                            selectInput("zidb_to_show", "Select a ZIDB file to show a preview :", choices = smpfiles[grepl(".zidb", smpfiles)]),
+                            
+                            tags$hr(),
+                            tags$h3("Head of the ZIDB's dataframe"),
+                            tableOutput("sample_head"),
+                            
+                            tags$hr(),
+                            tags$h3("Metadata of the ZIDB's dataframe"),
+                            verbatimTextOutput("sample_attributes"),
+                            
+                            tags$hr(),
+                            tags$h3("Summary of some of the columns of the ZIDB's dataframe"),
+                            verbatimTextOutput("sample_summary"),
+                            
+                            tags$hr(),
+                            tags$h3("Test plot of the ZIDB's dataframe"),
+                            plotOutput("sample_test_plot")
+                        )
+                    )
+                )
+            )
+        ),
+        tabPanel("Data Preprocessing",
+            
+        ),
+    )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+
+# SERVER ------------------------------------------------------------------
+
+server <- function(input, output, session) {
     
-    #Code here
+  
+    # Inutile car les échantillons ne varient pas
+    # sample_files <- reactive({
+    #     input$zidbmake
+    #     smpfiles <- list.files("www/Samples/")
+    #     smps <- smpfiles[!grepl("Description.zis", smpfiles)]
+    #     smps[!grepl(".zidb", smps)]
+    # })
+    # 
     
+  
+    # Préparation de la liste des fichiers zidb réactif à la création d'un nouveau
+    zidb_files <- reactive({
+      input$zidbmake
+      smpfiles <- list.files("www/Samples/")
+      smpfiles[grepl(".zidb", smpfiles)]
+    })
+  
+    
+    # Affichage des échantillons
+    output$folder_files <- renderPrint(
+        list.files(paste0("www/Samples/",input$sample_folder,"/"))
+    )
+    
+    
+    # Création du fichier zidb de l'échantillon choisi, si click sur le bouton,
+    # et mise à jour de la sélection pour la preview zidb
+    observeEvent(input$zidbmake, {
+        zidbMake(paste0("./www/Samples/",input$sample_folder))
+        updateSelectInput(session, "zidb_to_show",
+            "Select a ZIDB file to show a preview :", choices = zidb_files())
+    })
+
+    
+    # Affichage des fichiers zidb éxistants
+    output$zidb_made <- renderText({
+        zidb_files()
+    })
+    
+    
+    # Variable réactive pour le choix fichier zidb
+    dataframe <- reactive({
+      zidbDatRead(paste0("www/Samples/", input$zidb_to_show))
+    })
+    
+    
+    # Affichage du header du fichier zidb choisi
+    output$sample_head <- renderTable({
+        head(dataframe())
+    })
+    
+    
+    # Affichage de la métadata du zidb
+    output$sample_attributes <- renderPrint({
+        attr(dataframe(), "metadata")
+    })
+    
+    
+    # Affichage d'un sommaire du zidb
+    output$sample_summary <- renderPrint({
+        summary(dataframe()[, c("Area", "Perim.", "Skew", "Kurt")])
+    })
+    
+    
+    # Affichage d'un plot test du zidb
+    output$sample_test_plot <- renderPlot({
+        plot(dataframe()$Area, dataframe()$Perim., xlab = "Area", ylab = "Perimeter")
+    })
 }
 
-# Run the application 
+
+# APP ---------------------------------------------------------------------
+
 shinyApp(ui = ui, server = server)

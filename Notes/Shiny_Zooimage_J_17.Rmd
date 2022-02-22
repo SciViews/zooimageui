@@ -21,7 +21,7 @@ Mise en place du bon dossier, création du format ZIDB à partir de ZIDAT
 
 ## Adapt this to your system... This must be the directory where you
 ## unzipped the example dataset
-rootpath <- "ZI_Test_App/www/"
+rootpath <- "ZI_Tests/"
 
 smps <- c("./data/Samples/MTPS.2004-10-20.V5.zidb",
           "./data/Samples/MTLG.2005-05-24.H1.zidb")
@@ -105,3 +105,4 @@ file.show(system.file("etc", "Detailed.zic", package = "zooimage"))
 
 Je vais arrêter cela et plutôt tenter de faire un début d'app.
 
+Idées pour mon app : rajouter la partie chargement du fichier, pour afficher les vignettes que on veut
