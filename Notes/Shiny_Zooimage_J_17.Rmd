@@ -11,6 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 => Script Data Mining with R.R :
 
+
+=== Data extraction and exploration ===
+
 Mise en place du bon dossier, création du format ZIDB à partir de ZIDAT
 
 ```{r}
@@ -47,6 +50,58 @@ zidbMake("./data/Samples/MTPS.2004-10-20.V5")
 ## Batch creation of ZIDB files for all samples in a dir (and delete source)
 ## Note: use delete.source = TRUE to clean up the disk and keep only ZIDB files
 zidbMakeAll("./data/Samples", delete.source = FALSE, replace = TRUE)
-
 ```
+
+(La partie dat)
+Ensuite on peut déjà faires quelques manip pour voir ce que contiennent nos fichiers ZIDB, head, attributes, summary, plot, ...
+
+```{r}
+## Load and explore data from one ZIDB file
+dat1 <- zidbDatRead(smps[1])
+head(dat1)
+attr(dat1, "metadata")
+summary(dat1[, c("Area", "Perim.", "Skew", "Kurt")])
+plot(dat1$Area, dat1$Perim., xlab = "Area", ylab = "Perimeter")
+```
+
+Mais on peu link le contenu d'un fichier ZIDB dans R pour faire des recherches (pour charger les données) :
+
+```{r}
+## Lazy loading data from one ZIDB file in R
+db1 <- zidbLink(smps[1])
+items1 <- ls(db1) # Contains data in *_dat1 and vignettes in *_nn
+vigs1 <- items1[-grep("_dat1", items1)]
+## Display a 5*5 thumbnail of the first 25 vignettes
+zidbPlotNew("The 25 first vignettes in MTPS.2004-10-20.H1")
+for (i in 1:25)
+    zidbDrawVignette(db1[[vigs1[i]]], item = i, nx = 5, ny = 5)
+```
+
+
+=== Data preprocessing ===
+
+On doit faire un "training set", afin de pouvoir ensuite faire une identification manuelle des étiquettes en classes taxonomiques. \
+Le training set est un dataframe qui contient par exemple la variable class pour identification. \
+Pour préparer les dossiers en fonction des classes, zooimage utilise des fichiers ZIC (zooimage classification specification). \
+Parmis les dossiers crées, il y aura un dossier pour les non classés. \
+
+Première fonction : préparer le "training set", et donc tous les dossiers, basé sur detailed
+
+Deuxième fonction : voir le contenu du template qu'on a utilisé, et donc la structure de la hierarchie
+
+```{r}
+#### Training set preparation
+prepareTrain("./data/_train", zidbfiles = smps, template = "[Detailed]")
+## Inspect this directory and its subdirs, then ...
+## (you are supposed to move vignettes manually in the classes folders now;
+## not all vignettes need to be sorted: those left in "_", or one of its
+## subdirectories will *not* be used in the training set)
+
+## A ZIC file is used to describe initial classes in your training set.
+## Make your own ZIC file by inspiring you from Basic/Detailed/Very detailed
+file.show(system.file("etc", "Detailed.zic", package = "zooimage"))
+```
+
+
+Je vais arrêter cela et plutôt tenter de faire un début d'app.
 
