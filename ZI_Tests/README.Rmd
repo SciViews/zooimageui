@@ -1,0 +1,19 @@
+---
+title: "README"
+output: html_document
+---
+
+Le dossier data que j'utilise pour faire mes tests ici est dans gitignore.
+
+Si vous souhaitez l'avoir, il suffit de télécharger le zip :
+
+```{r}
+download.file(url = "https://filedn.com/lzGVgfOGxb6mHFQcRn9ueUb/zooimage/zooimage_examples.zip", destfile = "ZI_Tests/zooimage_exemples.zip")
+setwd("ZI_Tests/")
+unzip("zooimage_exemples.zip")
+unlink("zooimage_exemples.zip")
+setwd("../")
+```
+
+Et ensuite de placer le contenu de www dans un nouveau dossier appelé data.
+Le reste peut être supprimé.

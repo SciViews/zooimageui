@@ -9,3 +9,44 @@ Notes du Mardi 22 Février 2022, travail en présentiel. Nouveau dépôt github.
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+=> Script Data Mining with R.R :
+
+Mise en place du bon dossier, création du format ZIDB à partir de ZIDAT
+
+```{r}
+## Data mining with R - K. Denis & Ph. Grosjean
+
+## Adapt this to your system... This must be the directory where you
+## unzipped the example dataset
+rootpath <- "ZI_Test_App/www/"
+
+smps <- c("./data/Samples/MTPS.2004-10-20.V5.zidb",
+          "./data/Samples/MTLG.2005-05-24.H1.zidb")
+
+## Install zooimage & mlearning packages first
+## install.packages(c("zooimage", "mlearning"))
+## Load ZooImage and it also loads mlearning
+library(zooimage)
+
+# Zooimage requires to set default stringsAsFactors to TRUE
+old_stringsAsFactors <- getOption("stringsAsFactors")
+options(stringsAsFactors = TRUE)
+
+## Switch working directory
+old_dir <- setwd(rootpath)
+
+
+################################################################################
+#### Importation and exploration of the data
+## After image analysis, one got one directory per sample with vignettes and
+## .zim files, like in ./data/Samples
+##
+## Create a ZIDB for one sample (MTPS.2004-10-20.V5.zidb is created)
+zidbMake("./data/Samples/MTPS.2004-10-20.V5")
+
+## Batch creation of ZIDB files for all samples in a dir (and delete source)
+## Note: use delete.source = TRUE to clean up the disk and keep only ZIDB files
+zidbMakeAll("./data/Samples", delete.source = FALSE, replace = TRUE)
+
+```
+
