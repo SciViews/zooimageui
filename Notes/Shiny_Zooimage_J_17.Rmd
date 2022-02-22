@@ -1,0 +1,11 @@
+---
+title: "Shiny_Zooimage_J_17"
+output: html_document
+---
+
+Notes du Mardi 22 Février 2022, travail en présentiel. Nouveau dépôt github.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
