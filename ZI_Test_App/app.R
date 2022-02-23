@@ -49,10 +49,12 @@ ui <- fluidPage(
                 # Coté affichage de ce que on peut voir à partir de ces zidb
                 mainPanel(
                     tabsetPanel(
-                        tabPanel("Samples", verbatimTextOutput("folder_files")),
+                        tabPanel("Samples", verbatimTextOutput("sample_folder_files")),
+                        
                         tabPanel("ZIDB",
                             tags$br(),
-                            selectInput("zidb_to_show", "Select a ZIDB file to show a preview :", choices = smpfiles[grepl(".zidb", smpfiles)]),
+                            selectInput("zidb_to_show", "Select a ZIDB file to show a preview :",
+                                choices = smpfiles[grepl(".zidb", smpfiles)]),
                             
                             tags$hr(),
                             tags$h3("Head of the ZIDB's dataframe"),
@@ -69,6 +71,15 @@ ui <- fluidPage(
                             tags$hr(),
                             tags$h3("Test plot of the ZIDB's dataframe"),
                             plotOutput("sample_test_plot")
+                        ),
+                        
+                        tabPanel("ZIDB Vignettes",
+                            tags$br(),
+                            selectInput("vignettes_file", "ZIDB file to visualize",
+                                choices = smpfiles[grepl(".zidb", smpfiles)]),
+                            sliderInput("vignettes_vis", "Vignettes from n1 to n2",
+                                min = 1, max = 1, value = c(1,1), step = 1),
+                            tags$h3("Visualisation of vignettes"),
                         )
                     )
                 )
@@ -85,7 +96,9 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
     
-  
+    # ============ Première page ============
+    
+    
     # Inutile car les échantillons ne varient pas
     # sample_files <- reactive({
     #     input$zidbmake
@@ -95,7 +108,7 @@ server <- function(input, output, session) {
     # })
     # 
     
-  
+    
     # Préparation de la liste des fichiers zidb réactif à la création d'un nouveau
     zidb_files <- reactive({
       input$zidbmake
@@ -105,7 +118,7 @@ server <- function(input, output, session) {
   
     
     # Affichage des échantillons
-    output$folder_files <- renderPrint(
+    output$sample_folder_files <- renderPrint(
         list.files(paste0("www/Samples/",input$sample_folder,"/"))
     )
     
@@ -116,6 +129,8 @@ server <- function(input, output, session) {
         zidbMake(paste0("./www/Samples/",input$sample_folder))
         updateSelectInput(session, "zidb_to_show",
             "Select a ZIDB file to show a preview :", choices = zidb_files())
+        updateSelectInput(session, "vignettes_file",
+            "ZIDB file to visualize", choices = smpfiles[grepl(".zidb", smpfiles)])
     })
 
     
@@ -152,6 +167,34 @@ server <- function(input, output, session) {
     # Affichage d'un plot test du zidb
     output$sample_test_plot <- renderPlot({
         plot(dataframe()$Area, dataframe()$Perim., xlab = "Area", ylab = "Perimeter")
+    })
+    
+    
+    # Affichage des vignettes
+    # Création de ma var réactive pour avoir la dataframe du fichier choisi
+    dataframe_vign <- reactive({
+      zidbDatRead(paste0("www/Samples/", input$vignettes_file))
+    })
+    
+    
+    # Création d'une variable réactive pour avoir le max et min d'objets dans le fichier choisi
+    nb_vign_max_min <- reactive({
+        input$vignettes_file
+        return( c( min( dataframe_vign()["Item"] ), max( dataframe_vign()["Item"] )) )
+    })
+    
+    
+    # Update du sliderInput pour avoir les bonnes valeurs de max et min
+    observeEvent( input$vignettes_file,{
+        updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
+            min = nb_vign_max_min()[1], max = nb_vign_max_min()[2],
+            value = c(nb_vign_max_min()[1],nb_vign_max_min()[2]), step = 1)
+    })
+    
+    
+    # Chargement du fichier ZIDB choisi
+    loaded_ZIDB <- reactive({
+        zidbLink(input$vignettes_file)
     })
 }
 
