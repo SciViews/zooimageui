@@ -176,21 +176,21 @@ server <- function(input, output, session) {
     })
     
     
-    # Affichage des vignettes
+    # === Affichage des vignettes ===
     # Création de ma var réactive pour avoir la dataframe du fichier choisi
     dataframe_vign <- reactive({
       zidbDatRead(paste0("www/Samples/", input$vignettes_file))
     })
     
     
-    # Création d'une variable réactive pour avoir le max et min d'objets dans le fichier choisi
+    # Création d'une variable réactive pour avoir le max d'objets dans le fichier choisi
     nb_vign_max <- reactive({ # OLD : nb_vign_max = nb_vign_max_min
         input$vignettes_file
         return( max( dataframe_vign()["Item"] ))
     })
     
     
-    # Update du sliderInput pour avoir les bonnes valeurs de max et min
+    # Update du select input pour choisir les images
     observeEvent( input$vignettes_file,{
         # === OLD ===
         # updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
@@ -233,6 +233,10 @@ server <- function(input, output, session) {
             # A la position i moins le décalage par rapport à 1 (position dans le plot)
             # ainsi que nb d'éléments par lignes et colonnes
     })
+    
+    # ============ Deuxième page ============
+    
+    
 }
 
 
