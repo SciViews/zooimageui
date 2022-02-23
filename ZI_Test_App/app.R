@@ -80,6 +80,7 @@ ui <- fluidPage(
                             sliderInput("vignettes_vis", "Vignettes from n1 to n2",
                                 min = 1, max = 1, value = c(1,1), step = 1),
                             tags$h3("Visualisation of vignettes"),
+                            plotOutput("vignettes_plot")
                         )
                     )
                 )
@@ -180,21 +181,34 @@ server <- function(input, output, session) {
     # Création d'une variable réactive pour avoir le max et min d'objets dans le fichier choisi
     nb_vign_max_min <- reactive({
         input$vignettes_file
-        return( c( min( dataframe_vign()["Item"] ), max( dataframe_vign()["Item"] )) )
+        return( max( dataframe_vign()["Item"] ))
     })
     
     
     # Update du sliderInput pour avoir les bonnes valeurs de max et min
     observeEvent( input$vignettes_file,{
         updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
-            min = nb_vign_max_min()[1], max = nb_vign_max_min()[2],
-            value = c(nb_vign_max_min()[1],nb_vign_max_min()[2]), step = 1)
+            min = 1, max = nb_vign_max_min(),
+            value = c(1,16), step = 1)
     })
     
     
     # Chargement du fichier ZIDB choisi
-    loaded_ZIDB <- reactive({
-        zidbLink(input$vignettes_file)
+    loaded_zidb <- reactive({
+        zidbLink(paste0("www/Samples/",input$vignettes_file))
+    })
+    
+    
+    # Variable réactive contenant le nom des images
+    vignettes <- reactive({
+        ls(loaded_zidb())[!grepl("_dat1", ls(loaded_zidb()))]
+    })
+    
+    
+    output$vignettes_plot <- renderPlot({
+        zidbPlotNew("Vignettes")
+        for (i in input$vignettes_vis[1]:input$vignettes_vis[2])
+            zidbDrawVignette(loaded_zidb()[[vignettes()[i]]], item = i-(input$vignettes_vis[1]-1), nx = 4, ny = 4)
     })
 }
 
