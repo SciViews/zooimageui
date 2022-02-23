@@ -40,6 +40,7 @@ ui <- fluidPage(
                 sidebarPanel(
                     selectInput("sample_folder", "Sample folder :", choices = smps),
                     actionButton("zidbmake", "Make the ZIDB file"),
+                    actionButton("zidbmakeall", "Make ZIDB file for all of the samples"),
                     tags$br(),
                     tags$br(),
                     tags$h5(style = "font-weight: bold;" ,"Already formated :"),
@@ -83,7 +84,7 @@ ui <- fluidPage(
                                 # min = 1, max = 1, value = c(1,1), step = 1),
                             # === OLD ===
                             
-                            selectInput("vignettes_vis", "Vignettes to watch", choices = ""),
+                            selectInput("vignettes_vis", "Vignettes to watch", choices = "None"),
                             tags$h3("Visualisation of vignettes"),
                             plotOutput("vignettes_plot")
                         )
@@ -118,6 +119,7 @@ server <- function(input, output, session) {
     # Préparation de la liste des fichiers zidb réactif à la création d'un nouveau
     zidb_files <- reactive({
       input$zidbmake
+      input$zidbmakeall
       smpfiles <- list.files("www/Samples/")
       smpfiles[grepl(".zidb", smpfiles)]
     })
@@ -136,9 +138,19 @@ server <- function(input, output, session) {
         updateSelectInput(session, "zidb_to_show",
             "Select a ZIDB file to show a preview :", choices = zidb_files())
         updateSelectInput(session, "vignettes_file",
-            "ZIDB file to visualize", choices = smpfiles[grepl(".zidb", smpfiles)])
+            "ZIDB file to visualize", choices = zidb_files())
     })
-
+    
+    
+    # Création du zidb pour tous les échantillons, si click, et mises à jour sélec
+    observeEvent(input$zidbmakeall, {
+        zidbMakeAll("./www/Samples/", delete.source = FALSE, replace = TRUE)
+        updateSelectInput(session, "zidb_to_show",
+            "Select a ZIDB file to show a preview :", choices = zidb_files())
+        updateSelectInput(session, "vignettes_file",
+            "ZIDB file to visualize", choices = zidb_files())
+    })
+    
     
     # Affichage des fichiers zidb éxistants
     output$zidb_made <- renderText({
@@ -148,6 +160,7 @@ server <- function(input, output, session) {
     
     # Variable réactive pour le choix fichier zidb
     dataframe <- reactive({
+      req(input$zidb_to_show)
       zidbDatRead(paste0("www/Samples/", input$zidb_to_show))
     })
     
@@ -177,59 +190,81 @@ server <- function(input, output, session) {
     
     
     # === Affichage des vignettes ===
+    # Utilisation d'une variable réactive pour $vignettes_file car utilisé partout, et est nécessaire
+    vignettes_file <- reactive({
+      req(input$vignettes_file) # Indiquer qu'il a besoin d'avoir une valeur, soit un nom de fichier
+      input$vignettes_file
+    })
+    
+    
     # Création de ma var réactive pour avoir la dataframe du fichier choisi
     dataframe_vign <- reactive({
-      zidbDatRead(paste0("www/Samples/", input$vignettes_file))
+      zidbDatRead(paste0("www/Samples/", vignettes_file()))
     })
     
     
     # Création d'une variable réactive pour avoir le max d'objets dans le fichier choisi
     nb_vign_max <- reactive({ # OLD : nb_vign_max = nb_vign_max_min
-        input$vignettes_file
+        vignettes_file()
         return( max( dataframe_vign()["Item"] ))
     })
     
     
     # Update du select input pour choisir les images
-    observeEvent( input$vignettes_file,{
+    observeEvent( vignettes_file(),{
         # === OLD ===
         # updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
             # min = 1, max = nb_vign_max_min(),
             # value = c(1,16), step = 1)
         # === OLD ===
         
-        choices_vector <- (1:ceiling(nb_vign_max()/25))*25
+        choices_vector <- (1:ceiling(nb_vign_max()/25))*25 # Divise le nombre total de
+        # vignettes par 25, on en prend l'arrondis supérieur, et on crée un vecteur allant de
+        # 1 à cette valeur, le tout multiplié par 25, pour avoir les bornes supérieurers des
+        # classes d'images (images de 1 à 25, ou de 26 à 50)
+        
+        # Ensuite on change la dernière valeur pour qu'elle corresponde au maximum possible
         choices_vector[length(choices_vector)] <- choices_vector[length(choices_vector)-1] + nb_vign_max()%%25
-        updateSelectInput(session, "vignettes_vis", "Vignettes to watch", choices = paste0(choices_vector-24," - ",choices_vector))
+        updateSelectInput( session, "vignettes_vis", "Vignettes to watch",
+            choices = paste0( choices_vector-24, " - ", choices_vector ))
     })
     
     
     # Chargement du fichier ZIDB choisi
     loaded_zidb <- reactive({
-        zidbLink(paste0("www/Samples/",input$vignettes_file))
+        zidbLink( paste0("www/Samples/", vignettes_file()) )
     })
     
     
     # Variable réactive contenant le nom des images
     vignettes <- reactive({
-        ls(loaded_zidb())[!grepl("_dat1", ls(loaded_zidb()))]
+        ls( loaded_zidb() )[ !grepl( "_dat1", ls( loaded_zidb() )) ]
     })
     
     
     # Variable réactive qui reprend les résultats d'images à sélectionner
     vignettes_nb <- reactive({
-        splitted <- strsplit(input$vignettes_vis, " - ")
-        # Récupération de la limite supérieure et inférieure
-        c(as.numeric(splitted[[1]][1]), as.numeric(splitted[[1]][2]))
+        
+        splitted <- strsplit( input$vignettes_vis, " - ")
+        
+        # Récupération de la limite supérieure et inférieure de vignettes souhaitées
+        c( as.numeric( splitted[[1]][1] ), as.numeric( splitted[[1]][2] ) )
     })
     
     
     # Affichage dans un plot de ces images
     output$vignettes_plot <- renderPlot({
+        
+        req(vignettes_file(), vignettes_nb()) # Besoin de vignettes_file et vignettes_nb pour se faire
+        
+        from_image_nb <- vignettes_nb()[1]
+        to_image_nb <- vignettes_nb()[2]
+        
         zidbPlotNew("Vignettes") # Création du plot
-        for (i in vignettes_nb()[1]:vignettes_nb()[2]) # les images num i dans l'intervalle choisie
-            zidbDrawVignette(loaded_zidb()[[vignettes()[i]]],
-                item = i-(vignettes_nb()[1]-1), nx = 5, ny = 5)
+        
+        for (i in from_image_nb:to_image_nb) # les images num i dans l'intervalle choisie
+            zidbDrawVignette( loaded_zidb()[[vignettes()[i]]],
+                item = i - (from_image_nb - 1), nx = 5, ny = 5)
             # A la position i moins le décalage par rapport à 1 (position dans le plot)
             # ainsi que nb d'éléments par lignes et colonnes
     })
