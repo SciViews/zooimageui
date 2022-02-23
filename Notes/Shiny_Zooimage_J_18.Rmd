@@ -18,3 +18,57 @@ Toujours en travail sur mon app de test, test d'ajout d'un affichage des vignett
 
 === Partie Data Preprocessing ===
 
+Ré-initialisation des paramètres initiaux
+
+```{r}
+rootpath <- "/home/rstudio/shared/zooimage-ui/ZI_Tests/"
+
+smps <- c("./data/Samples/MTPS.2004-10-20.V5.zidb",
+          "./data/Samples/MTLG.2005-05-24.H1.zidb")
+
+library(zooimage)
+
+old_stringsAsFactors <- getOption("stringsAsFactors")
+options(stringsAsFactors = TRUE)
+
+old_dir <- setwd(rootpath)
+
+dat1 <- zidbDatRead(smps[1])
+
+db1 <- zidbLink(smps[1])
+items1 <- ls(db1)
+vigs1 <- items1[-grep("_dat1", items1)]
+```
+Voir dans les notes du jour 17 pour plus d'infos
+
+
+Pour la suite : Préparation de la classification manuelle et visualisation
+
+```{r}
+################################################################################
+#### Training set preparation
+prepareTrain("./data/_train", zidbfiles = smps, template = "[Detailed]")
+## Inspect this directory and its subdirs, then ...
+## (you are supposed to move vignettes manually in the classes folders now;
+## not all vignettes need to be sorted: those left in "_", or one of its
+## subdirectories will *not* be used in the training set)
+
+## A ZIC file is used to describe initial classes in your training set.
+## Make your own ZIC file by inspiring you from Basic/Detailed/Very detailed
+file.show(system.file("etc", "Detailed.zic", package = "zooimage"))
+
+## Read a training set - here, our example training set
+train <- getTrain("./data/Training set")
+head(train)
+sort(table(train$Class))
+## It is faster to start from the .Rdata file => use save()/load()
+#save(train, file = "./data/Training set.RData")
+#load("./data/Training set.RData")
+```
+
+Après avoir fait un getTrain, toute l'information à propos du training set et des données (data, metadata) est "packée" ensemble dans un seul objet R de class "ZITrain"
+
+
+===== IDEE APP =====
+
+Modifier la présentation des dernières vignettes
