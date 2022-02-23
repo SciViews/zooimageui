@@ -77,8 +77,13 @@ ui <- fluidPage(
                             tags$br(),
                             selectInput("vignettes_file", "ZIDB file to visualize",
                                 choices = smpfiles[grepl(".zidb", smpfiles)]),
-                            sliderInput("vignettes_vis", "Vignettes from n1 to n2",
-                                min = 1, max = 1, value = c(1,1), step = 1),
+                            
+                            # === OLD ===
+                            # sliderInput("vignettes_vis", "Vignettes from n1 to n2",
+                                # min = 1, max = 1, value = c(1,1), step = 1),
+                            # === OLD ===
+                            
+                            selectInput("vignettes_vis", "Vignettes to watch", choices = ""),
                             tags$h3("Visualisation of vignettes"),
                             plotOutput("vignettes_plot")
                         )
@@ -179,7 +184,7 @@ server <- function(input, output, session) {
     
     
     # Création d'une variable réactive pour avoir le max et min d'objets dans le fichier choisi
-    nb_vign_max_min <- reactive({
+    nb_vign_max <- reactive({ # OLD : nb_vign_max = nb_vign_max_min
         input$vignettes_file
         return( max( dataframe_vign()["Item"] ))
     })
@@ -187,9 +192,15 @@ server <- function(input, output, session) {
     
     # Update du sliderInput pour avoir les bonnes valeurs de max et min
     observeEvent( input$vignettes_file,{
-        updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
-            min = 1, max = nb_vign_max_min(),
-            value = c(1,16), step = 1)
+        # === OLD ===
+        # updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
+            # min = 1, max = nb_vign_max_min(),
+            # value = c(1,16), step = 1)
+        # === OLD ===
+        
+        choices_vector <- (1:ceiling(nb_vign_max()/25))*25
+        choices_vector[length(choices_vector)] <- choices_vector[length(choices_vector)-1] + nb_vign_max()%%25
+        updateSelectInput(session, "vignettes_vis", "Vignettes to watch", choices = paste0(choices_vector-24," - ",choices_vector))
     })
     
     
@@ -205,10 +216,22 @@ server <- function(input, output, session) {
     })
     
     
+    # Variable réactive qui reprend les résultats d'images à sélectionner
+    vignettes_nb <- reactive({
+        splitted <- strsplit(input$vignettes_vis, " - ")
+        # Récupération de la limite supérieure et inférieure
+        c(as.numeric(splitted[[1]][1]), as.numeric(splitted[[1]][2]))
+    })
+    
+    
+    # Affichage dans un plot de ces images
     output$vignettes_plot <- renderPlot({
-        zidbPlotNew("Vignettes")
-        for (i in input$vignettes_vis[1]:input$vignettes_vis[2])
-            zidbDrawVignette(loaded_zidb()[[vignettes()[i]]], item = i-(input$vignettes_vis[1]-1), nx = 4, ny = 4)
+        zidbPlotNew("Vignettes") # Création du plot
+        for (i in vignettes_nb()[1]:vignettes_nb()[2]) # les images num i dans l'intervalle choisie
+            zidbDrawVignette(loaded_zidb()[[vignettes()[i]]],
+                item = i-(vignettes_nb()[1]-1), nx = 5, ny = 5)
+            # A la position i moins le décalage par rapport à 1 (position dans le plot)
+            # ainsi que nb d'éléments par lignes et colonnes
     })
 }
 
