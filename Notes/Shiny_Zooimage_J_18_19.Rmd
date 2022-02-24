@@ -111,5 +111,7 @@ Pour cela je dois rajouter dans ma page Preprocessing, deux choses : \
 - Page pour créer le dossier qui va accueillir le train set, à partir des fichiers choisis \
 - Page pour faire le tri manuel des vignettes dans les bons dossiers \
 
+Attention : Il faut qu'il y ait des fichiers ZIDB, il faut faire attention si le dossier existe déjà
+
 => Modelling
 
