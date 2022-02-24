@@ -40,9 +40,12 @@ ui <- fluidPage(
                 sidebarPanel(
                     selectInput("sample_folder", "Sample folder :", choices = smps),
                     actionButton("zidbmake", "Make the ZIDB file"),
+                    tags$br(),
+                    
                     actionButton("zidbmakeall", "Make ZIDB file for all of the samples"),
                     tags$br(),
                     tags$br(),
+                    
                     tags$h5(style = "font-weight: bold;" ,"Already formated :"),
                     textOutput("zidb_made"),
                 ),
@@ -79,11 +82,6 @@ ui <- fluidPage(
                             selectInput("vignettes_file", "ZIDB file to visualize",
                                 choices = smpfiles[grepl(".zidb", smpfiles)]),
                             
-                            # === OLD ===
-                            # sliderInput("vignettes_vis", "Vignettes from n1 to n2",
-                                # min = 1, max = 1, value = c(1,1), step = 1),
-                            # === OLD ===
-                            
                             selectInput("vignettes_vis", "Vignettes to watch", choices = "None"),
                             tags$h3("Visualisation of vignettes"),
                             plotOutput("vignettes_plot")
@@ -103,7 +101,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
     
-    # ============ Première page ============
+# ============ Première page ============
     
     
     # Inutile car les échantillons ne varient pas
@@ -126,9 +124,9 @@ server <- function(input, output, session) {
   
     
     # Affichage des échantillons
-    output$sample_folder_files <- renderPrint(
+    output$sample_folder_files <- renderPrint({
         list.files(paste0("www/Samples/",input$sample_folder,"/"))
-    )
+    })
     
     
     # Création du fichier zidb de l'échantillon choisi, si click sur le bouton,
@@ -189,7 +187,7 @@ server <- function(input, output, session) {
     })
     
     
-    # === Affichage des vignettes ===
+# === Affichage des vignettes ===
     # Utilisation d'une variable réactive pour $vignettes_file car utilisé partout, et est nécessaire
     vignettes_file <- reactive({
       req(input$vignettes_file) # Indiquer qu'il a besoin d'avoir une valeur, soit un nom de fichier
@@ -212,21 +210,20 @@ server <- function(input, output, session) {
     
     # Update du select input pour choisir les images
     observeEvent( vignettes_file(),{
-        # === OLD ===
-        # updateSliderInput(session, "vignettes_vis", "Vignettes from n1 to n2",
-            # min = 1, max = nb_vign_max_min(),
-            # value = c(1,16), step = 1)
-        # === OLD ===
         
-        choices_vector <- (1:ceiling(nb_vign_max()/25))*25 # Divise le nombre total de
+        choices_vector_sup <- (1:ceiling(nb_vign_max()/25))*25 # Divise le nombre total de
         # vignettes par 25, on en prend l'arrondis supérieur, et on crée un vecteur allant de
         # 1 à cette valeur, le tout multiplié par 25, pour avoir les bornes supérieurers des
         # classes d'images (images de 1 à 25, ou de 26 à 50)
         
+        choices_vector_inf <- choices_vector_sup - 24
+        choices_vector_sup[length(choices_vector_sup)] <- nb_vign_max()
+        
         # Ensuite on change la dernière valeur pour qu'elle corresponde au maximum possible
-        choices_vector[length(choices_vector)] <- choices_vector[length(choices_vector)-1] + nb_vign_max()%%25
+        # choices_vector[length(choices_vector)] <- choices_vector[length(choices_vector)-1] + nb_vign_max()%%25
+        
         updateSelectInput( session, "vignettes_vis", "Vignettes to watch",
-            choices = paste0( choices_vector-24, " - ", choices_vector ))
+            choices = paste0( choices_vector_inf, " - ", choices_vector_sup ))
     })
     
     
@@ -269,7 +266,7 @@ server <- function(input, output, session) {
             # ainsi que nb d'éléments par lignes et colonnes
     })
     
-    # ============ Deuxième page ============
+# ============ Deuxième page ============
     
     
 }

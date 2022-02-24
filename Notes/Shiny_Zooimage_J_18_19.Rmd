@@ -5,11 +5,18 @@ output: html_document
 
 Fichier de notes du jour 18, mercredi 23 Février 2022. Présentiel.
 
+Et du jour 19, jeudi 24 Février 2022. Distanciel.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+===== IDEE APP =====
+
+Modifier la présentation des dernières vignettes
+
 ZooImage
+
 
 === Partie Extraction et Exploration des data ===
 
@@ -69,6 +76,3 @@ sort(table(train$Class))
 Après avoir fait un getTrain, toute l'information à propos du training set et des données (data, metadata) est "packée" ensemble dans un seul objet R de class "ZITrain"
 
 
-===== IDEE APP =====
-
-Modifier la présentation des dernières vignettes
