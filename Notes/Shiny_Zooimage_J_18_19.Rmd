@@ -75,4 +75,41 @@ sort(table(train$Class))
 
 Après avoir fait un getTrain, toute l'information à propos du training set et des données (data, metadata) est "packée" ensemble dans un seul objet R de class "ZITrain"
 
+("The function getTrain() reads the content of all directories, except the “unclassified” one \
+and its subdirectories. It then combines manual identifications of the vignettes with their associ- \
+ated measurements taken from the ZIDB files. The training set (Fig. 13.2) information is packed \
+together in one R object of class "ZITrain" .") \
+
+
+Dans le dossier train set, on peut voir un exemple où toutes nos vignettes on été triées manuellement. \
+On peut donc voir nos différentes vignettes dans les différents dossiers auxquelles elles correspondent. \
+On peut explorer là dedans, et une fois que tout est trié => getTrain \
+
+Le train set de l'exemple possède 1931 vignettes avec 31 caractéristiques mesurées, classées dans 25 classes. \
+Certaines classes ne sont pas intéressantes, et on va vouloir s'en débarasser pour la suite. \
+Mais on en a quand même besoin pour classer le zooplancton par rapport au reste. \
+
+
+On peut aller voir la hierarchie à différents niveau dans l'objet ZITrain, grâce à un attribut "path"
+
+
+PROBLEME AVEC CES FONCTIONS : Error in recode.ZITrain(train, depth = 2) : 
+  length of levels in 'path' attribute must match levels in object$Class
+```{r}
+## Since there is a hierachy in the classes, one can recode the training set
+## at various depth in that hierarchy
+## Here is it a the first depth level
+table(recode(train, depth = 1)$Class)
+## ... and at the second depth level
+table(recode(train, depth = 2)$Class)
+```
+
+
+Avant de passer à la suite, je pourrais essayer de rajouter un moyen de faire le triage dans mon app shiny.
+
+Pour cela je dois rajouter dans ma page Preprocessing, deux choses : \
+- Page pour créer le dossier qui va accueillir le train set, à partir des fichiers choisis \
+- Page pour faire le tri manuel des vignettes dans les bons dossiers \
+
+=> Modelling
 
