@@ -9,6 +9,7 @@ library(shiny)
 library(ggplot2)
 library(plotly)
 library(zooimage)
+library(sortable)
 
 
 # GLOBAL ------------------------------------------------------------------
@@ -123,7 +124,21 @@ ui <- fluidPage(
                     
                     # Page de tri
                     tabPanel("Manual Sorting",
-                        
+                        bucket_list(
+                            header = "Drag images from here",
+                            group_name = "bucket_list_group",
+                            orientation = "horizontal",
+                            add_rank_list(
+                                text = "Drag from here",
+                                labels = list.files("www/TS/test/_/")[grepl(".jpg", list.files("www/TS/test/_/"))],
+                                input_id = "rank_list_1"
+                            ),
+                            add_rank_list(
+                                text = "To here",
+                                labels = NULL,
+                                input_id = "rank_list_2"
+                            )
+                        )
                     )
                 )
             )

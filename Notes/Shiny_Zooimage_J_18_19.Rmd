@@ -118,7 +118,10 @@ Pour cela je dois rajouter dans ma page Preprocessing, deux choses : \
 
 Attention : Il faut qu'il y ait des fichiers ZIDB, il faut faire attention si le dossier existe déjà
 
-=> Modelling
 
 Page Data Preprocessing => Partie création du Training Set : Choix du nom du dossier, des fichiers, tu template \
                         => Partie Visualisation des Training Sets \
+
+
+Il faudrait, pour faire la partie manual sorting, que je m'intéresse aux packages sortable et shinyfiles. \
+Sortable qui rendrait le drag and drop possible, et shinyfiles pour tout ce qui est management des fichiers et dossiers. \
