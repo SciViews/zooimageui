@@ -41,5 +41,6 @@ vignettes/*.pdf
 # ZooImage Samples
 ZI_Test_App/www/Samples/
 ZI_Test_App/www/Training\ set/
+ZI_Test_App/www/TS/
 ZI_Test_App/__MACOSX/
 ZI_Tests/data/

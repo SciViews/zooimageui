@@ -101,11 +101,22 @@ ui <- fluidPage(
                     tabPanel("Preparing Train Set",
                              
                         fluidRow(
-                            column(width = 12,
-                                tags$h3("Files for Train Set") ,
+                            column(width = 4,
+                                tags$h3("Files for Training Set") ,
+                                textInput("ts_name", "Name of the Training Set"),
                                 checkboxGroupInput("zidb_to_prepare", label = "" ,choices = smpfiles[grepl(".zidb", smpfiles)]),
-                                selectInput("preptrain_template", "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
-                                actionButton("prepare", "Prepare Train Set"),
+                                selectInput("ts_template", "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
+                                actionButton("ts_prepare", "Prepare Training Set"),
+                            ),
+                            column(width = 8,
+                                tags$h3("Existing Train Sets"),
+                                verbatimTextOutput("ts_view"),
+                                
+                                conditionalPanel(
+                                    condition = "output.ts_folders_len > 0",
+                                    selectInput("ts_folder_to_show", "Train Set to visualize", choices = list.files("www/TS/")),
+                                    verbatimTextOutput("ts_content")
+                                )
                             )
                         )
                     ),
@@ -295,19 +306,64 @@ server <- function(input, output, session) {
 # ============ Deuxième page ============
     
     
-    # output pour créer un panneau conditionnel dans mon UI
+    # output pour créer un panneau conditionnel dans mon UI   (Dynamic UI)
     # (apparait que si des fichiers ZIDB sont présents)
     output$zidb_files <- reactive({
         input$zidbmake
         input$zidbmakeall
         smpfiles <- list.files("www/Samples/")
-        length(smpfiles[grepl(".zidb", smpfiles)])
+        length( smpfiles[grepl( ".zidb", smpfiles)] )
+    })
+    # Nécessaire pour le que browser charge la valeur la plus récente   (Dynamic UI)
+    # d'output pour évaluer correctement la conditon
+    outputOptions( output, "zidb_files", suspendWhenHidden = FALSE )
+    
+    
+    # Définition d'une var utile réactive car varie par rapport à l'input actionbutton
+    ts_folders <- reactive({
+        input$ts_prepare
+        list.files("www/TS/")
     })
     
     
-    # Nécessaire pour le que browser charge la valeur la plus récente
-    # d'output pour évaluer correctement la conditon
-    outputOptions(output, "zidb_files", suspendWhenHidden = FALSE)
+    # Création du Train Set
+    observeEvent( input$ts_prepare, {
+      
+      # Retirer les caractères spéciaux du nom de dossier, et arrêter si le nom 
+      # du dossier est vide ou si pas de zidb cochés
+      ts_name <- stringr::str_replace_all( input$ts_name, "[^[:alnum:]]", "")
+      req( ts_name != "", length( input$zidb_to_prepare ) > 0)
+      
+      # Preparation des arguments
+      traindir <- paste0("www/TS/", ts_name)
+      zidb_files <- paste0("www/Samples/", input$zidb_to_prepare)
+      
+      # Fonction principale
+      prepareTrain( traindir = traindir, zidbfiles = zidb_files, template = input$ts_template )
+      
+      # Actualisation des dossiers et fichiers
+      updateSelectInput( session, "ts_folder_to_show", "Train Set to visualize", choices = ts_folders() )
+    })
+    
+    
+    # Output pour montrer les Train Sets existants
+    output$ts_view <- renderPrint({
+        ifelse( length( ts_folders() ) > 0, ts_folders(), "No Training Set yet" )
+    })
+    
+    
+    # Création d'une variable output (Dynamic UI)
+    output$ts_folders_len <- reactive({
+        input$ts_prepare
+        length(ts_folders())
+    })
+    # chargement de la variable pour le browser (Dynamic UI)
+    outputOptions(output, "ts_folders_len", suspendWhenHidden = FALSE)
+    
+    
+    output$ts_content <- renderPrint({
+        list.files(paste0("www/TS/",input$ts_folder_to_show))
+    })
 }
 
 

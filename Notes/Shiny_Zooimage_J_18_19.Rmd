@@ -107,6 +107,11 @@ table(recode(train, depth = 2)$Class)
 
 Avant de passer à la suite, je pourrais essayer de rajouter un moyen de faire le triage dans mon app shiny.
 
+=> Sortable (et UI dynamique avec conditionnalPanel) \
+https://rstudio.github.io/sortable/ \
+https://shiny.rstudio.com/articles/dynamic-ui.html \
+
+
 Pour cela je dois rajouter dans ma page Preprocessing, deux choses : \
 - Page pour créer le dossier qui va accueillir le train set, à partir des fichiers choisis \
 - Page pour faire le tri manuel des vignettes dans les bons dossiers \
@@ -115,3 +120,5 @@ Attention : Il faut qu'il y ait des fichiers ZIDB, il faut faire attention si le
 
 => Modelling
 
+Page Data Preprocessing => Partie création du Training Set : Choix du nom du dossier, des fichiers, tu template \
+                        => Partie Visualisation des Training Sets \
