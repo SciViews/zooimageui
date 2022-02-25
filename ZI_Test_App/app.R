@@ -113,10 +113,50 @@ ui <- fluidPage(
                                 tags$h3("Existing Train Sets"),
                                 verbatimTextOutput("ts_view"),
                                 
+                                # Panneau : ne s'affiche que si il y a des Training Sets
                                 conditionalPanel(
-                                    condition = "output.ts_folders_len > 0",
+                                    condition = "output.ts_folder_len > 0",
                                     selectInput("ts_folder_to_show", "Train Set to visualize", choices = list.files("www/TS_Unsorted/")),
                                     verbatimTextOutput("ts_content")
+                                )
+                            )
+                        )
+                    ),
+                    
+                    # Page de tri manuel en attendant de trouver mieux
+                    tabPanel("Manual Sorting",
+                        
+                        # Panneau : ne s'affiche que si il y a des Training Sets
+                        conditionalPanel(
+                            condition = "output.ts_folder_len > 0",
+                            
+                            fluidRow(
+                                column(width = 6,
+                                    tags$h3("Unsorted Training Sets :"),
+                                    sidebarLayout(
+                                        sidebarPanel(
+                                            selectInput("ts_ms_dlf", "Training Set to download", choices = list.files("www/TS_Unsorted/")),
+                                            downloadButton("ts_ms_dl", "Download .zip")
+                                        ),
+                                        mainPanel(
+                                            verbatimTextOutput("ts_ms_dl_view"),
+                                        )
+                                    )
+                                ),
+                                column(width = 6,
+                                    tags$h3("Sorted Training Sets :"),
+                                    sidebarLayout(
+                                        sidebarPanel(
+                                            tags$h4("Upload your zipped Training Set here :"),
+                                            fileInput("ts_ms_up", "Upload .zip", multiple = FALSE),
+                                        ),
+                                        mainPanel(
+                                            conditionalPanel(
+                                                condition = "output.tss_folder_len > 0",
+                                                verbatimTextOutput("ts_ms_up_view"),
+                                            )
+                                        )
+                                    )
                                 )
                             )
                         )
@@ -150,6 +190,9 @@ ui <- fluidPage(
 # SERVER ------------------------------------------------------------------
 
 server <- function(input, output, session) {
+    
+    # Taille max pour upload :
+    options(shiny.maxRequestSize=30*1024^2)
     
 # ============ Première page ============
     
@@ -321,6 +364,8 @@ server <- function(input, output, session) {
 # ============ Deuxième page ============
     
     
+# === Partie Preparation du Training Set ===
+    
     # output pour créer un panneau conditionnel dans mon UI   (Dynamic UI)
     # (apparait que si des fichiers ZIDB sont présents)
     output$zidb_files <- reactive({
@@ -368,16 +413,76 @@ server <- function(input, output, session) {
     
     
     # Création d'une variable output (Dynamic UI)
-    output$ts_folders_len <- reactive({
+    output$ts_folder_len <- reactive({
         input$ts_prepare
         length(ts_folders())
     })
     # chargement de la variable pour le browser (Dynamic UI)
-    outputOptions(output, "ts_folders_len", suspendWhenHidden = FALSE)
+    outputOptions(output, "ts_folder_len", suspendWhenHidden = FALSE)
     
     
+    # Affichage du contenu du dossier TS
     output$ts_content <- renderPrint({
         list.files(paste0("www/TS_Unsorted/",input$ts_folder_to_show))
+    })
+    
+    
+# === Partie manual sorting ===
+    
+    # 1) Partie des Training Sets non triés
+    
+    # Montrer les Training Sets non triés disponibles
+    output$ts_ms_dl_view <- renderPrint({
+        ts_folders()
+    })
+    
+    
+    # Bouton pour télécharger le Training Set
+    output$ts_ms_dl <- downloadHandler(
+        filename = function() {
+            paste(input$ts_ms_dlf, ".zip", sep = "")
+        },
+        content = function(file) {
+            zip(zipfile = file, files = paste0("www/TS_Unsorted/", input$ts_ms_dlf))
+        }
+    )
+    
+    
+    # 2) Partie des Training Sets triés
+    
+    # Variable réactive pour afficher les TS triés
+    tss_folders <- reactive({
+        input$ts_ms_up
+        list.files("www/TS_Sorted/")
+    })
+    
+    
+    # Quand on upload => Récuperer le fichier
+    observeEvent( input$ts_ms_up, {
+        setwd("www/TS_Sorted/")
+        unzip(input$ts_ms_up$datapath, list = TRUE)
+        setwd("../../")
+    })
+    
+    # observeEvent( input$ts_ms_up, {
+    #   ts_ms_up <- input$ts_ms_up
+    #   if (is.null(ts_ms_up))
+    #     return()
+    #   file.copy(ts_ms_up$datapath, file.path("www/TS_Unsorted/", ts_ms_up$name))
+    # })
+    # 
+    
+    # Output pour panneau conditionnel pour afficher les TS triés   (dynamic UI)
+    output$tss_folder_len <- reactive({
+        length(tss_folders())
+    })
+    # Chargement de la variable pour le browser   (dynamic UI)
+    outputOptions(output, "tss_folder_len", suspendWhenHidden = FALSE)
+    
+    
+    # Montrer les Training Sets triés disponibles
+    output$ts_ms_up_view <- renderPrint({
+        tss_folders()
     })
 }
 
