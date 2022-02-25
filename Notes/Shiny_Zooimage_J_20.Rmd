@@ -1,0 +1,14 @@
+---
+title: "Shiny_Zooimage_J_20"
+output: html_document
+---
+
+Fichier de notes du jour 20, vendredi 25 Février 2022.    Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Continuation des recherches ZooImage et App tests
+
+=> Mise en place d'un système pour télécharger le Training set, pour le trier, et le remettre trié.

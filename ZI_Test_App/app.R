@@ -115,22 +115,22 @@ ui <- fluidPage(
                                 
                                 conditionalPanel(
                                     condition = "output.ts_folders_len > 0",
-                                    selectInput("ts_folder_to_show", "Train Set to visualize", choices = list.files("www/TS/")),
+                                    selectInput("ts_folder_to_show", "Train Set to visualize", choices = list.files("www/TS_Unsorted/")),
                                     verbatimTextOutput("ts_content")
                                 )
                             )
                         )
                     ),
                     
-                    # Page de tri
-                    tabPanel("Manual Sorting",
+                    # Page de tri manuel si on utilisait sortable
+                    tabPanel("Manual Sorting (sortable work in progress)",
                         bucket_list(
-                            header = "Drag images from here",
+                            header = "Drag images",
                             group_name = "bucket_list_group",
                             orientation = "horizontal",
                             add_rank_list(
                                 text = "Drag from here",
-                                labels = list.files("www/TS/test/_/")[grepl(".jpg", list.files("www/TS/test/_/"))],
+                                labels = list.files("www/TS_Unsorted/test/_/")[grepl(".jpg", list.files("www/TS_Unsorted/test/_/"))],
                                 input_id = "rank_list_1"
                             ),
                             add_rank_list(
@@ -337,33 +337,33 @@ server <- function(input, output, session) {
     # Définition d'une var utile réactive car varie par rapport à l'input actionbutton
     ts_folders <- reactive({
         input$ts_prepare
-        list.files("www/TS/")
+        list.files("www/TS_Unsorted/")
     })
     
     
     # Création du Train Set
     observeEvent( input$ts_prepare, {
       
-      # Retirer les caractères spéciaux du nom de dossier, et arrêter si le nom 
-      # du dossier est vide ou si pas de zidb cochés
-      ts_name <- stringr::str_replace_all( input$ts_name, "[^[:alnum:]]", "")
-      req( ts_name != "", length( input$zidb_to_prepare ) > 0)
-      
-      # Preparation des arguments
-      traindir <- paste0("www/TS/", ts_name)
-      zidb_files <- paste0("www/Samples/", input$zidb_to_prepare)
-      
-      # Fonction principale
-      prepareTrain( traindir = traindir, zidbfiles = zidb_files, template = input$ts_template )
-      
-      # Actualisation des dossiers et fichiers
-      updateSelectInput( session, "ts_folder_to_show", "Train Set to visualize", choices = ts_folders() )
+        # Retirer les caractères spéciaux du nom de dossier, et arrêter si le nom 
+        # du dossier est vide ou si pas de zidb cochés
+        ts_name <- stringr::str_replace_all( input$ts_name, "[^[:alnum:]]", "")
+        req( ts_name != "", length( input$zidb_to_prepare ) > 0)
+        
+        # Preparation des arguments
+        traindir <- paste0("www/TS_Unsorted/", ts_name)
+        zidb_files <- paste0("www/Samples/", input$zidb_to_prepare)
+        
+        # Fonction principale
+        prepareTrain( traindir = traindir, zidbfiles = zidb_files, template = input$ts_template )
+        
+        # Actualisation des dossiers et fichiers
+        updateSelectInput( session, "ts_folder_to_show", "Train Set to visualize", choices = ts_folders() )
     })
     
     
     # Output pour montrer les Train Sets existants
     output$ts_view <- renderPrint({
-        ifelse( length( ts_folders() ) > 0, ts_folders(), "No Training Set yet" )
+        if( length( ts_folders() ) > 0) {ts_folders()} else {"No Training Set Yet"}
     })
     
     
@@ -377,7 +377,7 @@ server <- function(input, output, session) {
     
     
     output$ts_content <- renderPrint({
-        list.files(paste0("www/TS/",input$ts_folder_to_show))
+        list.files(paste0("www/TS_Unsorted/",input$ts_folder_to_show))
     })
 }
 
