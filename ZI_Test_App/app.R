@@ -157,7 +157,7 @@ ui <- fluidPage(
                                         sidebarPanel(
                                             tags$h4("Upload your zipped Training Set here :"),
                                             tags$br(),
-                                            fileInput("ts_ms_up", "Upload .zip", multiple = FALSE),
+                                            fileInput("tss_upload", "Upload .zip", multiple = FALSE),
                                             tags$p("Please, wait that it appears in the list")
                                         ),
                                         
@@ -468,35 +468,35 @@ server <- function(input, output, session) {
     
     # Variable réactive pour afficher les TS triés
     tss_folders <- reactive({
-        input$ts_ms_up
+        input$tss_upload
         timer()
         list.files("www/TS_Sorted/")
     })
     
     
     # Quand on upload => Récuperer le fichier
-    observeEvent( input$ts_ms_up, {
+    observeEvent( input$tss_upload, {
       
         # Désactive le bouton upload, pour ne pas surcharger
-        shinyjs::disable("ts_ms_up")
+        shinyjs::disable("tss_upload")
         
         # Mise en place d'une variable pour récupérer les données dans la table,
         # et test du contenu de celle-ci
-        ts_ms_up <- input$ts_ms_up
-            if ( is.null(ts_ms_up) )
+        tss_upload <- input$tss_upload
+            if ( is.null(tss_upload) )
             return()
         
         # "Copie" du fichier rentrant, pour le stocker dans le système
-        file.copy(ts_ms_up$datapath, file.path("www/TS_Sorted/", ts_ms_up$name))
+        file.copy(tss_upload$datapath, file.path("www/TS_Sorted/", tss_upload$name))
         
         # Unzip et supression du zip
         setwd("www/TS_Sorted/")
-        unzip( ts_ms_up$name )
-        unlink( ts_ms_up$name )
+        unzip( tss_upload$name )
+        unlink( tss_upload$name )
         setwd("../../")
         
         # Réactive le bouton upload, une fois que tout est fini
-        shinyjs::enable("ts_ms_up")
+        shinyjs::enable("tss_upload")
     })
 
     
