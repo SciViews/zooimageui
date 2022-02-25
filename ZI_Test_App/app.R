@@ -10,6 +10,7 @@ library(ggplot2)
 library(plotly)
 library(zooimage)
 library(sortable)
+library(shinyjs)
 
 
 # GLOBAL ------------------------------------------------------------------
@@ -28,6 +29,7 @@ options(stringsAsFactors = TRUE)
 ui <- fluidPage(
 
     titlePanel("ZooImage Test"),
+    useShinyjs(),
     
     navbarPage("ZooImage UI",
         
@@ -129,27 +131,36 @@ ui <- fluidPage(
                         # Panneau : ne s'affiche que si il y a des Training Sets
                         conditionalPanel(
                             condition = "output.ts_folder_len > 0",
-                            
                             fluidRow(
+                                
+                                # Partie des TS non triés / DOWNLOAD
                                 column(width = 6,
                                     tags$h3("Unsorted Training Sets :"),
                                     sidebarLayout(
+                                        
                                         sidebarPanel(
-                                            selectInput("ts_ms_dlf", "Training Set to download", choices = list.files("www/TS_Unsorted/")),
-                                            downloadButton("ts_ms_dl", "Download .zip")
+                                            selectInput("tsu_folder_to_dl", "Training Set to download", choices = list.files("www/TS_Unsorted/")),
+                                            downloadButton("tsu_download", "Download .zip")
                                         ),
+                                        
                                         mainPanel(
-                                            verbatimTextOutput("ts_ms_dl_view"),
+                                            verbatimTextOutput("tsu_view"),
                                         )
                                     )
                                 ),
+                                
+                                # Partie des TS triés / UPLOAD
                                 column(width = 6,
                                     tags$h3("Sorted Training Sets :"),
                                     sidebarLayout(
+                                      
                                         sidebarPanel(
                                             tags$h4("Upload your zipped Training Set here :"),
+                                            tags$br(),
                                             fileInput("ts_ms_up", "Upload .zip", multiple = FALSE),
+                                            tags$p("Please, wait that it appears in the list")
                                         ),
+                                        
                                         mainPanel(
                                             conditionalPanel(
                                                 condition = "output.tss_folder_len > 0",
@@ -162,15 +173,15 @@ ui <- fluidPage(
                         )
                     ),
                     
-                    # Page de tri manuel si on utilisait sortable
-                    tabPanel("Manual Sorting (sortable work in progress)",
+                    # Page de tri manuel si on utilisait sortable // DEMO
+                    tabPanel("Manual Sorting (sortable demo)",
                         bucket_list(
                             header = "Drag images",
                             group_name = "bucket_list_group",
                             orientation = "horizontal",
                             add_rank_list(
                                 text = "Drag from here",
-                                labels = list.files("www/TS_Unsorted/test/_/")[grepl(".jpg", list.files("www/TS_Unsorted/test/_/"))],
+                                labels = list.files("www/TS_Unsorted/test/_/")[!grepl(".jpg", list.files("www/TS_Unsorted/test/_/"))],
                                 input_id = "rank_list_1"
                             ),
                             add_rank_list(
@@ -193,10 +204,13 @@ server <- function(input, output, session) {
     
     # Taille max pour upload :
     options(shiny.maxRequestSize=30*1024^2)
-    
-# ============ Première page ============
-    
-    
+    # Timer pour enclencer des choses réactive toutes les t millisecondes
+    timer <- reactiveTimer(3000)
+
+
+# SERVER : Premiere page --------------------------------------------------
+
+
     # Inutile car les échantillons ne varient pas
     # sample_files <- reactive({
     #     input$zidbmake
@@ -290,16 +304,13 @@ server <- function(input, output, session) {
     })
     
     
-    # Création de ma var réactive pour avoir la dataframe du fichier choisi
-    dataframe_vign <- reactive({
-      zidbDatRead(paste0("www/Samples/", vignettes_file()))
-    })
-    
-    
-    # Création d'une variable réactive pour avoir le max d'objets dans le fichier choisi
+    # Création d'une variable réactive pour avoir le max d'objets dans le fichier choisi (+clarté)
     nb_vign_max <- reactive({ # OLD : nb_vign_max = nb_vign_max_min
-        vignettes_file()
-        return( max( dataframe_vign()["Item"] ))
+        
+        # Création d'une var pour accéder à ma dataframe facilement
+        dataframe_vign <- zidbDatRead(paste0("www/Samples/", vignettes_file()))
+      
+        return( max( dataframe_vign["Item"] ))
     })
     
     
@@ -311,11 +322,13 @@ server <- function(input, output, session) {
         # 1 à cette valeur, le tout multiplié par 25, pour avoir les bornes supérieurers des
         # classes d'images (images de 1 à 25, ou de 26 à 50)
         
+        # Création d'un vecteur avec les bornes inférieures
         choices_vector_inf <- choices_vector_sup - 24
+        # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
         choices_vector_sup[length(choices_vector_sup)] <- nb_vign_max()
         
         # Ensuite on change la dernière valeur pour qu'elle corresponde au maximum possible
-        # choices_vector[length(choices_vector)] <- choices_vector[length(choices_vector)-1] + nb_vign_max()%%25
+        # choices_vector[length(choices_vector)] <- choices_vector[length(choices_vector)-1] + nb_vign_max()%%25 (Ancien code)
         
         updateSelectInput( session, "vignettes_vis", "Vignettes to watch",
             choices = paste0( choices_vector_inf, " - ", choices_vector_sup ))
@@ -360,10 +373,11 @@ server <- function(input, output, session) {
             # A la position i moins le décalage par rapport à 1 (position dans le plot)
             # ainsi que nb d'éléments par lignes et colonnes
     })
-    
-# ============ Deuxième page ============
-    
-    
+
+
+# SERVER : Deuxieme page --------------------------------------------------
+
+
 # === Partie Preparation du Training Set ===
     
     # output pour créer un panneau conditionnel dans mon UI   (Dynamic UI)
@@ -382,6 +396,7 @@ server <- function(input, output, session) {
     # Définition d'une var utile réactive car varie par rapport à l'input actionbutton
     ts_folders <- reactive({
         input$ts_prepare
+        timer()
         list.files("www/TS_Unsorted/")
     })
     
@@ -403,6 +418,7 @@ server <- function(input, output, session) {
         
         # Actualisation des dossiers et fichiers
         updateSelectInput( session, "ts_folder_to_show", "Train Set to visualize", choices = ts_folders() )
+        updateSelectInput( session, "tsu_folder_to_dl", "Training Set to download", choices = ts_folders() )
     })
     
     
@@ -414,7 +430,7 @@ server <- function(input, output, session) {
     
     # Création d'une variable output (Dynamic UI)
     output$ts_folder_len <- reactive({
-        input$ts_prepare
+        # input$ts_prepare => Remettre si jamais problème d'affichage
         length(ts_folders())
     })
     # chargement de la variable pour le browser (Dynamic UI)
@@ -432,18 +448,18 @@ server <- function(input, output, session) {
     # 1) Partie des Training Sets non triés
     
     # Montrer les Training Sets non triés disponibles
-    output$ts_ms_dl_view <- renderPrint({
+    output$tsu_view <- renderPrint({
         ts_folders()
     })
     
     
     # Bouton pour télécharger le Training Set
-    output$ts_ms_dl <- downloadHandler(
+    output$tsu_download <- downloadHandler(
         filename = function() {
-            paste(input$ts_ms_dlf, ".zip", sep = "")
+            paste(input$tsu_folder_to_dl, ".zip", sep = "")
         },
         content = function(file) {
-            zip(zipfile = file, files = paste0("www/TS_Unsorted/", input$ts_ms_dlf))
+            zip(zipfile = file, files = paste0("www/TS_Unsorted/", input$tsu_folder_to_dl))
         }
     )
     
@@ -453,24 +469,36 @@ server <- function(input, output, session) {
     # Variable réactive pour afficher les TS triés
     tss_folders <- reactive({
         input$ts_ms_up
+        timer()
         list.files("www/TS_Sorted/")
     })
     
     
     # Quand on upload => Récuperer le fichier
     observeEvent( input$ts_ms_up, {
+      
+        # Désactive le bouton upload, pour ne pas surcharger
+        shinyjs::disable("ts_ms_up")
+        
+        # Mise en place d'une variable pour récupérer les données dans la table,
+        # et test du contenu de celle-ci
+        ts_ms_up <- input$ts_ms_up
+            if ( is.null(ts_ms_up) )
+            return()
+        
+        # "Copie" du fichier rentrant, pour le stocker dans le système
+        file.copy(ts_ms_up$datapath, file.path("www/TS_Sorted/", ts_ms_up$name))
+        
+        # Unzip et supression du zip
         setwd("www/TS_Sorted/")
-        unzip(input$ts_ms_up$datapath, list = TRUE)
+        unzip( ts_ms_up$name )
+        unlink( ts_ms_up$name )
         setwd("../../")
+        
+        # Réactive le bouton upload, une fois que tout est fini
+        shinyjs::enable("ts_ms_up")
     })
-    
-    # observeEvent( input$ts_ms_up, {
-    #   ts_ms_up <- input$ts_ms_up
-    #   if (is.null(ts_ms_up))
-    #     return()
-    #   file.copy(ts_ms_up$datapath, file.path("www/TS_Unsorted/", ts_ms_up$name))
-    # })
-    # 
+
     
     # Output pour panneau conditionnel pour afficher les TS triés   (dynamic UI)
     output$tss_folder_len <- reactive({
@@ -484,6 +512,7 @@ server <- function(input, output, session) {
     output$ts_ms_up_view <- renderPrint({
         tss_folders()
     })
+
 }
 
 

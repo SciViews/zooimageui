@@ -11,4 +11,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Continuation des recherches ZooImage et App tests
 
+=> Réglage d'un problème d'affichage
 => Mise en place d'un système pour télécharger le Training set, pour le trier, et le remettre trié.
+
+
+Découverte de shinyjs => fonctions utiles sur shiny
+
+
+Questions : \
+  - Comment pourrais-je, avec le downloadButton, exécuter du code avant de donner le contenu du fichier à download ? \
+  - Comment ziper en ayant que le dossier sélectionné et pas le chemin ? \
+  - Comment faire un affichage sympa des vecteurs \
+
+
+J'ai essayé de nettoyer mon code autant que possible, le rendre certaines choses moins répétées, et d'ajouter des fonctionnalités utiles.
