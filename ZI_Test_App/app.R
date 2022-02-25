@@ -164,7 +164,7 @@ ui <- fluidPage(
                                         mainPanel(
                                             conditionalPanel(
                                                 condition = "output.tss_folder_len > 0",
-                                                verbatimTextOutput("ts_ms_up_view"),
+                                                verbatimTextOutput("tss_up_view"),
                                             )
                                         )
                                     )
@@ -509,7 +509,7 @@ server <- function(input, output, session) {
     
     
     # Montrer les Training Sets triés disponibles
-    output$ts_ms_up_view <- renderPrint({
+    output$tss_up_view <- renderPrint({
         tss_folders()
     })
 
