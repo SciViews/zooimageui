@@ -11,11 +11,12 @@ library(plotly)
 library(zooimage)
 library(sortable)
 library(shinyjs)
+library(withr)
 
 
 # GLOBAL ------------------------------------------------------------------
 
-setwd("/home/rstudio/shared/zooimage-ui/ZI_Test_App/")
+# setwd("/home/rstudio/shared/zooimage-ui/ZI_Test_App/")
 smpfiles <- list.files("www/Samples/")
 smps <- smpfiles[!grepl("Description.zis", smpfiles)]
 smps <- smps[!grepl(".zidb", smps)]
@@ -470,6 +471,10 @@ server <- function(input, output, session) {
         },
         content = function(file) {
             zip(zipfile = file, files = paste0("www/TS_Unsorted/", input$tsu_folder_to_dl))
+        # with_path("www/TS_Unsorted/", 
+        #           zip(zipfile = "test.zip", files = paste0(Sys.getenv("PATH"),"/test/")), 
+        #           action = "replace")
+        # Problème : Ne télécharge pas
         }
     )
     

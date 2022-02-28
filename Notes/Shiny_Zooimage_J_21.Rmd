@@ -10,10 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Partir de :
--> Des zidb dans un dossier
+-> Des zidb dans un dossier (ou alors on a le choix)
 
-Manque : Dire à partir de quel dossier on veut travailler
+----- Manque : Dire à partir de quel dossier on veut travailler
 
+
+=================================================================================================================================================
 
 Il existe des serveurs de données ouverts : dataverse :
 Fournir des données zippées, que on peut récupérer
@@ -24,11 +26,16 @@ Si le problème concerne une grande quantité de données mais que on doit accé
 
 => l'important c'est de ne pas mettre les données dans le dépot github + savoir pourquoi on utilise quelle méthode
 
+=================================================================================================================================================
+
 On peut le faire soit en version locale ou en serveur
 => Est-ce possible de faire tourner localement l'app ? (raisonnable ?)
 
+=================================================================================================================================================
+
 Il va falloir faire de la modularisation : package golem (lié à shiny)
 
+=================================================================================================================================================
 
 === Choses à faire ===
 
@@ -38,11 +45,72 @@ Il va falloir faire de la modularisation : package golem (lié à shiny)
 
 3) Machine learning : classification
 
-4) Cahier des charges (définition la plus complète et détaillée de ce que le travail doit faire)
-- fonctionnalités (ex : traitements local / serveur)
-- implémentation (comment ça fonctionne) (ex : accès des données, ...)
-- interface (MOCK : ex, draw.io)
-- timing
-- tests/maintenances
+4) Cahier des charges (définition la plus complète et détaillée de ce que le travail doit faire) \
+- fonctionnalités (ex : traitements local / serveur) \
+- implémentation (comment ça fonctionne) (ex : accès des données, ...) \
+- interface (MOCK : ex, draw.io) \
+- timing \
+- tests/maintenances \
 
 5) Présentation objectifs lundi 7 Mars (mrd vdd)
+
+=================================================================================================================================================
+
+1) Est-ce que l'app copie tout le dossier www dans les dossiers temporaires ? \
+   Est-ce qu'il y aurait moyen d'utiliser l'app en local, chez l'utilisateur, et ou les dossiers du serveur. \
+   Qu'est-ce qui est le plus adapté pour ne pas devoir copier les données, et charger trop de choses. \
+   
+   => Fin de matinée : Recherches du 1) \
+   => Début d'après midi : Recherches du 1) \
+   
+===> le dossier www sert à partager des choses entre le serveur et le client. Son contenu est copié sur le client.
+
+Faudrait-il alors mettre les data dans un autre dossier que le www ?
+
+Quelques liens peut-être utiles : \
+https://shiny.rstudio.com/articles/persistent-data-storage.html#local \
+https://www.r-bloggers.com/2021/06/speeding-up-r-shiny-the-definitive-guide/ \
+https://subscription.packtpub.com/book/application-development/9781785280900/8/ch08lvl1sec53/the-www-directory \
+
+
+ESSAYER D'ALLER VOIR DANS LA DOC DE SHINY
+( La question se pose bien du côté serveur )
+
+
+=================================================================================================================================================
+
+Réunion après midi :        (wp.sciviews.org, données bio III)
+
+Dendrogrammes, partitionnement récursif
+
+Quand on fait du classement, on peut avoir différents groupes qui parle de la même classe, mais qui sont séparés. On peut les trouver par partitionnement récursif
+
+Apprendre à l'ordinateur à classer des objets sur base des mesures que on fait dessus (attributs), sans connaître la classe de l'objet. \
+=> Machine learning
+
+Il y a plein d'algorithmes différents, qui ne sont pas tous toujours utiles au même moments.
+=> Pour le plancton par exemple, il y a un nombre de classes de planctons différents.
+
+(L'ordre des règles pour la création du partitionnement récursif a de l'influence)
+
+On peut utiliser des classifieurs, et des ensembles de classifieurs
+
+
+Random forest : On fait faire plein d'arbres aléatoirement différents, puis on les fait voter sur un résultat
+
+On essaie de commencer avec la variable qui sépare le mieux le groupe en deux
+
+
+Important : A chaque fois on a un groupe qui va être séparé en deux sous groupes sur bases de règles appliquées à des variables (attributs)
+
+On utilise la meilleur règle de base, mais pour avoir un aléatoire, on utilise que certaines variables (attributs).
+Au lieu de prendre la meilleur variable, on va prendre des sous ensembles de variables.
+Comme si on prenait 2/3 à chaque fois des variables (sous ensemble différents pour chaques arbres, et règles)
+On peut faire pareil avec les individus (mais là ça reste le même pour toutes les règles)
+
+
+accuracy / recall / precision
+
+
+on peut jouer sur pas mal de choses comme : le nb d'individus, les attributs, les algorithmes, paramétrisation de ceux-ci
+=> on teste toujours le classifieur avec cette procédure
