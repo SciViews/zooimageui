@@ -104,14 +104,14 @@ ui <- fluidPage(
                     tabPanel("Preparing Train Set",
                              
                         fluidRow(
-                            column(width = 4,
+                            column(width = 3,
                                 tags$h3("Files for Training Set") ,
                                 textInput("ts_name", "Name of the Training Set"),
                                 checkboxGroupInput("zidb_to_prepare", label = "" ,choices = smpfiles[grepl(".zidb", smpfiles)]),
                                 selectInput("ts_template", "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
                                 actionButton("ts_prepare", "Prepare Training Set"),
                             ),
-                            column(width = 8,
+                            column(width = 9,
                                 tags$h3("Existing Train Sets"),
                                 verbatimTextOutput("ts_view"),
                                 
@@ -128,13 +128,23 @@ ui <- fluidPage(
                     # Page de tri manuel en attendant de trouver mieux
                     tabPanel("Manual Sorting",
                         
+                        # Présentation
+                        tags$h3("In this window, you can download the unsorted 
+                                training set that you want to use, unzip it, 
+                                and then manually sort the vignettes inside the 
+                                good folders. You can then zip the training set 
+                                folder (and only this folder), and upload it to 
+                                continue in the process of the training set."),
+                        tags$h4("If you don't see the part to download an unsorted 
+                                training set, that means that no training sets 
+                                has been prepared yet."),
+                        
                         # Panneau : ne s'affiche que si il y a des Training Sets
-                        conditionalPanel(
-                            condition = "output.ts_folder_len > 0",
-                            fluidRow(
+                        fluidRow(
+                            column(width = 6,
                                 
                                 # Partie des TS non triés / DOWNLOAD
-                                column(width = 6,
+                                conditionalPanel( condition = "output.ts_folder_len > 0",
                                     tags$h3("Unsorted Training Sets :"),
                                     sidebarLayout(
                                         
@@ -147,25 +157,25 @@ ui <- fluidPage(
                                             verbatimTextOutput("tsu_view"),
                                         )
                                     )
-                                ),
+                                )
+                            ),
                                 
-                                # Partie des TS triés / UPLOAD
-                                column(width = 6,
-                                    tags$h3("Sorted Training Sets :"),
-                                    sidebarLayout(
-                                      
-                                        sidebarPanel(
-                                            tags$h4("Upload your zipped Training Set here :"),
-                                            tags$br(),
-                                            fileInput("tss_upload", "Upload .zip", multiple = FALSE),
-                                            tags$p("Please, wait that it appears in the list")
-                                        ),
-                                        
-                                        mainPanel(
-                                            conditionalPanel(
-                                                condition = "output.tss_folder_len > 0",
-                                                verbatimTextOutput("tss_up_view"),
-                                            )
+                            # Partie des TS triés / UPLOAD
+                            column(width = 6,
+                                tags$h3("Sorted Training Sets :"),
+                                sidebarLayout(
+                                  
+                                    sidebarPanel(
+                                        tags$h4("Upload your zipped Training Set here :"),
+                                        tags$br(),
+                                        fileInput("tss_upload", "Upload .zip", multiple = FALSE),
+                                        tags$p("Please, wait that it appears in the list")
+                                    ),
+                                    
+                                    mainPanel(
+                                        conditionalPanel(
+                                            condition = "output.tss_folder_len > 0",
+                                            verbatimTextOutput("tss_up_view"),
                                         )
                                     )
                                 )
