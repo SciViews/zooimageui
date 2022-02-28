@@ -20,7 +20,7 @@ Découverte de shinyjs => fonctions utiles sur shiny
 
 Questions : \
   - Comment pourrais-je, avec le downloadButton, exécuter du code avant de donner le contenu du fichier à download ? \
-  - Comment ziper en ayant que le dossier sélectionné et pas le chemin ? \
+  - Comment ziper en ayant que le dossier sélectionné et pas le chemin ? => withr (package r)
   - Comment faire un affichage sympa des vecteurs \
 
 

@@ -9,3 +9,40 @@ Fichier de notes du Lundi 28 Février 2022. Travail présentiel.
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Partir de :
+-> Des zidb dans un dossier
+
+Manque : Dire à partir de quel dossier on veut travailler
+
+
+Il existe des serveurs de données ouverts : dataverse :
+Fournir des données zippées, que on peut récupérer
+
+Dans ce contexte, l'approche téléchargement des données est correcte car on charge des fichiers ZIDB qui sont ensuite disponibles localement à vitesse maximale (vitesse du disque SSD ou HDD) (fichiers pas trop volumineux)
+
+Si le problème concerne une grande quantité de données mais que on doit accéder qu'à une petite partie alors, c'est la base de données qui sera meilleur.
+
+=> l'important c'est de ne pas mettre les données dans le dépot github + savoir pourquoi on utilise quelle méthode
+
+On peut le faire soit en version locale ou en serveur
+=> Est-ce possible de faire tourner localement l'app ? (raisonnable ?)
+
+Il va falloir faire de la modularisation : package golem (lié à shiny)
+
+
+=== Choses à faire ===
+
+1) Données sur le disque : Qu'est-ce qu'on peut faire avec l'app Shiny ? Accès des données ? Ailleurs sur le disque ? (vdd)
+
+2) Golem => modularisation
+
+3) Machine learning : classification
+
+4) Cahier des charges (définition la plus complète et détaillée de ce que le travail doit faire)
+- fonctionnalités (ex : traitements local / serveur)
+- implémentation (comment ça fonctionne) (ex : accès des données, ...)
+- interface (MOCK : ex, draw.io)
+- timing
+- tests/maintenances
+
+5) Présentation objectifs lundi 7 Mars (mrd vdd)
