@@ -31,3 +31,12 @@ tempdir in R : http://rstat.consulting/blog/temporary-dir-and-files-in-r/
 J'ai beaucoup cherché, mais je ne trouve pas de choses qui expliquent comment Shiny fonctionne avec le dossier tmp/ 
 
 Difficile de savoir s'il faut faire quelque chose de particulier pour éviter de surcharger l'app avec de grosses quantités de données
+
+
+=> shinyfiles ? https://cran.r-project.org/web/packages/shinyFiles/shinyFiles.pdf
+
+Provides functionality for client-side navigation of \
+the server side file system in shiny apps. In case the app is running \
+locally this gives the user direct access to the file system without the \
+need to ``download'' files to a temporary location. Both file and folder \
+selection as well as file saving is available \
