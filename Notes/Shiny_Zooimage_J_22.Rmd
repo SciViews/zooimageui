@@ -11,10 +11,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Aujourd'hui : 
 
--> Recherches sur le traitements des données par Shiny, comment c'est géré ? Copie-t-il tout dans les dossiers temporaires ?
+-> Recherches sur le traitements des données/fichiers par Shiny, comment c'est géré ? Copie-t-il tout dans les dossiers temporaires ?
 
 -> Début de ma préparation à ma présentation des objectifs de mon stage.
     . Lieux de stage
     . Equipe
     . Objectifs
     . Avancement
+
+
+===== Shiny et le traitement de ses fichiers ===
+
+info : https://docs.rstudio.com/connect/1.5.10/admin/process-management.html
+
+Je ne trouve toujours pas grand chose qui parle du dossier tmp, ou d'une possible copie de tous les fichiers, ou du dossier www...
+
+tempdir in R : http://rstat.consulting/blog/temporary-dir-and-files-in-r/
+
+J'ai beaucoup cherché, mais je ne trouve pas de choses qui expliquent comment Shiny fonctionne avec le dossier tmp/ 
+
+Difficile de savoir s'il faut faire quelque chose de particulier pour éviter de surcharger l'app avec de grosses quantités de données
