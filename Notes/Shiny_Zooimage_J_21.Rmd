@@ -88,8 +88,8 @@ Quand on fait du classement, on peut avoir différents groupes qui parle de la m
 Apprendre à l'ordinateur à classer des objets sur base des mesures que on fait dessus (attributs), sans connaître la classe de l'objet. \
 => Machine learning
 
-Il y a plein d'algorithmes différents, qui ne sont pas tous toujours utiles au même moments.
-=> Pour le plancton par exemple, il y a un nombre de classes de planctons différents.
+Il y a plein d'algorithmes différents, qui ne sont pas tous toujours utiles au même moments. \
+=> Pour le plancton par exemple, il y a un nombre de classes de planctons différents. \
 
 (L'ordre des règles pour la création du partitionnement récursif a de l'influence)
 
@@ -103,14 +103,14 @@ On essaie de commencer avec la variable qui sépare le mieux le groupe en deux
 
 Important : A chaque fois on a un groupe qui va être séparé en deux sous groupes sur bases de règles appliquées à des variables (attributs)
 
-On utilise la meilleur règle de base, mais pour avoir un aléatoire, on utilise que certaines variables (attributs).
-Au lieu de prendre la meilleur variable, on va prendre des sous ensembles de variables.
-Comme si on prenait 2/3 à chaque fois des variables (sous ensemble différents pour chaques arbres, et règles)
-On peut faire pareil avec les individus (mais là ça reste le même pour toutes les règles)
+On utilise la meilleur règle de base, mais pour avoir un aléatoire, on utilise que certaines variables (attributs). \
+Au lieu de prendre la meilleur variable, on va prendre des sous ensembles de variables. \
+Comme si on prenait 2/3 à chaque fois des variables (sous ensemble différents pour chaques arbres, et règles) \
+On peut faire pareil avec les individus (mais là ça reste le même pour toutes les règles) \
 
 
 accuracy / recall / precision
 
 
-on peut jouer sur pas mal de choses comme : le nb d'individus, les attributs, les algorithmes, paramétrisation de ceux-ci
-=> on teste toujours le classifieur avec cette procédure
+on peut jouer sur pas mal de choses comme : le nb d'individus, les attributs, les algorithmes, paramétrisation de ceux-ci \
+=> on teste toujours le classifieur avec cette procédure \

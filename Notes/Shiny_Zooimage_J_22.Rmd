@@ -1,0 +1,20 @@
+---
+title: "Shiny_Zooimage_J_22"
+output: html_document
+---
+
+Fichier de notes du jour 22, mardi 01 Mars 2022.    Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Aujourd'hui : 
+
+-> Recherches sur le traitements des données par Shiny, comment c'est géré ? Copie-t-il tout dans les dossiers temporaires ?
+
+-> Début de ma préparation à ma présentation des objectifs de mon stage.
+    . Lieux de stage
+    . Equipe
+    . Objectifs
+    . Avancement
