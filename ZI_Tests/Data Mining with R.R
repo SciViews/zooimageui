@@ -63,7 +63,7 @@ file.show(system.file("etc", "Detailed.zic", package = "zooimage"))
 
 ## Read a training set - here, our example training set
 train <- getTrain("./data/Training set")
-train$Class <- factor(train$Class, levels = basename(attr(train, "path")) )
+train$Class <- factor(train$Class, levels = basename(attr(train, "path")) ) # Needed line of code to have the class as a factor
 head(train)
 sort(table(train$Class))
 ## It is faster to start from the .Rdata file => use save()/load()

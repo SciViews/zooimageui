@@ -128,3 +128,61 @@ Lien de la video tuto : https://www.youtube.com/watch?v=3-p9XLvoJV0 \
 !!! Question ???
 
 Comment faire passer des valeurs d'un module à un autre, si possible ?
+Dois-je refaire un projet entier pour utiliser golem ?
+
+
+=========== Apprentissage de ZooImage ===========
+
+=== Partie Modeling ===
+
+Différentes étapes : Sélection de variables, choix de l'algorithme de machine learning, la calibration, et le choix des meilleurs paramètres pour l'algorithme.
+
+=> Dans zooimage, toutes ces étapes sont intégrées dans l'objet de type ZIClass
+
+Si on veut faire un classifieur foret aléatoire ("Random forest") avec les valeurs par défaut, et une validation croisée de 10 fois, ça donne :
+
+```{r}
+classif <- ZIClass(Class ~ ., train, method = "mlRforest", calc.vars = calcVars,
+    ntree = 200, cv.k = 10)
+```
+
+Faire un objet ZIClass comme ça met en jeu trois étapes : 1) Calcul/Sélection des variables, 2) Création du classifieur, 3) "x-fold" validation croisée du classifieur sur le training set. \
+
+La partie de calcul des variables est effectuée par calc.vars et son argument (par défault calcVars de ZooImage) permet de choisir les variables à calculer. \
+
+```{r}
+names(train) # Original variables
+names(traincalc <- calcVars(train)) # Variables as seen be classifier
+```
+
+Ceci permet de voir la différence entre les valeurs de départ, et celles calculées. \
+
+calcVars fait en fait des calculs de toutes les nouvelles variables, et change leur nom. \
+
+La variable classe fait partie des variables calculées, elle est modelée à partir de toutes les variables pré-existantes. \
+
+!!! => Indice de Gini : mesure la variabilité / différence : égalité inégalité \
+
+Illustration de la procédure de sélection d'une variable.
+
+```{r}
+require(randomForest)
+# Importance of the predictors
+Imp <- classif$importance
+varImpPlot(classif, n.var = nrow(Imp))
+# Importance of preditor variables as measured by the mean decrease of the Gini index for the random forest classifier classif.
+Threshold <- 30
+abline(v = Threshold, lty = 2)
+# Drop variables with low Gini decrease
+VarsToDrop <- rownames(Imp)[Imp < Threshold]
+```
+
+Attention, on peut choisir la liste des "predictors" que l'on veut utiliser dans ZooImage (grâce à l'option ZI.dropVars) : \
+
+
+```{r}
+options(ZI.dropVars = VarsToDrop)
+# Now, 'Min' is drop from the dataset
+names(traincalc <- calcVars(train))
+```
+
