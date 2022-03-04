@@ -13,3 +13,118 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Recherches pour Golem et le Machine Learning étant donné que je ne trouve rien pour le traitement des données par shiny.
 
+// Installation du package golem
+
+
+=========== Tuto ===========
+New Project : golemproject
+=== 01.start.R
+
+golem::fill_desc() \
+Il s'agit d'une fonction qui permet de remplir le fichier de description du package golem (Car en fait, faire une app shiny avec golem, c'est comme faire un package)
+
+golem::set_golem_options() \
+Fonction importante car elle définit de nombreuses options globales utilisés par les fonctions de golem
+
+Ensuite on a toutes des fonctions usethis, pour faire une licence, faire un readme, un code de conduite, un badge de "lifecycle", un "news_md", ou encore utiliser git \
+usethis::use_mit_license() \
+usethis::use_readme_rmd() \
+usethis::use_code_of_conduct() \
+usethis::use_lifecycle_badge() \
+
+usethis::use_news_md() \
+usethis::use_git() \
+
+On peut charger un raw dataframe : usethis::use_data_raw() \
+
+On peut faire un test initial avec la fonction de golem : \
+golem::use_recommended_tests() \
+
+Rajouter une série de dépendance à notre package : \
+golem::use_recommended_deps() \
+
+On peut changer la favicon : \
+golem::remove_favicon() \
+golem::use_favicon() \
+
+Avec :
+golem::use_utils_ui() \
+golem::use_utils_server() \
+On crée deux fichiers dans le dossier R, où l'app se trouve, dans laquelle se retrouve des fonctions utile pour la partie serveur, et la partie UI de notre app. \
+
+=== 02_dev.R et run_dev.R
+
+On utilisera le fichier run_dev.R pour : \
+- Définir l'app en mode de production \
+- Détacher tous les packages qu'on a chargé dans notre environnement \
+- "Run" des documents de "roxygen" et "devtool" et recharger \
+
+Et enfin : LANCER L'APP \
+
+Dans 02_dev.R : \
+Il y a une fonction pour créer des modules : \
+golem::add_module( name = "name_of_the_module" ) \
+Crée un fichier dans lequel on a une partie UI et une partie server, on a également deux lignes de code à copier depuis ce module, dans l'app shiny, afin d'utiliser ce module dans l'app. \
+
+Il y a une fonction pour rajouter des packages ou dépendances au choix : \
+usethis::use_package("package") \
+
+On peut utiliser plus de tests avec (tests de fonctions traditionnelles/normales de R) : \
+usethis::use_test("test") \
+
+Plus d'infos tests : https://youtu.be/3-p9XLvoJV0?t=810 \
+
+On peut ajouter un bouton au "browser" : \
+golem::browser_button() \
+
+Plus d'infos browser : https://youtu.be/3-p9XLvoJV0?t=1012 \
+(C'est une forme de bouton caché que on peut ajouter) \
+
+On peut ajouter des fichiers javascript externe, des "handlers" : \
+golem::add_js_file() \
+golem::add_js_handler() combiné à golem::invoke_js() \
+Ou également des fichiers CSS : \
+golem::add_css_file() \
+
+js_handler : une fonction qu'on peut appeller depuis le côté serveur \
+
+Plus d'infos js : https://youtu.be/3-p9XLvoJV0?t=1099 \
+
+Ensuite, fonctions pour faire du dévelopemment de packages : \
+différentes fonctions ... faire des vignettes, utiliser github, travis, appveyor, ... \
+
+
+=== 03_deploy.R
+
+Possède une série de fonctions qu'on peut utiliser pour mettre notre application en production \
+
+test() test des fonctions, et tests par défault, est-ce que l'app fonctionne ? \
+
+On a ensuite des fonctions pour déployer des éléments : \
+=> utilisation de la plateforme rstudio, de docker, de shinyproxy, heroku, ... \
+
+
+=== run_app.R 
+
+Contient également des fonctions \
+
+Utilisé quand notre package est construit, installé et chargé \
+On peut l'utiliser pour lancer notre application \
+On peut passer des paramètres à notre application avec : \
+with_golem_options() \
+golem_opts = list () \
+golem::get_golem_options() \
+
+Avec ces deux fonctions, on est capable d'ajouter un package avec une fonction à l'intérieure, ça lance une application, et cette application peut avoir des paramètres. \
+
+"custommade application with parameters"
+
+Plus d'infos run_app.R : https://youtu.be/3-p9XLvoJV0?t=1618 \
+
+
+Lien de la video tuto : https://www.youtube.com/watch?v=3-p9XLvoJV0 \
+
+
+!!! Question ???
+
+Comment faire passer des valeurs d'un module à un autre, si possible ?
