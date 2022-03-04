@@ -1,0 +1,15 @@
+---
+title: "Shiny_Zooimage_J_25"
+output: html_document
+---
+
+Notes du jour 25 Vendredi 04 Mars 2022. Présentiel. 
+
+Il n'y a pas deu de notes pour les jours 23 et 24 car j'ai réalisé, et me suis préparé à ma présentation de mes objectifs de stage durant ces jours là.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Recherches pour Golem et le Machine Learning étant donné que je ne trouve rien pour le traitement des données par shiny.
+
