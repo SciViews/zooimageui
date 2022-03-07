@@ -1,0 +1,80 @@
+---
+title: "Shiny_Zooimage_J_26"
+output: html_document
+---
+
+Fichier de notes du jour 26, Lundi 07 Mars 2022.    Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+=== Choses à faire update ===
+
+1) Données sur le disque : Qu'est-ce qu'on peut faire avec l'app Shiny ? Accès des données ? Ailleurs sur le disque ? (vdd)
+  => J'ai déjà beaucoup regardé à ça, et rien trouvé de spécial...
+
+2) Golem => modularisation
+  => J'ai déjà regardé au fonctionnement de ça également : Je sais comment faire à partir d'un nouveau projet.
+
+3) Machine learning : classification
+  => J'y ai également regardé un peu, les débuts de la modélisation.
+
+4) Cahier des charges (définition la plus complète et détaillée de ce que le travail doit faire) \
+- fonctionnalités (ex : traitements local / serveur) \
+- implémentation (comment ça fonctionne) (ex : accès des données, ...) \
+- interface (MOCK : ex, draw.io) \
+- timing \
+- tests/maintenances \
+
+=============================
+
+
+Pour reprendre dans mon apprentissage de la modélisation dans ZooImage : \
+Certaines de ces commandes ne peuvent pas être exécutées directement dans le chunk car sinon elle ne s'appliquent pas au long terme. (les setups) \
+
+```{r}
+rootpath <- "/home/rstudio/shared/zooimage-ui/ZI_Tests/"
+
+smps <- c("./data/Samples/MTPS.2004-10-20.V5.zidb",
+          "./data/Samples/MTLG.2005-05-24.H1.zidb")
+library(zooimage)
+
+old_stringsAsFactors <- getOption("stringsAsFactors")
+options(stringsAsFactors = TRUE)
+
+old_dir <- setwd(rootpath)
+
+train <- getTrain("./data/Training set")
+train$Class <- factor(train$Class, levels = basename(attr(train, "path")) )
+
+classif <- ZIClass(Class ~ ., train, method = "mlRforest", calc.vars = calcVars,
+    ntree = 200, cv.k = 10) # Note than method, calc.vars & cv.k are default values
+classif
+
+
+```
+
+Les derniers tests effectués à partir du manuel :
+
+```{r}
+names(train) # Original variables
+names(traincalc <- calcVars(train)) # Variables as seen be classifier
+```
+
+```{r}
+require(randomForest)
+# Importance of the predictors
+Imp <- classif$importance
+varImpPlot(classif, n.var = nrow(Imp))
+# Importance of preditor variables as measured by the mean decrease of the Gini index for the random forest classifier classif.
+Threshold <- 30
+abline(v = Threshold, lty = 2)
+# Drop variables with low Gini decrease
+VarsToDrop <- rownames(Imp)[Imp < Threshold]
+```
+
+
+
+
+
