@@ -31,7 +31,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 Pour reprendre dans mon apprentissage de la modélisation dans ZooImage : \
-Certaines de ces commandes ne peuvent pas être exécutées directement dans le chunk car sinon elle ne s'appliquent pas au long terme. (les setups) \
+Certaines de ces commandes ne peuvent pas être exécutées directement dans le chunk car sinon elle ne s'appliquent pas au long terme. (les setups) (old_dir <- setwd(rootpath) principalement) \
 
 ```{r}
 rootpath <- "/home/rstudio/shared/zooimage-ui/ZI_Tests/"
@@ -86,6 +86,19 @@ options(ZI.dropVars = VarsToDrop)
 # Now, 'Min' is drop from the dataset
 names(traincalc <- calcVars(train, drop.vars = VarsToDrop)) # ou getOption("ZI.dropVars")
 ```
+
+Il faut faire attention que le options ne suffit pas. ici, il faut préciser dans le calcVars() l'option drop.vars = "" afin de préciser quelles variables calculées on souhaite éliminer. (soit en prenant les valeurs de VarsToDrop ou en allant chercher avec getOption()) \
+
+Concrêtement, on pourrait remplacer la fonction calcVars afin qu'elle calcule d'autre variables qui nous intéresse, d'autre prédicteurs.
+
+Une autre étape utile consiste à choisir des meilleurs paramètres pour l'algorithme de classification. Par exemple, pour "random forest" on peut changer le nombre d'arbres à utiliser. \
+
+```{r}
+plot(classif$err.rate[, "OOB"], type = "l", xlab = "trees", ylab = "Error")
+abline(v = 200, lty = 2)
+```
+
+En fait dans ce cas, le résultat est pas très utile ni intéressant car on avait déjà set le nombre d'abres à 200. Mais l'idée est que si le nombre d'abres était 500 par exemple, on verrait que la courbe devient très linéaire à partir de 200. Donc on a gardé la valeur de 200 arbres. \
 
 
 
