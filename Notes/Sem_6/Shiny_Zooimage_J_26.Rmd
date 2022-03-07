@@ -62,6 +62,8 @@ names(train) # Original variables
 names(traincalc <- calcVars(train)) # Variables as seen be classifier
 ```
 
+Procédure de choix d'une variable, en se basant sur l'indice de Gini, calculé avec l'algorithme de forêt aléatoire, pour sélectionner seulement les prédicteur les plus discriminants.
+
 ```{r}
 require(randomForest)
 # Importance of the predictors
@@ -74,6 +76,16 @@ abline(v = Threshold, lty = 2)
 VarsToDrop <- rownames(Imp)[Imp < Threshold]
 ```
 
+La liste des prédicteurs que on veut utiliser dans Zooimage est spécifié dans l'option ZI.dropVars de cette manière :
+
+```{r}
+Imp <- classif$importance
+Threshold <- 30
+VarsToDrop <- rownames(Imp)[Imp < Threshold]
+options(ZI.dropVars = VarsToDrop)
+# Now, 'Min' is drop from the dataset
+names(traincalc <- calcVars(train, drop.vars = VarsToDrop)) # ou getOption("ZI.dropVars")
+```
 
 
 
