@@ -319,9 +319,35 @@ conf3 <- confusion(predict(classif, test), test$Class)
 conf3
 ```
 
-La formule utilisé pour créer la matrice de confusion 3 m'est plus obscure ... \
+(La formule utilisé pour créer la matrice de confusion 3 m'est plus obscure ...) \
 
+La moitié des particules dans notre échantillon de test sont mal classifiées ! \
+=> C'est à cause de la présence des particules qui ne sont pas visuellement reconnaissables dans les vignettes (elles augmentent le taux d'erreur) \
 
+De tels scores mènent à des résultats inutilisables pour les biologistes ou écologistes. Sauf si ils réduisent la fraction de mauvaise classification en ayant réalisé une sorte de "validation manuelle" dans la littérature du plancton. \
+Cela consiste à faire une correction manuelle de la classification réalisée automatiquement. \
+On le fait de manière très similaire à ce qu'on fait quand on trie les vignettes au début, mais en introduisant d'abord les vignettes dans les différents dossiers en fonction de leur classification automatique. \
+
+Voici un exemple (échantillon séparé, avec son set de validation) \
+On utilisera alors l'argument classes = classif (dans prepareTest()) pour activer le pré-tri des vignettes en utilisant le classifieur. \
+
+```{r}
+old_wd <- getwd()
+setwd("/home/rstudio/shared/zooimage-ui/ZI_Tests/")
+prepareTest(file.path(rootpath, "data", "_test2"), smps[2], template = classif, classes = classif)
+## Maintenant on peut aller voir les dossiers et sous-dossiers et re-classer les mauvaises vignettes
+## On va dire que c'est le bon résultat ...
+```
+```{r}
+test2 <- getTest(file.path(rootpath, "data", "Test sets", "MTLG.2005-05-24.H1"))
+# On crée et on étudie la matrice de confusion
+conf4 <- confusion(predict(classif, test2), test2$Class)
+conf4
+```
+
+Et oui, c'est plus rapide de vérifier que la classification est bonne et ne changer que ce qui est mauvais, que de classifier l'entièreté de l'échantillons à la main. \
+Voilà pourquoi cette pratique reste utile et nécessaire. Cela aide le machine learning à mieux se dérouler. \
+Il y a un gain, un profit significatif à traiter les échantillons de plancton de cette manière. (dans la discussion on parle d'idées ou d'améliorations) \
 
 
 
