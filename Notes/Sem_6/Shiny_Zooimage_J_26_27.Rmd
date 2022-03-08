@@ -287,8 +287,39 @@ De plus, le nombre d'individus dans le training set tend à être plus équitabl
 Cela signifie que les probabilités précédentes ont besoin d'être ajustées pour refléter les proportions relatives de chaque classe dans une situation pratique. \
 Cela peut être fait très facilement avec l'objet "confusion". \
 
-Par exemple, on pourrait inspecter les performances de l'algorithme random forest, avec un échantillon réalistique qui contient une moitié de particules non vivantes (neige marine ou débris), et une communauté de zooplancton dominée par les "calanoid copepods" et les "chaetognaths" de cette manière :
+Par exemple, on pourrait inspecter les performances de l'algorithme random forest, avec un échantillon réalistique qui contient une moitié de particules non vivantes (neige marine ou débris ou fibres), et une communauté de zooplancton dominée par les "calanoid copepods" et les "chaetognaths" de cette manière :
 
+```{r}
+priors <- rep(20, 25) # On crée un priors avec 25 fois la valeur 20
+names(priors) <- rownames(conf) # On ajout les noms des classes
+priors[c("Calanoida", "Chaetognatha")] <- c(300, 100) # On passe le nombres des zooplanctons sélectionnés à une valeur représentative
+priors[c("debris", "fiber", "marine snow")] <- 266 # On passe le nombre des particules non vivantes à 266
+priors
+
+prior(conf) <- priors # On modifie les valeurs de priors pour notre matrice de confusion
+summary(conf, type = c("Fscore", "Recall", "Precision"))[1:3, ] # certaines métriques, 3 lignes
+# Pour reset les priors dans le training set :
+prior(conf) <- NULL
+```
+
+Sinon, il existe une meilleur méthode : \
+Utiliser un test séparé, fait à partir d'un échantillon représentatif. ("test set") \
+Voilà ce qu'on a dans notre premier échantillon dans le dataset de l'exemple : \
+
+```{r}
+old_wd <- getwd()
+setwd("/home/rstudio/shared/zooimage-ui/ZI_Tests/")
+prepareTest(file.path(rootpath, "data", "_test"), smps[1], template = classif)
+# Maintenant on a un dossier de test, dont on est sensé trier les vignettes, mais on va supposé que c'est fait :
+```
+```{r}
+test <- getTest(file.path(rootpath,"data", "Test sets", "MTPS.2004-10-20.V5"))
+# Création et étude de la matrice de confusion
+conf3 <- confusion(predict(classif, test), test$Class)
+conf3
+```
+
+La formule utilisé pour créer la matrice de confusion 3 m'est plus obscure ... \
 
 
 
@@ -301,6 +332,7 @@ Termes à mieux comprendre :
  - Gini criterion
  - Wald aggregation criterion
  - valeurs "cross-validated" et celles "out-of-bag"
+ - Priors ?
  => Être sur de bien comprendre :
  - Recall
  - Precision

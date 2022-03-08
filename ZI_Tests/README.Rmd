@@ -17,3 +17,5 @@ setwd("../")
 
 Et ensuite de placer le contenu de www dans un nouveau dossier appelé data.
 Le reste peut être supprimé.
+
+!!! Attention, le dossier "Test sets" n'y est pas présent via le téléchargement, je vais devoir trouver un moyen de l'ajouter... !!!
