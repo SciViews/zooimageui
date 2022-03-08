@@ -117,7 +117,7 @@ classifrf <- mlearning(Class ~ ., data = traincalc,
 => !!! mlearning similaire à ZIClass ? 
 
 
-2) Deuxième étape : Création du classificateur \
+2) Deuxième étape : Création du classifieur \
 
 
 3) Troisième et dernière étape réalisé lors de la création d'un objet ZIClass : \
@@ -132,13 +132,13 @@ classifcv <- predict(classifrf, method = "cv", cv.k = 10)
 
 En fait dans le bloc suivant on a un résumé :
 ```{r}
-# Partie création d'un classificateur, sur base de ZooImage, tout est fait en une fonction
+# Partie création d'un classifieur, sur base de ZooImage, tout est fait en une fonction
 
-classif <- ZIClass(Class ~ ., train, method = "mlRforest", calc.vars = calcVars,
+classif <- ZIClass(Class ~ ., data = train, method = "mlRforest", calc.vars = calcVars,
     ntree = 200, cv.k = 10) # Note than method, calc.vars & cv.k are default values
 classif
 
-# Partie création du même classificateur, mais en passant par d'autres fonctions, en faisant chaque étape
+# Partie création du même classifieur, mais en passant par d'autres fonctions, en faisant chaque étape
 
 ## The various steps involved here are:
 ## 1) Calculation of derived/transformed variables, and also, possibly,
@@ -151,6 +151,35 @@ classifrf <- mlRforest(Class ~ ., data = traincalc, ntree = 200)
 ##    algorithm (here, 10-fold cross-validation)
 classifcv <- predict(classifrf, method = "cv", cv.k = 10)
 ```
+
+En fait dans la fonction ZIClass de ZooImage, on appelle toute une série de fonctions d'autres packages comme mlearning. \
+Il y a différentes méthodes/stratégies pour faire la "10-Fold cross validation" en utilisant un échantillon stratifié. \
+De base on utilise cv qui est l'équivalent de cvpredict() (utilisation de errorest(), du package ipred) \
+On peut voir d'autres stratégies pour le faire via ?cvpredict et ?errorest \
+
+
+En résumé, on peut faire l'objet ZIClass soit en faisant toutes les étapes soit en utilisant la fonction ZIClass de ZooImage \
+
+```{r}
+classif <- ZIClass(Class ~ ., data = train, method = "mlRforest", calc.vars = calcVars, ntree = 200, cv.k = 10)
+```
+
+Il existe bien d'autres algorithmes de machine learning disponibles dans mlearning : \
+- "linear discriminant analysis" \
+- "quadratic linear discriminant analysis" \
+- "learning vector quantization" \
+- "neural network" \
+- "support vector machine" \
+- "naïve Bayes" \
+- "random forest" \
+
+Les objects créés par mlearning sont aussi des interfaces utilisant des algorithmes provenant d'autres packages. \
+
+(MASS, class, nnet, e1071, randomForest, ...)
+
+
+
+============== Model Evaluation ==============
 
 
 
