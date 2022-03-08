@@ -231,13 +231,80 @@ plot(conf, type = "image")
 Il faut faire attention que par défaut, la matrice de confusion est affichée avec les classes triées en fonction de leurs taux mutuels de faux positifs et de faux négatifs. \
 Cela permet ainsi de rapprocher au maximum les classes avec les plus grandes "confusion".
 
-# Détail : Vraiment important ??
-Le tri est réalisé en utilisant le clustering hierarchique ("hierarchical clustering", avec fonction hclust()) sur une matrice symétrique, avec une moyenne des faux positifs et faux négatifs en dehors de la diagonale.
+# Détail : Vraiment important ?? \
+Le tri est réalisé en utilisant le clustering hierarchique ("hierarchical clustering", avec fonction hclust()) sur une matrice symétrique, avec une moyenne des faux positifs et faux négatifs en dehors de la diagonale. \
 (et par défaut le "Wald aggregation criterion")
+
+On peut voir le dendrogamme de ce clustering : \
+
+```{r}
+plot(conf, type = "dendrogram")
+```
 # Détail
 
+Si on souhaite, dans le cas de random forest, utiliser les prédictions out-of-bag, on pourrait faire : \
+```{r}
+## In the specific case of random forest, you could decide as well to use the
+## out-of-bag prediction at this stage:
+confoob <- confusion(classif, predict(classif, method = "oob"))
+## If you combine this, with ZIClass(...., cv.k = NULL), you short circuit
+## the time-consumming cross-validation step on the creation of your ZIClass
+## object, and you can fine-tune it faster. However, out-of-bag is not
+## available for all machine learning algorithms, and it is also perhaps
+## not as reliable as stratified cross-validation
+```
+
+On peut ensuite faire différents types d'affichages, comme par exemple, pour représenter la performance de notre classifieur : \
+(related to recall versus precision for each class, or its combination as F1-score are also available) \
+
+```{r}
+plot(conf, type = "barplot")
+plot(conf, type = "stars")
+```
+
+Pour comparer deux classifieurs : Il y a un graphe pour !
+
+(On crée un autre classifieur méthode différente, pour tester)
+A partir d'un exemple : On va créer un classifieur de type "support vector machine classifier" avec "linear kernel" à partir du même training set. \
+On va ensuite le comparer à random forest, classe par classe, en fonction du "recall" et de la "précision". \
+
+```{r}
+classif2 <- ZIClass(Class ~ ., train, method = "mlSvm", kernel = "linear")
+classif2
+summary(classif2)
+conf2 <- confusion(classif2)
+conf2
+plot(conf2, type = "barplot")
+plot(conf2)
+plot(conf, conf2)
+```
+
+Pour un petit rappel des matrices de confusion : https://kobia.fr/classification-metrics-precision-recall/ \
+
+Les statistiques basées sur les matrices de confusions sont dépendantes des proportions relatives d'items dans chaque classe, c'est donc important de définir des bons à prioris. \
+Les communautés de plancton peuvent changer drastiquement. Les groupes taxonomiques dominant une communauté peuvent être différent en fonction des différents endroits (géographiques) et moments (temps). \
+De plus, le nombre d'individus dans le training set tend à être plus équitable ("balanced"), avec un sur-échantillonage des groupes plus rares, pour avoir assez de vignettes pour faire l'apprentissage. \
+Cela signifie que les probabilités précédentes ont besoin d'être ajustées pour refléter les proportions relatives de chaque classe dans une situation pratique. \
+Cela peut être fait très facilement avec l'objet "confusion". \
+
+Par exemple, on pourrait inspecter les performances de l'algorithme random forest, avec un échantillon réalistique qui contient une moitié de particules non vivantes (neige marine ou débris), et une communauté de zooplancton dominée par les "calanoid copepods" et les "chaetognaths" de cette manière :
 
 
+
+
+
+
+
+
+Termes à mieux comprendre :
+ - F-score
+ - Gini criterion
+ - Wald aggregation criterion
+ - valeurs "cross-validated" et celles "out-of-bag"
+ => Être sur de bien comprendre :
+ - Recall
+ - Precision
+ - Accuracy
 
 
 Questions : 
