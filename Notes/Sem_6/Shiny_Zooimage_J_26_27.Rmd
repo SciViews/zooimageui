@@ -62,6 +62,8 @@ names(train) # Original variables
 names(traincalc <- calcVars(train)) # Variables as seen be classifier
 ```
 
+1) Première étape : calcul et sélection des variables \
+
 Procédure de choix d'une variable, en se basant sur l'indice de Gini, calculé avec l'algorithme de forêt aléatoire, pour sélectionner seulement les prédicteur les plus discriminants.
 
 ```{r}
@@ -99,6 +101,62 @@ abline(v = 200, lty = 2)
 ```
 
 En fait dans ce cas, le résultat est pas très utile ni intéressant car on avait déjà set le nombre d'abres à 200. Mais l'idée est que si le nombre d'abres était 500 par exemple, on verrait que la courbe devient très linéaire à partir de 200. Donc on a gardé la valeur de 200 arbres. \
+
+
+Voir ce qu'est err.rate dans classif :
+```{r}
+names(classif)
+classif$err.rate
+classif$err.rate[,"OOB"]
+```
+
+```{r}
+classifrf <- mlearning(Class ~ ., data = traincalc,
+    method = "mlRforest", ntree = 200)
+```
+=> !!! mlearning similaire à ZIClass ? 
+
+
+2) Deuxième étape : Création du classificateur \
+
+
+3) Troisième et dernière étape réalisé lors de la création d'un objet ZIClass : \
+Validation croisée X-Fold sur le dataframe avec ses nouvelles variables (en utilisant le même algorithme de machine learning) \
+
+Ceci est l'équivalent : \
+```{r}
+# 10-fold cross-validation set by using cv.k = 10
+classifcv <- predict(classifrf, method = "cv", cv.k = 10)
+```
+
+
+En fait dans le bloc suivant on a un résumé :
+```{r}
+# Partie création d'un classificateur, sur base de ZooImage, tout est fait en une fonction
+
+classif <- ZIClass(Class ~ ., train, method = "mlRforest", calc.vars = calcVars,
+    ntree = 200, cv.k = 10) # Note than method, calc.vars & cv.k are default values
+classif
+
+# Partie création du même classificateur, mais en passant par d'autres fonctions, en faisant chaque étape
+
+## The various steps involved here are:
+## 1) Calculation of derived/transformed variables, and also, possibly,
+##    selection of variables is done by calcVars() (or your awn function)
+names(train) # Original variables
+names(traincalc <- calcVars(train)) # Variables as seen be classifier
+## 2) Train a classifier on transformed data frame
+classifrf <- mlRforest(Class ~ ., data = traincalc, ntree = 200)
+## 3) Apply x-fold cross-validation on the same training set with the choosen
+##    algorithm (here, 10-fold cross-validation)
+classifcv <- predict(classifrf, method = "cv", cv.k = 10)
+```
+
+
+
+
+
+
 
 
 
