@@ -28,3 +28,20 @@ Je vais créer une "nouvelle" app, qui reprendra une partie des éléments déj�
 
 ! Attention avec Golem : C'est comme créer un package, donc il est recommandé de savoir comment créer un package !
 
+Revisionnage d'un tuto golem, afin de me remémoriser les choses à savoir. \
+(Pour les notes, voir le fichier Shiny_Zooimage_J_25.Rmd) \
+
+Note supplémentaire : 
+Handler - Fonction qu'on peut rajouter pour être éxécutée par javascript et pas par R.
+run_dev.R - On pourrait le dupliquer, et l'utiliser pour tester chaque modules avant l'utilisation. 
+
+
+En attendant de savoir comment faire avec le projet de golem et le dépot github, je vais essayer de commencer mon écriture de rapport, intro ...
+
+
+=== Questions :
+
+- Comment je fait pour utiliser Golem ? Normalement il faut créer un nouveau projet...
+- fonction ns() ?
+- dockerfile ? utile ?
+- Utilisation de Github ?
