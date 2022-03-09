@@ -6,3 +6,5 @@
   $run_dev.*
   
 ^Trials$
+^LICENSE$
+^LICENSE\.md$
