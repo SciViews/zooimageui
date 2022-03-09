@@ -1,0 +1,30 @@
+---
+title: "Shiny_Zooimage_J_28"
+output: html_document
+---
+
+Fichier de notes du jour 28. Mercredi 09 Mars 2022.   Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+=== Recherche de titres de stage :
+
+- Une interface web réalisée via Shiny pour le programme ZooImage
+- Réalisation d'une interface grâce au package Shiny de R, pour l'utilisation du programme ZooImage
+- Réalisation d'une application web Shiny permettant l'utilisation du programme ZooImage
+- ~~Céation d'une interface graphique au programme ZooImage grâce au package Shiny de R~~
+- Création d'une interface web au programme ZooImage via le package Shiny de R
+- Création/Réalisation d'une interface web permettant l'étude du plancton grâce au package Shiny de R
+- Création/Réalisation d'une application web, via Shiny, permettant l'étude du plancton grâce au programme ZooImage
+- Création/Réalisation d'un site web, en utilisant Shiny/le package Shiny de R, qui permet l'étude du plancton réalisée par le programme ZooImage
+
+=== Travail Shiny et ZooImage :
+
+Ayant appris plus de choses à propos du programme ZooImage, je vais essayer de continuer mes expérimentations dans Shiny. \
+Je vais pour cela, essayer de me baser sur la modularisation offerte par Golem. \
+Je vais créer une "nouvelle" app, qui reprendra une partie des éléments déjà créés dans mon app de tests pour ZooImage. \
+
+! Attention avec Golem : C'est comme créer un package, donc il est recommandé de savoir comment créer un package !
+
