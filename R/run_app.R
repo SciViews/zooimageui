@@ -12,6 +12,7 @@ run_app <- function(
   options = list(), 
   enableBookmarking = NULL,
   uiPattern = "/",
+  data_folder_path = Sys.getenv("ZOOIMAGE_DATA_DIR"),
   ...
 ) {
   with_golem_options(
@@ -23,6 +24,8 @@ run_app <- function(
       enableBookmarking = enableBookmarking, 
       uiPattern = uiPattern
     ), 
-    golem_opts = list(...)
+    golem_opts = list(
+      data_folder_path = data_folder_path
+    )
   )
 }

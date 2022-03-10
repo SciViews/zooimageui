@@ -25,4 +25,7 @@ J'ai écris les étapes réalisées en gros. \
     -> Comment utiliser ça dans l'app ? Pramètre de l'app ?
 
 
+ Questions)
+ - Toujours, les variables et autres peuvent-elles passer entre les modules/fichiers de base ?
+
 =========================================================================================================================================

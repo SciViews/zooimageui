@@ -9,6 +9,7 @@ run_app(
   options = list(),
   enableBookmarking = NULL,
   uiPattern = "/",
+  data_folder_path = Sys.getenv("ZOOIMAGE_DATA_DIR"),
   ...
 )
 }

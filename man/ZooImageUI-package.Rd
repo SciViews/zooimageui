@@ -5,7 +5,7 @@
 \alias{ZooImageUI-package}
 \title{ZooImageUI}
 \description{
-Description
+It is a web app to make an interface to the program ZooImage.
 }
 \section{Application Shiny}{
 

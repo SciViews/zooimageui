@@ -6,7 +6,7 @@ Authors@R:
            family = "Lecocq",
            role = c("aut", "cre"),
            email = "martin.lecocq@std.heh.be")
-Description: What the package does (one paragraph).
+Description: It is a web app to make an interface to the program ZooImage.
 License: GPL (>= 2)
 Imports: 
     attempt,

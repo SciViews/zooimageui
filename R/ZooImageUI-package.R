@@ -1,6 +1,6 @@
 #' ZooImageUI
 #' 
-#' Description
+#' It is a web app to make an interface to the program ZooImage.
 #' 
 #' @section Application Shiny:
 #' 

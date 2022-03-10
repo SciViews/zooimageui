@@ -10,7 +10,8 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      h1("TemplateGolem")
+      h1("TemplateGolem"),
+      mod_mod_01_ZI_data_dir_show_ui("mod_01_ZI_data_dir_show_ui_1")
     )
   )
 }
