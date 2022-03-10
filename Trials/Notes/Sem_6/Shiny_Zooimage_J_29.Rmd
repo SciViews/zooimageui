@@ -1,0 +1,28 @@
+---
+title: "Shiny_Zooimage_J_29"
+output: html_document
+---
+
+Fichier de notes du jour 29, jeudi 10 Mars 2022.    Présentiel
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais donc, enfin, après avoir réglé mes problèmes, pouvoir recommencer des tests sur Shiny, golem, et Zooimage.
+
+
+!!! Afin de comprendre comment mettre au point le système du projet/package golem dans mon repository github, j'ai passé une après midi avec \
+M. Grosjean, et j'ai pris des notes dans le Jour_28.txt à propos des étapes à suivre. (notament des changements dans le fichier .Rbuildignore) \
+Ou encore des changements dans les options du projet => Build Tools, configure \
+J'ai écris les étapes réalisées en gros. \
+
+
+=== Objectif : Faire une application qui va lire la variable environnementale : va chercher des données dans le dossier correspondant ===
+
+ 1) Variable environnementale "ZOOIMAGE_DATA_DIR"
+    -> Sys.setenv(ZOOIMAGE_DATA_DIR = "~/shared/data)
+    -> Comment utiliser ça dans l'app ? Pramètre de l'app ?
+
+
+=========================================================================================================================================

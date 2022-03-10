@@ -6,7 +6,7 @@ library(shiny)
 library(sortable)
 
 # Pourquoi le vecteur généré par list.files ne veut pas être considéré ? => chemin était mauvais
-files <- list.files("/home/rstudio/shared/zooimage-ui/ZI_Test_App/www/TS/test")
+files <- list.files("/home/rstudio/shared/zooimage-ui/Trials/ZI_Test_App/www/TS/test")
 names <- c("Marc","Pierre","Paul")
 
 labels <- files

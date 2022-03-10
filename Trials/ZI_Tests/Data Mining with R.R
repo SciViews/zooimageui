@@ -2,7 +2,7 @@
 
 ## Adapt this to your system... This must be the directory where you
 ## unzipped the example dataset
-rootpath <- "/home/rstudio/shared/zooimage-ui/ZI_Tests/"
+rootpath <- "/home/rstudio/shared/zooimage-ui/Trials/ZI_Tests/"
 
 smps <- c("./data/Samples/MTPS.2004-10-20.V5.zidb",
           "./data/Samples/MTLG.2005-05-24.H1.zidb")
