@@ -6,5 +6,6 @@
 #' @noRd
 app_server <- function( input, output, session ) {
   # Your application server logic 
-  mod_mod_01_ZI_data_dir_show_server("mod_01_ZI_data_dir_show_ui_1")
+  mod_Data_Test_Server_server("Data_Test_Server_ui_1")
+  mod_Data_Test_Local_server("Data_Test_Local_ui_1")
 }

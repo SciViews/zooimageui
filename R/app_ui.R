@@ -11,7 +11,14 @@ app_ui <- function(request) {
     # Your application UI logic 
     fluidPage(
       h1("TemplateGolem"),
-      mod_mod_01_ZI_data_dir_show_ui("mod_01_ZI_data_dir_show_ui_1")
+      navbarPage("Test de traitement des dossiers et fichiers",
+        tabPanel("Server Folder",
+          mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
+        ),
+        tabPanel("Local Folder",
+          mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
+        )
+      )
     )
   )
 }

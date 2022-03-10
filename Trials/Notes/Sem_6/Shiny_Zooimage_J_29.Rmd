@@ -29,3 +29,26 @@ J'ai écris les étapes réalisées en gros. \
  - Toujours, les variables et autres peuvent-elles passer entre les modules/fichiers de base ?
 
 =========================================================================================================================================
+
+ => App sous golem qui arrive à aller chercher des données de titanic, depuis ~/shared/data/ : Fonctionne !
+ 
+
+=== Nouvel objectif : Essayer d'utiliser un dossier, en considérant que on utilse l'app en local. ===
+
+ shinyfiles ?
+
+=> Non, il suffit d'aller chercher dans les chemins
+
+L'app, tourne soit sur le serveur, soit en local.
+
+Mais les données, les fichiers et dossiers, sont toujours trouvé en local : local du serveur, ou local du local.
+
+=====================================================================================================
+
+
+
+Resumé de mes questions sur golem :
+
+- Peut on créer mettre des modules dans un module ?
+
+- Peut on faire passer des variables d'un module à l'autre ? Il me semble que oui.
