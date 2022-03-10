@@ -14,11 +14,13 @@ mod_Data_Test_Local_ui <- function(id){
     sidebarLayout(
       
       sidebarPanel(
-        textInput(ns("local_folder_path"),"Folder Path :", value = "~/")
+        textInput(ns("local_folder_path"),"Folder Path :", value = "~/"),
+        selectInput(ns("first_folder"), "First folder :", choices = list.files("~/"))
       ),
       
       mainPanel(
-        verbatimTextOutput(ns("folder_ls"))
+        verbatimTextOutput(ns("folder_ls1")),
+        verbatimTextOutput(ns("folder_ls2"))
       )
     )
   )
@@ -31,8 +33,11 @@ mod_Data_Test_Local_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    output$folder_ls <- renderPrint({
+    output$folder_ls1 <- renderPrint({
       list.files(input$local_folder_path)
+    })
+    output$folder_ls2 <- renderPrint({
+      list.files(paste0("~/",input$first_folder))
     })
   })
 }
