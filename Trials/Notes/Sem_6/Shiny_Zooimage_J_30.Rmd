@@ -16,3 +16,9 @@ knitr::opts_chunk$set(echo = TRUE)
  - Conception et réalisation d’une interface web en Shiny et R pour l’étude du plancton avec le programme ZooImage
 
 =====================================================================================================================
+
+Après avoir passé une grosse partie de la matinée à essayer de faire un affichage conditionnel avec golem \
+- en essayant avec conditional panel (problème modules gèrent ça différement et je n'y arrive pas pour le moment) \
+- en essayant avec if et else (problème : qu'une seule chose peut en sortir / un seul résultat) \
+
+Je vais donc plutôt passer à autre chose en attendant, je vais essayer de recréer ce que j'avais fait pour l'app ZooImage mais donc ici avec les modules.
