@@ -10,9 +10,9 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      h1("TemplateGolem"),
-      navbarPage("Test de traitement des dossiers et fichiers",
-        tabPanel("Server Folder",
+      h1("Nouvelle app ZooImage avec Golem"),
+      navbarPage("ZooImage-UI",
+        tabPanel("Data folder",
           mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
         ),
         tabPanel("Local Folder",
