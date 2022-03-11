@@ -23,7 +23,8 @@ mod_ZI_Test_server <- function(id){
     ns <- session$ns
     
     output$test <- renderText({
-      data_folder_path
+      # J'avais testé de prendre data_folder_path après l'avoir définit dans ZooImageUI-package.R, mais on dirait que ce n'est pas la bonne idée
+      "data_folder_path"
     })
   })
 }

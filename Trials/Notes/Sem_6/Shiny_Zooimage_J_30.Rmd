@@ -30,3 +30,13 @@ J'ai essayé d'introduire des variables globales en les mettant dans le fichier 
 Peut-être que je peux faire un fichier global.R ?
 
 Je ne suis pas sûr que mes recherches aient un sens.
+
+De toute la matinée, j'ai fait pas mal de tests, sur golem, pour tester : de faire des panneaux conditionnels, et utiliser des variables globales, mais je n'arrive à rien...
+
+====== Résumé/Questions :
+
+ - Comment je pourrais faire mes affichages conditionnels (avec les modules) ? Est-ce que ce que je voulais faire est inutile ?
+ 
+ - Comment fixer des variables globales ?
+ 
+ 

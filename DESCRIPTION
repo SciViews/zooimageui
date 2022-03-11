@@ -19,7 +19,8 @@ Imports:
     shiny (>= 1.7.1),
     zooimage,
     ggplot2,
-    rlang
+    rlang,
+    utils
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
