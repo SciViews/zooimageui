@@ -12,11 +12,17 @@ app_ui <- function(request) {
     fluidPage(
       h1("Nouvelle app ZooImage avec Golem"),
       navbarPage("ZooImage-UI",
-        tabPanel("Data folder",
-          mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
+                 
+        tabPanel("Data Folder All In One",
+          mod_Data_Folder_ui("Data_Folder_ui_1")
         ),
+        
+        tabPanel("Server folder",
+          # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
+        ),
+        
         tabPanel("Local Folder",
-          mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
+          # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
         )
       )
     )
