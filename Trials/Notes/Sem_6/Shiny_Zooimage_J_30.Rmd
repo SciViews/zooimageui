@@ -39,4 +39,27 @@ De toute la matinée, j'ai fait pas mal de tests, sur golem, pour tester : de fa
  
  - Comment fixer des variables globales ?
  
+ - roxygen, qu'est-ce qu'il faut documenter, comment et quand ?
+ 
+ - Data de test pour le package ? => échantillons de test de ZooImage ? Comment ?
+
+
+====== Après midi :
+ 
+ Je vais essayer de faire des recherches pour mieux comprendre comment utiliser des variables globales. \
+ Comment fonctionnent les paramètres que on fournit à run_app \
+ 
+ J'ai préparé les données de test de ZooImage dans ~/shared/data/zooimage_data/
+ 
+ Visionnage d'une très courte vidéo qui parle de roxygen : juste appris rapidement les fondements ultra essentiels d'un package (8min)
+ 
+
+ J'ai fait quoi ? :
+ 
+ - Mis mes données de test de ZooImage dans ~/shared/data/zooimage_data \
+ - Créé une fonction qui va chercher mes noms de dossiers "sample" dans une liste de noms de fichiers et dossiers \
+ - dans run_app, j'ai créé deux nouvelles variables : smpfiles et smps, dont la première va chercher les fichiers et dossiers qui se trouvent dans \
+ ~/shared/data/zooimage_data/Samples \
+ et la seconde va dans la liste de ces fichiers et dossiers, resortir ceux (les dossiers) qui sont des échantillons \
+ - fait un test, dans un module, pour afficher les résultats, voir si ces variables donnent bien ce qu'elles sont sensé donner. \
  

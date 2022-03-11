@@ -25,7 +25,7 @@ mod_Data_Test_Server_server <- function(id){
     
     data_folder_path <- golem::get_golem_options("data_folder_path")
     
-    tita_data <- read.csv(paste0(data_folder_path,"/titanic_data.csv"))
+    tita_data <- read.csv("~/shared/data/titanic_data.csv")
     
     output$titanic_data_table <- renderDataTable({
       tita_data

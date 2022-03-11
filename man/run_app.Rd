@@ -10,6 +10,8 @@ run_app(
   enableBookmarking = NULL,
   uiPattern = "/",
   data_folder_path = Sys.getenv("ZOOIMAGE_DATA_DIR"),
+  smpfiles = list.files(paste0(data_folder_path, "/Samples")),
+  smps = samples(smpfiles),
   ...
 )
 }

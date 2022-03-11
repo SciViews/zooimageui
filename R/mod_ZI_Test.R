@@ -11,7 +11,8 @@ mod_ZI_Test_ui <- function(id){
   ns <- NS(id)
   tagList(
   
-  textOutput(ns("test"))
+  verbatimTextOutput(ns("test1")),
+  verbatimTextOutput(ns("test2"))
   )
 }
     
@@ -22,9 +23,14 @@ mod_ZI_Test_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    output$test <- renderText({
+    output$test1 <- renderPrint({
       # J'avais testé de prendre data_folder_path après l'avoir définit dans ZooImageUI-package.R, mais on dirait que ce n'est pas la bonne idée
-      "data_folder_path"
+      golem::get_golem_options("smpfiles")
+    })
+    
+    output$test2 <- renderPrint({
+      # J'avais testé de prendre data_folder_path après l'avoir définit dans ZooImageUI-package.R, mais on dirait que ce n'est pas la bonne idée
+      golem::get_golem_options("smps")
     })
   })
 }

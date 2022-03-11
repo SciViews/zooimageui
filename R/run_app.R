@@ -13,6 +13,8 @@ run_app <- function(
   enableBookmarking = NULL,
   uiPattern = "/",
   data_folder_path = Sys.getenv("ZOOIMAGE_DATA_DIR"),
+  smpfiles = list.files(paste0(data_folder_path,"/Samples")),
+  smps = samples(smpfiles),
   ...
 ) {
   with_golem_options(
@@ -25,7 +27,9 @@ run_app <- function(
       uiPattern = uiPattern
     ), 
     golem_opts = list(
-      data_folder_path = data_folder_path
+      data_folder_path = data_folder_path,
+      smpfiles = smpfiles,
+      smps = smps
     )
   )
 }
