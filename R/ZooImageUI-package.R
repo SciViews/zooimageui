@@ -18,3 +18,5 @@ NULL
 .onLoad <- function(lib, pkg) {
   options(svDialogs.tmpfiles = TRUE)
 }
+
+data_folder_path <- golem::get_golem_options("data_folder_path")

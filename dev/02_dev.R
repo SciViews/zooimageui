@@ -20,7 +20,7 @@ usethis::use_package( "thinkr" )
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "Data_Folder" ) # Name of the module
-golem::add_module( name = "Data_Test_Local" ) # Name of the module
+golem::add_module( name = "ZI_Test" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*

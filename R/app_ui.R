@@ -18,6 +18,10 @@ app_ui <- function(request) {
           # mod_Data_Folder_ui("Data_Folder_ui_1")
         # ),
         
+        tabPanel("Tests",
+          mod_ZI_Test_ui("ZI_Test_ui_1")
+        ),
+        
         tabPanel("Server folder",
           mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
         ),

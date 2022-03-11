@@ -22,3 +22,11 @@ Après avoir passé une grosse partie de la matinée à essayer de faire un affi
 - en essayant avec if et else (problème : qu'une seule chose peut en sortir / un seul résultat) \
 
 Je vais donc plutôt passer à autre chose en attendant, je vais essayer de recréer ce que j'avais fait pour l'app ZooImage mais donc ici avec les modules.
+
+Je me demande comment on peut définir des variables globales pour le package golem.
+
+J'ai essayé d'introduire des variables globales en les mettant dans le fichier de package ZooImageUI-package.R mais ça ne fait rien.
+
+Peut-être que je peux faire un fichier global.R ?
+
+Je ne suis pas sûr que mes recherches aient un sens.
