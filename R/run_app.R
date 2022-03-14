@@ -12,11 +12,9 @@ run_app <- function(
   options = list(), 
   enableBookmarking = NULL,
   uiPattern = "/",
-  data_folder_path = Sys.getenv("ZOOIMAGE_DATA_DIR"),
-  smpfiles = list.files(paste0(data_folder_path,"/Samples")),
-  smps = samples(smpfiles),
   ...
 ) {
+  source(system.file("global.R",package = "ZooImageUI"))
   with_golem_options(
     app = shinyApp(
       ui = app_ui,
@@ -27,9 +25,7 @@ run_app <- function(
       uiPattern = uiPattern
     ), 
     golem_opts = list(
-      data_folder_path = data_folder_path,
-      smpfiles = smpfiles,
-      smps = smps
+      ...
     )
   )
 }

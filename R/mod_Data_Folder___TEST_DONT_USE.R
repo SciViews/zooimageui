@@ -7,17 +7,19 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_Data_Folder_ui <- function(id){
-  ns <- NS(id)
+mod_Data_Folder_ui <- function(namespace){
+  ns <- NS(namespace)
   tagList(
     
     conditionalPanel(
       # condition = 'output.is_server_sided == "TRUE",
-      condition = "output['is_server_sided'] == 'TRUE'",
-      ns = ns,
+      # condition = paste0("output['",ns("is_server_sided"),"'] == 'TRUE'"),
+      # ns = ns,
+      # condition = paste0("output.",ns("is_server_sided")," == 'TRUE'"),
+      condition = "true == true",
       
       # textOutput(ns("server_data_folder_path"), "Server Data Folder :"),
-      textOutput("server_data_folder_path", "Server Data Folder :"),
+      textOutput(ns("server_data_folder_path"), "Server Data Folder :"),
     )
   )
 }
@@ -31,15 +33,16 @@ mod_Data_Folder_server <- function(id){
     
     # Création de la variable réactive pour le panneau conditionnel mode Server
     output$is_server_sided <- reactive({
-      if ( golem::get_golem_options("data_folder_path") != "" ){
-        "TRUE"
-      } else {
-        "FALSE"
-      }
+      TRUE
+      # if ( golem::get_golem_options("data_folder_path") != "" ){
+        # "TRUE"
+      # } else {
+        # "FALSE"
+      # }
     })
     # Nécessaire pour le que browser charge la valeur la plus récente (Dynamic UI)
     # d'output pour évaluer correctement la condition
-    outputOptions( output, "is_server_sided", suspendWhenHidden = FALSE )
+    # outputOptions( output, "is_server_sided", suspendWhenHidden = FALSE )
     
     output$server_data_folder_path <- renderText({
       golem::get_golem_options("data_folder_path")

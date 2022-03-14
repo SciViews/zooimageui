@@ -3,6 +3,7 @@
 #' @description A shiny Module.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
+#' @param data_folder_path global.R variable
 #'
 #' @noRd 
 #'
@@ -22,8 +23,8 @@ mod_Data_Test_Server_ui <- function(id){
 mod_Data_Test_Server_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
-    
-    data_folder_path <- golem::get_golem_options("data_folder_path")
+    # 
+    # data_folder_path <- golem::get_golem_options("data_folder_path")
     
     tita_data <- read.csv("~/shared/data/titanic_data.csv")
     
@@ -32,7 +33,8 @@ mod_Data_Test_Server_server <- function(id){
     })
     
     output$path <- renderPrint({
-      paste0(data_folder_path,"/titanic_data.cvs")
+      # vient du global.R
+      data_folder_path
     })
     
   })

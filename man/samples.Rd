@@ -4,18 +4,20 @@
 \alias{samples}
 \title{Samples Folders}
 \usage{
-samples(Sample_folder_files)
+samples(Sample_folder_content)
 }
 \arguments{
-\item{Sample_folder_files}{}
+\item{Sample_folder_content}{Vector of names of a folder's content}
 }
 \value{
-The names of the samples' sub-folders in a main "Sample" folder
+The names of the samples' folders from a vector of names
 }
 \description{
-Samples Folders
+Description
 }
 \examples{
-Sample_folder_files <- list.files("~/shared/data/zooimage_data/Sample")
-samples(Sample_folder_files)
+Sample_folder_content <- list.files("~/shared/data/zooimage_data/Sample") 
+# Attention qu'ici, il vaudrait mieux utiliser un dossier du package, en 
+# utilisant des données échantillon du package
+samples(Sample_folder_content)
 }

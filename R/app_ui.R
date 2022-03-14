@@ -14,9 +14,9 @@ app_ui <- function(request) {
       navbarPage("ZooImage-UI",
                  
         # tentative de page dans laquelle j'aurais un "panel" conditionnel pour pouvoir choisir le dossier des données dans le cas de l'utilisation de l'app en local
-        # tabPanel("Data Folder All In One",
-          # mod_Data_Folder_ui("Data_Folder_ui_1")
-        # ),
+        tabPanel("Data Folder All In One",
+          mod_Data_Folder_bis_ui("Data_Folder_bis_ui_1")
+        ),
         
         tabPanel("Tests",
           mod_ZI_Test_ui("ZI_Test_ui_1")

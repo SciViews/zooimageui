@@ -1,0 +1,39 @@
+---
+title: "Shiny_ZooImage_J_31"
+output: html_document
+---
+
+Fichier de notes du jour 31, Lundi 14 Mars 2022. Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Continuation de mes avancées dans golem et ZooImage.
+
+Je vais tout d'abord regarder pour introduire un fichier global.R afin que certaines commandes ne soient exécutées qu'une seule fois au lancement de mon app.
+
+=> Introduction de global.R dans un package golem.
+
+
+J'ai donc crée dans "inst/" un fichier qui s'appelle global.R : \
+Dans ce fichier, j'ai repris mes différentes commandes qui devaient s'éxécuter qu'une seule fois, et pouvoir être utilisées de façon global dans mon app shiny.
+Je peux utiliser des fonctions que j'ai créé comme samples \
+Afin que ce fichier global.R soit utilisé par golem j'ai rajouté : \
+source(system.file("global.R",package = "ZooImageUI")) dans la partie du code de la fonction run_app afin qu'elle éxécute d'abord toutes ces commandes avant de lancer l'app.
+
+Donc on a des variables ou du code dans global.R qui n'est exécuté qu'une seule fois, au démarrage de l'appli. \
+Les variables définies là pourront être utilisées n'importe où dans l'app (module ou non) \
+
+
+Création d'une page qui affiche soit le dossier qui contient les données, soit qui demande quel dossier on veut utiliser pour ses données \
+
+On a un peanneau conditionnel : Si on a un chemin de dossier de données : le montre, et il y a un bouton qui permet de l'effacer, afin d'en choisir un nouveau !
+
+L'autre panneau conditionnel : Si on a pas de chemin de dossier de données : demande de donner le chemin du dossier des données, et il y a un bouton pour l'activer.
+
+Problème : tout ne réagit pas comme je voudrais à mon data_folder_path \
+-> J'essaie de rendre cela plus réactif \
+Je viens de trouver la solution à mon problème : reactiveVal() : permet de faire une variable réactive, qui va lire et écrire. \
+En fait cela permet de faire une variable, comme on le fait dans r, mais qui a les propriétés d'une variable réactive. \

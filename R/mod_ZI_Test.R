@@ -3,6 +3,7 @@
 #' @description A shiny Module.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
+#' @param smpfiles,smps global.R variables
 #'
 #' @noRd 
 #'
@@ -24,13 +25,13 @@ mod_ZI_Test_server <- function(id){
     ns <- session$ns
     
     output$test1 <- renderPrint({
-      # J'avais testé de prendre data_folder_path après l'avoir définit dans ZooImageUI-package.R, mais on dirait que ce n'est pas la bonne idée
-      golem::get_golem_options("smpfiles")
+      # vient du global.R
+      smpfiles
     })
     
     output$test2 <- renderPrint({
-      # J'avais testé de prendre data_folder_path après l'avoir définit dans ZooImageUI-package.R, mais on dirait que ce n'est pas la bonne idée
-      golem::get_golem_options("smps")
+      # vient du global.R
+      smps
     })
   })
 }
