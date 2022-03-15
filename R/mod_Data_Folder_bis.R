@@ -40,13 +40,13 @@ mod_Data_Folder_bis_ui <- function(id){
       ),
       
       # Affichage du contenu du dossier sample si il existe
-      tags$h2("Selection of the \"Samples\" folder"),
+      tags$h2("Selection of the \"Sample\" folder"),
       tags$br(),
-      selectInput(ns("Samples_folder_select"), "Select the \"Samples\" folder : ", choices = list.files(data_folder_path)),
-      actionButton(ns("set_Samples_folder"), "Set the \"Samples\" folder"),
+      selectInput(ns("Sample_folder_select"), "Select the \"Sample\" folder : ", choices = list.files(data_folder_path)),
+      actionButton(ns("set_Sample_folder"), "Set the \"Sample\" folder"),
       tags$br(),
       tags$br(),
-      verbatimTextOutput(ns("Samples_folder_show")),
+      verbatimTextOutput(ns("Sample_folder_show")),
       
       
       ns = ns,
@@ -119,7 +119,7 @@ mod_Data_Folder_bis_server <- function(id){
       # Si on appuie sur le bouton "Change data folder" : On efface le chemin
       observeEvent(input$rm_data_folder_path, {
         data_folder_path_rea("") # change la var en "" et fait réagir le reste
-        print(data_folder_path_rea()) # pour imprimer dans la console le résultat : visuel
+        print(data_folder_path_rea()) # pour imprimer dans la console le résultat (contrôle)
       })
       
       # Montrer le contenu du data_folder
@@ -135,22 +135,27 @@ mod_Data_Folder_bis_server <- function(id){
       })
       
       # Montrer le contenu du dossier en cours du choix
-      output$Samples_folder_show <- renderPrint({
-        list.files( paste0(data_folder_path_rea(), "/", input$Samples_folder_select) )
+      output$Sample_folder_show <- renderPrint({
+        list.files( paste0(data_folder_path_rea(), "/", input$Sample_folder_select) )
       })
       
-      # Set up du chemin du dossier Samples
-      Samples_folder_path <- eventReactive( input$set_Samples_folder, {
+      # Set up du chemin du dossier Sample
+      Sample_folder_path <- eventReactive( input$set_Sample_folder, {
         
         # Définition d'une variable pour plus de facilité et clarté
-        Samples_folder_path_tmp <- paste0(data_folder_path_rea(), "/", input$Samples_folder_select)
+        Sample_folder_path_tmp <- paste0(data_folder_path_rea(), "/", input$Sample_folder_select)
         
         # Si le contenu du dossier existe et est non nul on le garde si pas on prend garde rien ("")
-        if ( length(list.files(Samples_folder_path_tmp)) > 0 ) {
-          Samples_folder_path_tmp
+        if ( length(list.files(Sample_folder_path_tmp)) > 0 ) {
+          Sample_folder_path_tmp
         } else {
           ""
         }
+      })
+      
+      # Pour avoir un retour dans la console, et voir que cela fonctionne (contrôle)
+      observeEvent(input$set_Sample_folder, {
+        print(Sample_folder_path())
       })
       
       
@@ -158,10 +163,10 @@ mod_Data_Folder_bis_server <- function(id){
       # Si on appuie sur le bouton "Save new path" : On sauvegarde le nouveau chemin
       observeEvent(input$save_new_data_folder_path, {
         data_folder_path_rea(input$new_data_folder_path) # change la var en le nouveau chemin et fait réagir le reste
-        print(data_folder_path_rea()) # pour imprimer dans la console le résultat : visuel
+        print(data_folder_path_rea()) # pour imprimer dans la console le résultat (contrôle)
         
-        # Update du sélecteur de dossier Samples car on change de dossier
-        updateSelectInput(session, "Samples_folder_select", "Select the \"Samples\" folder : ", choices = list.files(data_folder_path_rea()))
+        # Update du sélecteur de dossier Sample car on change de dossier
+        updateSelectInput(session, "Sample_folder_select", "Select the \"Sample\" folder : ", choices = list.files(data_folder_path_rea()))
       })
       
       # Affichage du contenu du dossier en cours de choix
