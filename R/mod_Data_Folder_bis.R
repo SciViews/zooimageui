@@ -48,16 +48,19 @@ mod_Data_Folder_bis_ui <- function(id){
       
       sidebarLayout(
         
+        # Dossier de data à choisir :
         sidebarPanel(
-          # Dossier de data à choisir :
           tags$h2("Data storage folder :"),
-          textInput(ns("new_data_folder_path"), "Path to data folder :"),
+          textInput(ns("new_data_folder_path"), "Path to data folder :", value = "~/"),
           tags$br(),
           
           # Enregistrer le new_data_folder_path dans data_folder_path_rea()
           actionButton(ns("save_new_data_folder_path"), "Save new path"),
+          tags$br(),
+          tags$p("Please avoid putting \"/\" at the end of the path"),
         ),
         
+        # Affichage du contenu du dossier choisi en direct.
         mainPanel(
           tags$h2("Folder content"),
           verbatimTextOutput(ns("choosing_folder_content")),

@@ -1,0 +1,17 @@
+---
+title: "Shiny_Zooimage_J_32"
+output: html_document
+---
+
+Fichier de notes du jour 32. Mardi 15 Mars 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai réglé un peut les commentaires dans le script pour le dossier des données, \
+et j'ai rajouté une valeur de défault pour le chemin du dossier qui est "~/" \
+
+Je vais regarder pour remettre les anciennes partie de l'app que j'avais déjà \
+fait dans l'ancienne app de test de ZooImage \
+

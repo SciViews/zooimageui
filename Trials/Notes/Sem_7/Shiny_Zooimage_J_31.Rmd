@@ -39,3 +39,4 @@ Je viens de trouver la solution à mon problème : reactiveVal() : permet de fai
 En fait cela permet de faire une variable, comme on le fait dans r, mais qui a les propriétés d'une variable réactive. \
 
 J'ai donc réussis à faire un affichage conditionnel, qui montre même les contenus des dossiers, et qui permet d'effacer le chemin d'accès aux données, et d'en mettre un nouveau ! \
+
