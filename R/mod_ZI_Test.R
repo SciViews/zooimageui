@@ -12,8 +12,8 @@ mod_ZI_Test_ui <- function(id){
   ns <- NS(id)
   tagList(
   
-  verbatimTextOutput(ns("test1")),
-  verbatimTextOutput(ns("test2"))
+  verbatimTextOutput(ns("test"))
+  
   )
 }
     
@@ -24,15 +24,10 @@ mod_ZI_Test_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    output$test1 <- renderPrint({
-      # vient du global.R
-      smpfiles
+    output$test <- renderPrint({
+      # Essayer d'afficher une variable d'un autre module
     })
     
-    output$test2 <- renderPrint({
-      # vient du global.R
-      smps
-    })
   })
 }
     

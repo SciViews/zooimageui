@@ -40,13 +40,18 @@ mod_Data_Folder_bis_ui <- function(id){
       ),
       
       # Affichage du contenu du dossier sample si il existe
+      tags$hr(),
       tags$h2("Selection of the \"Sample\" folder"),
       tags$br(),
+      # Choix parmis les différents dossiers
       selectInput(ns("Sample_folder_select"), "Select the \"Sample\" folder : ", choices = list.files(data_folder_path)),
+      # Set up : on définit le dossier
       actionButton(ns("set_Sample_folder"), "Set the \"Sample\" folder"),
       tags$br(),
       tags$br(),
-      verbatimTextOutput(ns("Sample_folder_show")),
+      verbatimTextOutput(ns("Sample_folder_show")), # on montre le contenu du dossier en cours de sélection
+      
+      verbatimTextOutput(ns("test")),
       
       
       ns = ns,
@@ -156,6 +161,20 @@ mod_Data_Folder_bis_server <- function(id){
       # Pour avoir un retour dans la console, et voir que cela fonctionne (contrôle)
       observeEvent(input$set_Sample_folder, {
         print(Sample_folder_path())
+      })
+      
+      smpfiles <- reactive({
+        if ( Sample_folder_path() != "" ) {
+          list.files(Sample_folder_path())
+        }
+      })
+      
+      smps <- reactive ({
+        samples(smpfiles())
+      })
+      
+      output$test <- renderPrint({
+        smps()
       })
       
       

@@ -23,4 +23,9 @@ Je vais ensuite essayer de rendre plus réactif la variable globale smpfiles et 
 J'ai rajouté une option pour définir un dossier "Samples" pour pouvoir ensuite l'utiliser dans ZooImage ! \
 On peut voir le contenu des différents dossier, choisir le bon, et le définir. \
 On peut le changer si on se trompe. \
-Si jamais on change de dossier de data, cela s'actualise.
+Si jamais on change de dossier de data, cela s'actualise. \
+
+Maintenant, les variables smpfiles, et smps qui étaient dans les variables globales sont maintenant dans le module Data_Folder_bis car elle sont plus réactives, elle sont en fait définies par le choix du dossier Sample. \
+
+Je vais maintenant essayer de faire communiquer des modules entre-eux et donc récupérer des variables à travers ceux-ci. \
+J'ai essayé de chercher un peu, mais je n'ai pas encore trouvé. \
