@@ -15,3 +15,12 @@ et j'ai rajouté une valeur de défault pour le chemin du dossier qui est "~/" \
 Je vais regarder pour remettre les anciennes partie de l'app que j'avais déjà \
 fait dans l'ancienne app de test de ZooImage \
 
+Ajout d'un affichage conditionnel du dossier sample ! \
+Bouton qui permet de l'afficher ou non. \
+Je vais ensuite essayer de rendre plus réactif la variable globale smpfiles et smps => trop fixe \
+
+
+J'ai rajouté une option pour définir un dossier "Samples" pour pouvoir ensuite l'utiliser dans ZooImage ! \
+On peut voir le contenu des différents dossier, choisir le bon, et le définir. \
+On peut le changer si on se trompe. \
+Si jamais on change de dossier de data, cela s'actualise.
