@@ -12,7 +12,8 @@ mod_ZI_Test_ui <- function(id){
   ns <- NS(id)
   tagList(
   
-  verbatimTextOutput(ns("test"))
+  verbatimTextOutput(ns("exemple")),
+  verbatimTextOutput(ns("texte"))
   
   )
 }
@@ -20,12 +21,16 @@ mod_ZI_Test_ui <- function(id){
 #' ZI_Test Server Functions
 #'
 #' @noRd 
-mod_ZI_Test_server <- function(id){
+mod_ZI_Test_server <- function(id, test){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    output$test <- renderPrint({
-      # Essayer d'afficher une variable d'un autre module
+    output$exemple <- renderPrint({
+      "Print is working"
+    })
+    
+    output$texte <- renderPrint({
+      test$texte
     })
     
   })

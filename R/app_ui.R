@@ -18,6 +18,10 @@ app_ui <- function(request) {
           mod_Data_Folder_bis_ui("Data_Folder_bis_ui_1")
         ),
         
+        tabPanel("Communicating modules test",
+          mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
+        ),
+        
         tabPanel("Tests",
           mod_ZI_Test_ui("ZI_Test_ui_1")
         ),

@@ -11,8 +11,11 @@ app_server <- function( input, output, session ) {
   # soit qui demande à l'utilisateur de choisir son dossier où sont ses données
   mod_Data_Folder_bis_server("Data_Folder_bis_ui_1")
   
+  # Tests de communication entre modules
+  test <- mod_ZI_Test_bis_server("ZI_Test_bis_ui_1")
+  
   # Test variables globales
-  mod_ZI_Test_server("ZI_Test_ui_1")
+  mod_ZI_Test_server("ZI_Test_ui_1", test = test)
   
   # Tests de chemins d'accès aux données pour le mode serveur et mode local
   mod_Data_Test_Server_server("Data_Test_Server_ui_1")

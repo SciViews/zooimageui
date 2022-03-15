@@ -29,3 +29,66 @@ Maintenant, les variables smpfiles, et smps qui étaient dans les variables glob
 
 Je vais maintenant essayer de faire communiquer des modules entre-eux et donc récupérer des variables à travers ceux-ci. \
 J'ai essayé de chercher un peu, mais je n'ai pas encore trouvé. \
+
+
+Après midi : \
+
+Début des recherches pour la communication inter modules avec Golem. \
+
+Je fais beaucoup de recherches sur internet pour essayer de comprendre comment cela fonctionne \
+Le problème c'est que je ne comprends pas bien, et ne trouve pas de réponse claire à ce que je me demande. \
+J'ai également l'impression que plusieurs méthodes pourraient permettre de faire ce que je veux, \
+Ce qui ne m'aide pas dans mes recherches. \
+
+J'ai essayé de comprendre de différentes manières comme grâce à : \
+ - https://rtask.thinkr.fr/fr/la-communication-entre-modules-et-ses-caprices/ \
+ - https://github.com/CDU-data-science-team/healthcareSPC/tree/main/R \
+ - https://www.ardata.fr/post/2019/04/26/share-reactive-among-shiny-modules/ \
+ 
+Je fais des tests, mais rien de spécial pour le moment ...
+
+
+Après avoir cherché pendant quelques heures, j'ai enfin trouvé une solution !!! \
+J'ai donc lu beaucoup de sites, d'articles, de tutos, de tout et n'importe quoi, et j'ai enfin trouvé une solution adaptée pour golem ! \
+Résultat => C'est facile !
+
+Si on prend l'exemple de deux modules disons module 1 et 2 \
+Si dans le module 1, on a un input appelé "message" \
+
+on va le récupérer et le préparer à l'envoi comme suit : (dans la partie serveur du 1er module) \
+```{r}
+lettre <- reactiveValues(
+      message = NULL
+)
+    
+observe({
+  lettre$message <- input$message
+})
+    
+return(montexte)
+```
+
+On va le faire passer par la partie app_server.R via : \
+```{r}
+  # on prend le résultat du 1er module on le met dans une variable appelée lettre
+  lettre <- mod_module_1_server("module_1_ui_1")
+  
+  # on appelle le module 2 et on lui fournit un paramètre (lettre que on vient de définir)
+  mod_module_2_server("module_2_ui_1", lettre = lettre)
+```
+
+Et on récupérera finalement le tout dans le deuxième module via : \
+```{r}
+mod_module_2_server <- function(id, lettre){
+  moduleServer( id, function(input, output, session){
+    ns <- session$ns
+    
+    output$texte <- renderPrint({
+      lettre$message # en fait on reprend juste notre argument lettre et on retire ce qu'il y a dedans : message
+    })
+    
+  })
+}
+```
+
+Voilà comment faire passer des arguments au travers de modules.
