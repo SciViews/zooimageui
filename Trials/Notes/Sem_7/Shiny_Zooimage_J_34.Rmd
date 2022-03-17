@@ -12,4 +12,23 @@ knitr::opts_chunk$set(echo = TRUE)
 Note : Il n'y a pas eu de jour 33 car j'ai travaillé sur ma rédaction de rapport partiel.
 
 
-Je vais continuer à améliorer mon app, et rajouter ce que j'avais déjà pu utiliser avant.
+Je vais continuer à améliorer mon app, et rajouter ce que j'avais déjà pu utiliser avant. \
+J'ai essayer de résoudre un problème avec ce qu'il se passait dans mon app : pas réussi avant de partir en réunion avec M. Grosjean, mais il s'avère que je n'aurai pas vraiment besoin de faire cela. \
+Durant la réunion, on a fait un peu le point sur ce que j'avais appris, et sur ce que je vais devoir faire/changer. \
+
+=> Je vais devoir apprendre à utiliser les branches \
+=> Améliorer mon app \
+=> Je vais devoir faire mon cahier des charges \
+
+
+Pour l'utilisation de branches dans github :
+
+Créer une branche via rstudio (par exemple) \
+Modifier quelque chose dans la branche + commit + push \
+Modifier quelque chose dans le main (ici on crée un conflit pour tester) \
+Assembler la branche avec le main : être dans main + git merge test \
+Ensuite on va là où il y a le conflit et on met ce que on veut qu'il y ait : ensuite on commit + push \
+Supprimer la branche : git branch -d test \
+git push origin --delete test \
+
+Voilà ce qui peut être fait. \

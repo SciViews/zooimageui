@@ -14,8 +14,8 @@ app_ui <- function(request) {
       navbarPage("ZooImage-UI",
                  
         # Page dans laquelle je peux définir le dossier qui contient mes données
-        tabPanel("Data Folder All In One",
-          mod_Data_Folder_bis_ui("Data_Folder_bis_ui_1")
+        tabPanel("Data Folder Settings",
+          mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
         ),
         
         # == Tests de com entre modules
