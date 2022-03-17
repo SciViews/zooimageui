@@ -33,6 +33,7 @@ mod_Data_Folder_bis_ui <- function(id){
           actionButton(ns("rm_data_folder_path"), "Change data folder"),
         ),
         
+        # Montre le contenu
         mainPanel(
           tags$h2("Data folder content"),
           verbatimTextOutput(ns("data_folder_content"))
@@ -51,6 +52,9 @@ mod_Data_Folder_bis_ui <- function(id){
       tags$br(),
       verbatimTextOutput(ns("Sample_folder_show")), # on montre le contenu du dossier en cours de sélection
       
+      tags$br(),
+      tags$hr(),
+      tags$h2("Here are the recognized samples :"),
       verbatimTextOutput(ns("test")),
       
       

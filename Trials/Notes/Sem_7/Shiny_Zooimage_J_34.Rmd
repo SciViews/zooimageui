@@ -1,0 +1,15 @@
+---
+title: "Shiny_Zooimage_J_34"
+output: html_document
+---
+
+Fichier de notes du jour 34. Jeudi 17 Mars 2022.    Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Note : Il n'y a pas eu de jour 33 car j'ai travaillé sur ma rédaction de rapport partiel.
+
+
+Je vais continuer à améliorer mon app, et rajouter ce que j'avais déjà pu utiliser avant.

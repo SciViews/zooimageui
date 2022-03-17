@@ -13,11 +13,12 @@ app_ui <- function(request) {
       h1("Nouvelle app ZooImage avec Golem"),
       navbarPage("ZooImage-UI",
                  
-        # tentative de page dans laquelle j'aurais un "panel" conditionnel pour pouvoir choisir le dossier des données dans le cas de l'utilisation de l'app en local
+        # Page dans laquelle je peux définir le dossier qui contient mes données
         tabPanel("Data Folder All In One",
           mod_Data_Folder_bis_ui("Data_Folder_bis_ui_1")
         ),
         
+        # == Tests de com entre modules
         tabPanel("Communicating modules test",
           mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
         ),
@@ -25,14 +26,18 @@ app_ui <- function(request) {
         tabPanel("Tests",
           mod_ZI_Test_ui("ZI_Test_ui_1")
         ),
+        # == Tests de com entre modules
         
-        tabPanel("Server folder",
-          mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
-        ),
         
-        tabPanel("Local Folder",
-          mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
-        )
+        # --- Anciens tests ---
+        # tabPanel("Server folder",
+          # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
+        # ),
+        
+        # tabPanel("Local Folder",
+          # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
+        # )
+        # --- Anciens tests ---
       )
     )
   )

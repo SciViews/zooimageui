@@ -17,8 +17,9 @@ app_server <- function( input, output, session ) {
   # Test variables globales
   mod_ZI_Test_server("ZI_Test_ui_1", test = test)
   
-  # Tests de chemins d'accès aux données pour le mode serveur et mode local
-  mod_Data_Test_Server_server("Data_Test_Server_ui_1")
-  mod_Data_Test_Local_server("Data_Test_Local_ui_1")
+  # --- Anciens tests ---
+  # mod_Data_Test_Server_server("Data_Test_Server_ui_1")
+  # mod_Data_Test_Local_server("Data_Test_Local_ui_1")
+  # --- Anciens tests ---
   
 }
