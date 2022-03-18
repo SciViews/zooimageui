@@ -62,6 +62,7 @@ mod_Data_Folder_Settings_ui <- function(id){
           
           # Enregistrer le new_data_folder_path dans data_folder_path_rea()
           actionButton(ns("set_new_data_folder_path"), "Set new path"),
+          actionButton(ns("get_server_folder_back"), "Cancel"),
           tags$br(),
           tags$br(),
           tags$p("Please avoid putting \"/\" at the end of the path"),
@@ -113,8 +114,13 @@ mod_Data_Folder_Settings_server <- function(id){
       data_folder_path_rea()
     })
     
+    old_path <- ""
+    
     # Si on appuie sur le bouton "Change data folder" : On efface le chemin
     observeEvent(input$rm_data_folder_path, {
+      
+      old_path <<- isolate(data_folder_path_rea()) # Sauvegarde de l'ancien chemin
+      
       data_folder_path_rea("") # change la var en "" et fait réagir le reste
       print(data_folder_path_rea()) # pour imprimer dans la console le résultat (contrôle)
     })
@@ -156,6 +162,12 @@ mod_Data_Folder_Settings_server <- function(id){
     observeEvent(input$set_new_data_folder_path, {
       data_folder_path_rea(input$new_data_folder_path) # change la var en le nouveau chemin et fait réagir le reste
       print(data_folder_path_rea()) # pour imprimer dans la console le résultat (contrôle)
+    })
+    
+    # Si on veut reprendre le chemin précédant
+    observeEvent(input$get_server_folder_back, {
+      data_folder_path_rea(old_path)
+      print(data_folder_path_rea())
     })
     
     # Affichage du contenu du dossier en cours de choix

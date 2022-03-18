@@ -10,7 +10,6 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      h1("Nouvelle app ZooImage avec Golem"),
       navbarPage("ZooImage-UI",
                  
         # Page dans laquelle je peux définir le dossier qui contient mes données
