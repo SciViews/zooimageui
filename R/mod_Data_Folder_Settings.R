@@ -57,15 +57,13 @@ mod_Data_Folder_Settings_ui <- function(id){
         # Dossier de data à choisir :
         sidebarPanel(
           tags$h2("Data storage folder :"),
-          textInput(ns("new_data_folder_path"), "Path to data folder :", value = "~/"),
+          textInput(ns("new_data_folder_path"), "", value = "~/"),
           tags$br(),
           
           # Enregistrer le new_data_folder_path dans data_folder_path_rea()
           actionButton(ns("set_new_data_folder_path"), "Set new path"),
           actionButton(ns("get_server_folder_back"), "Cancel"),
           tags$br(),
-          tags$br(),
-          tags$p("Please avoid putting \"/\" at the end of the path"),
         ),
         
         # Affichage du contenu du dossier choisi en direct.
@@ -139,7 +137,7 @@ mod_Data_Folder_Settings_server <- function(id){
     
     # Set up du chemin du dossier Samples
     Samples_folder_path <- reactive({
-      paste0(data_folder_path_rea(),"/Samples")
+      path(data_folder_path_rea(),"/Samples")
     })
     
     smpfiles <- reactive({

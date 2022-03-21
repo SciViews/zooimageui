@@ -1,0 +1,18 @@
+---
+title: "Shiny_Zooimage_J_36"
+output: html_document
+---
+
+Fichier de notes du jour 36. Lundi 21 Mars 2022.    Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Je vais tout d'abord essayer de regarder pour rajouter les données de test "exemple" du package (que M. Grosjean m'a donné). \
+Pas sûr de tout le bon fonctionnement car il s'agit d'anciennes données, sous un ancien format (afin qu'elles ne soient pas d'une taille trop volumineuse pour le format package). \
+
+
+Apprentissage du package fs pour utiliser d'une meilleur manière les chemins \
+-> fs::path() pour créer un chemin \

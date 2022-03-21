@@ -10,7 +10,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      navbarPage("ZooImage-UI",
+      navbarPage("ZooImage-UI v1.0",
                  
         # Page dans laquelle je peux définir le dossier qui contient mes données
         tabPanel("Data Folder Settings",
