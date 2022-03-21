@@ -7,6 +7,9 @@
 app_server <- function( input, output, session ) {
   # Your application server logic 
   
+  # Panneau fixe de mon app
+  mod_Fixed_Pannel_server("Fixed_Pannel_ui_1")
+  
   # Test d'une fenêtre conditionnelle qui affiche soit le dossier des données du serveur,
   # soit qui demande à l'utilisateur de choisir son dossier où sont ses données
   mod_Data_Folder_Settings_server("Data_Folder_Settings_ui_1")

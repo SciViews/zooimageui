@@ -23,7 +23,7 @@ mod_Data_Folder_Settings_ui <- function(id){
       sidebarLayout(
         
         # Dossier de data défini, on le montre :
-        sidebarPanel(
+        sidebarPanel(id = "dsf_sidebar",
           tags$h2("Data storage folder :"),
           textOutput(ns("data_folder_path_show")),
           tags$br(),
@@ -55,7 +55,7 @@ mod_Data_Folder_Settings_ui <- function(id){
       sidebarLayout(
         
         # Dossier de data à choisir :
-        sidebarPanel(
+        sidebarPanel(id = "dsf_sidebar",
           tags$h2("Data storage folder :"),
           textInput(ns("new_data_folder_path"), "", value = "~/"),
           tags$br(),

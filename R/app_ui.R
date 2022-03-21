@@ -9,38 +9,44 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic 
-    fluidPage(
-      fluidRow(
+    fluidPage(theme = shinytheme("cosmo"),
+      fluidRow(id="body",
         
+        column(width = 2, id = "left_col",
+          
+          mod_Fixed_Pannel_ui("Fixed_Pannel_ui_1")
+        ),
         
-        column(width = 10, offset = 2,
-          navbarPage("ZooImage-UI v1.0",
-                     
-            # Page dans laquelle je peux définir le dossier qui contient mes données
-            tabPanel("Data Folder Settings",
-              mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
-            ),
-            
-            # == Tests de com entre modules
-            tabPanel("Communicating modules test",
-              mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
-            ),
-            
-            tabPanel("Tests",
-              mod_ZI_Test_ui("ZI_Test_ui_1")
-            ),
-            # == Tests de com entre modules
-            
-            
-            # --- Anciens tests ---
-            # tabPanel("Server folder",
-              # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
-            # ),
-            
-            # tabPanel("Local Folder",
-              # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
-            # )
-            # --- Anciens tests ---
+        column(width = 10, id = "right_col",
+          tags$div(id = "right_col_div",
+            navbarPage("ZooImage-UI v1.0",
+                       
+              # Page dans laquelle je peux définir et voir le dossier qui contient mes données
+              tabPanel("Data Folder Settings",
+                mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
+              ),
+              
+              # == Tests de com entre modules
+              tabPanel("Communicating modules test",
+                mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
+              ),
+              
+              tabPanel("Tests",
+                mod_ZI_Test_ui("ZI_Test_ui_1")
+              ),
+              # == Tests de com entre modules
+              
+              
+              # --- Anciens tests ---
+              # tabPanel("Server folder",
+                # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
+              # ),
+              
+              # tabPanel("Local Folder",
+                # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
+              # )
+              # --- Anciens tests ---
+            )
           )
         )
       )

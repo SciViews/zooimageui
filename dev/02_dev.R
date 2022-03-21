@@ -20,7 +20,7 @@ usethis::use_package( "thinkr" )
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "Data_Folder_Settings" ) # Name of the module
-golem::add_module( name = "ZI_Test_bis" ) # Name of the module
+golem::add_module( name = "Fixed_Pannel" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
@@ -31,7 +31,7 @@ golem::add_utils( "helpers" )
 ## Creates .js and .css files at inst/app/www
 golem::add_js_file( "script" )
 golem::add_js_handler( "handlers" )
-golem::add_css_file( "custom" )
+golem::add_css_file( "global_css" )
 
 ## Add internal datasets ----
 ## If you have data in your package

@@ -17,6 +17,7 @@ Imports:
     htmltools,
     processx,
     shiny (>= 1.7.1),
+    shinythemes,
     zooimage,
     ggplot2,
     rlang,

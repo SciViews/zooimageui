@@ -18,3 +18,16 @@ Pas sûr de tout le bon fonctionnement car il s'agit d'anciennes données, sous 
 
 Apprentissage du package fs pour utiliser d'une meilleur manière les chemins \
 -> fs::path() pour créer un chemin \
+
+Je suis entrain de rajouter le panneau fixe à mon application web. \
+Il y a donc deux colonnes dans une ligne, une colonne de taille 2 et l'autre de taille 10 : celle de 2 contient le panneau fixe, et l'autre le contenu de l'app. \
+
+
+J'ai rajouté du CSS dans mon app : ajout du panneau fixe avec css et ajout de css dans ma colonne de droite. \
+
+Je vais regarder pour ajouter un thème de shiny : package shinythemes \
+
+J'ai donc combiné du css avec un thème de shiny pour rendre mon app plus jolie. \
+
+=> CSS + Theme + Panneau fixe + mise en page et minis modifs
+

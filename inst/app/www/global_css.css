@@ -1,0 +1,67 @@
+
+/* ================= */
+/* ==== General ==== */
+/* ================= */
+
+
+/* ================= */
+/* Colonne de gauche */
+/* ================= */
+
+#left_col { /*
+  border: solid;
+  border-width: 2px;
+  border-color: red; */
+  margin: 0px;
+  margin-bottom: 20px;
+  padding: 0px;
+}
+
+div#fixed_pannel_div {
+  background-color: #333333;
+  color: #FFFFFF;
+  
+  border: solid;
+  border-width: 2px;
+  border-radius: 8px;
+  border-color: #333333;
+  
+  padding: 12px;
+  margin-left: 5px;
+  margin-top: 5px;
+  
+  width : 95%;
+}
+
+h2#fixed_pannel_title {
+  font-weight: bold;
+}
+
+/* ================= */
+/* Colonne de droite */
+/* ================= */
+
+#right_col { /*
+  border: solid;
+  border-width: 2px;
+  border-color: blue; */
+  margin: 0px;
+  padding: 0px;
+}
+
+div#right_col_div {
+  background-color: #333333;
+  color: #FFFFFF;
+  
+  border-radius: 8px;
+  
+  margin: 0px;
+  padding: 0px;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+#dsf_sidebar {
+  color: #000000;
+  padding-top: 0px;
+}
