@@ -10,33 +10,39 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      navbarPage("ZooImage-UI v1.0",
-                 
-        # Page dans laquelle je peux définir le dossier qui contient mes données
-        tabPanel("Data Folder Settings",
-          mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
-        ),
-        
-        # == Tests de com entre modules
-        tabPanel("Communicating modules test",
-          mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
-        ),
-        
-        tabPanel("Tests",
-          mod_ZI_Test_ui("ZI_Test_ui_1")
-        ),
-        # == Tests de com entre modules
+      fluidRow(
         
         
-        # --- Anciens tests ---
-        # tabPanel("Server folder",
-          # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
-        # ),
-        
-        # tabPanel("Local Folder",
-          # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
-        # )
-        # --- Anciens tests ---
+        column(width = 10, offset = 2,
+          navbarPage("ZooImage-UI v1.0",
+                     
+            # Page dans laquelle je peux définir le dossier qui contient mes données
+            tabPanel("Data Folder Settings",
+              mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
+            ),
+            
+            # == Tests de com entre modules
+            tabPanel("Communicating modules test",
+              mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
+            ),
+            
+            tabPanel("Tests",
+              mod_ZI_Test_ui("ZI_Test_ui_1")
+            ),
+            # == Tests de com entre modules
+            
+            
+            # --- Anciens tests ---
+            # tabPanel("Server folder",
+              # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
+            # ),
+            
+            # tabPanel("Local Folder",
+              # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
+            # )
+            # --- Anciens tests ---
+          )
+        )
       )
     )
   )
