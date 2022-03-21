@@ -19,7 +19,7 @@ usethis::use_package( "thinkr" )
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "Data_Folder_Settings" ) # Name of the module
+golem::add_module( name = "Samples_main" ) # Name of the module
 golem::add_module( name = "Fixed_Pannel" ) # Name of the module
 
 ## Add helper functions ----

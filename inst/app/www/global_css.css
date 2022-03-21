@@ -33,7 +33,7 @@ div#fixed_pannel_div {
   width : 95%;
 }
 
-h2#fixed_pannel_title {
+h4#fixed_pannel_title {
   font-weight: bold;
 }
 
@@ -61,7 +61,29 @@ div#right_col_div {
   margin-right: 5px;
 }
 
-#dsf_sidebar {
+/* Mise en forme des sidebar panels */
+form.well {
   color: #000000;
   padding-top: 0px;
+  padding: 10px;
+  border: solid;
+  border-width: 0px;
+  border-radius: 8px;
+}
+form h2 {
+  margin: 0px;
+}
+
+/* Mise en forme des tabs */
+li a {
+  color : white;
+}
+
+/* ======= */
+/* Samples */
+/* ======= */
+
+/* ZIDB Prep */
+#zidb_prep {
+  border: solid;
 }
