@@ -18,8 +18,8 @@ mod_Samples_main_ui <- function(id){
           
           # Choix de l'échantillon pour la préparation des ZIDB
           sidebarPanel(
-            selectInput("sample_folder", "Sample folder :",
-                choices = "!!!To Change!!!"),
+            selectInput(ns("sample_folder"), "Sample folder :",
+                choices = "No Samples"),
             actionButton("zidbmake", "Make the ZIDB file"),
             tags$br(),
             tags$br(),
@@ -33,7 +33,8 @@ mod_Samples_main_ui <- function(id){
           ),
           
           mainPanel(
-            "Main Panel"
+            h3("Selected Sample's content :"),
+            verbatimTextOutput(ns("sel_samp_cont")),
           ),
         ),
       ),
@@ -76,10 +77,28 @@ mod_Samples_main_ui <- function(id){
 #' Samples_main Server Functions
 #'
 #' @noRd 
-mod_Samples_main_server <- function(id){
+mod_Samples_main_server <- function(id, settings_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
- 
+    
+    # Préparation des variables qui viennent de settings
+    data_folder_path <- reactive({ settings_vars$data_folder_path_rea })
+    smpfiles <- reactive({ settings_vars$smpfiles })
+    smps <- reactive({ settings_vars$smps })
+
+
+# ZIDB Preparation --------------------------------------------------------
+
+    # Mise à jour du sélecteur d'échantillons
+    observeEvent(smps(), {
+      updateSelectInput(session, "sample_folder", "Sample folder :",choices = smps())
+    })
+    
+    # Attention, ça marche, mais il faut que je modifie des éléments du CSS qui perturbent le verbatimOutput
+    output$sel_samp_cont <- renderPrint({
+      list.files(fs::path(data_folder_path(),"Samples",input$sample_folder))
+    })
+    
   })
 }
     

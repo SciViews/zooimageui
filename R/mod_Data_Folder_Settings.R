@@ -182,6 +182,21 @@ mod_Data_Folder_Settings_server <- function(id){
       return(result)
     })
     
+    
+    # ===== Envoi des variables =====
+    vars <- reactiveValues(
+      data_folder_path_rea = NULL,
+      smpfiles = NULL,
+      smps = NULL,
+    )
+    
+    observe({
+      vars$data_folder_path_rea <- data_folder_path_rea()
+      vars$smpfiles <- smpfiles()
+      vars$smps <- smps()
+    })
+    
+    return(vars)
   })
 }
     

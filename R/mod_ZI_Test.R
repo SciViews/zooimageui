@@ -30,7 +30,7 @@ mod_ZI_Test_server <- function(id, test){
     })
     
     output$texte <- renderPrint({
-      test$texte
+      test$data_folder_path_rea
     })
     
   })

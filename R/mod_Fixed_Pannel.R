@@ -14,8 +14,7 @@ mod_Fixed_Pannel_ui <- function(id){
       tags$h4("Global Informations", id = "fixed_pannel_title"),
       tags$hr(),
       tags$h4("-> Global Settings"),
-      tags$p("- 1"),
-      tags$p("- 2"),
+      textOutput(ns("data_folder_path")),
       tags$hr(),
       tags$h4("-> Samples"),
       tags$p("- 1"),
@@ -39,10 +38,13 @@ mod_Fixed_Pannel_ui <- function(id){
 #' Fixed_Pannel Server Functions
 #'
 #' @noRd 
-mod_Fixed_Pannel_server <- function(id){
+mod_Fixed_Pannel_server <- function(id, settings_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
- 
+    
+    data_folder_path <- reactive ({ settings_vars$data_folder_path_rea })
+    
+    output$data_folder_path <- renderText({ data_folder_path() })
   })
 }
     

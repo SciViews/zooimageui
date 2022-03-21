@@ -31,3 +31,16 @@ J'ai donc combiné du css avec un thème de shiny pour rendre mon app plus jolie
 
 => CSS + Theme + Panneau fixe + mise en page et minis modifs
 
+
+J'ai rajouté un onglet Samples que j'ai repris de ce que j'avais déjà fait dans mon ancienne app de ZooImage, et en la nettoyant car beaucoup de choses n'était plus bonnes, ou au bon endroit. Je vais donc à présent essayer de la rendre fonctionnelle. \
+J'ai donc rajouté un module, avec quelques éléments dans tous les fichiers qui s'en occupe. \
+
+J'ai dans ma page Samples un onglet ZIDB Preparation dans lequel il y a : \
+- Un sidepanel qui permet de créer le(s) ZIDB avec options \
+- Un mainpanel qui permet de voir le contenu de l'échantillon que l'on sélectionne, ainsi que les ZIDB déjà préparés. \
+
+J'ai essayé de rajouter dans le mainpanel un verbatimOutput qui affiche le contenu de l'échantillon choisi, et il faut que je fasse attention que mon CSS influence son affichage. \
+
+
+
+
