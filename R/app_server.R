@@ -8,13 +8,13 @@ app_server <- function( input, output, session ) {
   # Your application server logic 
   
   # Panneau fixe de mon app
-  mod_Fixed_Pannel_server("Fixed_Pannel_ui_1", settings_vars = settings_vars)
+  fixed_pannel_vars <- mod_Fixed_Pannel_server("Fixed_Pannel_ui_1", settings_vars = settings_vars, Samples_vars = Samples_vars)
   
   # === Settings === (Page)
   settings_vars <- mod_Data_Folder_Settings_server("Data_Folder_Settings_ui_1")
   
   # === Samples === (Page)
-  mod_Samples_main_server("Samples_main_ui_1", settings_vars = settings_vars)
+  Samples_vars <- mod_Samples_main_server("Samples_main_ui_1", settings_vars = settings_vars, fixed_pannel_vars = fixed_pannel_vars)
   
   # Tests de communication entre modules
   test <- mod_ZI_Test_bis_server("ZI_Test_bis_ui_1")

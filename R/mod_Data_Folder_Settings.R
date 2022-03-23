@@ -95,7 +95,7 @@ mod_Data_Folder_Settings_server <- function(id){
     # ===== GENERAL =====
     # Création d'une variable réactive qui contient le nom du "data_folder"
     data_folder_path_rea <- reactiveVal({
-      data_folder_path
+      getOption("data_folder_path")
     })
     
     # Création d'une variable pour tester si on a un dossier de data défini

@@ -17,7 +17,7 @@ mod_Fixed_Pannel_ui <- function(id){
       textOutput(ns("data_folder_path")),
       tags$hr(),
       tags$h4("-> Samples"),
-      tags$p("- 1"),
+      selectInput(ns("zidb_show"), NULL, choices = "No ZIDB"),
       tags$p("- 2"),
       tags$hr(),
       tags$h4("-> Training Sets"),
@@ -38,13 +38,41 @@ mod_Fixed_Pannel_ui <- function(id){
 #' Fixed_Pannel Server Functions
 #'
 #' @noRd 
-mod_Fixed_Pannel_server <- function(id, settings_vars){
+mod_Fixed_Pannel_server <- function(id, settings_vars, Samples_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    data_folder_path <- reactive ({ settings_vars$data_folder_path_rea })
+# Récupération Des Variables ----------------------------------------------
+
+    # settings vars
+    data_folder_path <- reactive({ settings_vars$data_folder_path_rea })
     
+    # Samples_vars
+    zidb_files <- reactive({ Samples_vars$zidb_files })
+
+# Settings ----------------------------------------------------------------
+
     output$data_folder_path <- renderText({ data_folder_path() })
+    
+# Samples -----------------------------------------------------------------
+
+    observeEvent(zidb_files(), {
+      updateSelectInput(session, "zidb_show", NULL, choices = zidb_files())
+    })
+      
+
+# Communication -----------------------------------------------------------
+
+    to_Samples_vars <- reactiveValues(
+      zidb_show = NULL,
+    )
+    
+    observe({
+      to_Samples_vars$zidb_show <- input$zidb_show
+    })
+    
+    return(to_Samples_vars)
+    
   })
 }
     

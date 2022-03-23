@@ -12,7 +12,7 @@
 #' @import zooimage
 #' @importFrom ggplot2 ggplot
 #' @import rlang
-#' @importFrom utils read.csv
+#' @importFrom utils head read.csv
 #' @importFrom fs path
 #' @import shinythemes
 #' 

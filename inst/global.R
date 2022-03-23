@@ -6,7 +6,9 @@
 library(ZooImageUI)
 
 # Variables
-data_folder_path <- Sys.getenv("ZOOIMAGE_DATA_DIR")
+options(
+  data_folder_path = Sys.getenv("ZOOIMAGE_DATA_DIR")
+)
 
 # Commands
 old_stringsAsFactors <- getOption("stringsAsFactors")

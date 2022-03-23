@@ -12,11 +12,13 @@ mod_Samples_main_ui <- function(id){
   tagList(
     
     tabsetPanel(
-      
+
+# ZIDB Preparation UI -----------------------------------------------------
+
       tabPanel("ZIDB Preparation",
         tags$br(),
         sidebarLayout(
-          
+
           # Choix de l'échantillon pour la préparation des ZIDB
           sidebarPanel(
             
@@ -45,34 +47,33 @@ mod_Samples_main_ui <- function(id){
           ),
         ),
       ),
-      
+
+# ZIDB Visualisation UI ---------------------------------------------------
+
       tabPanel("ZIDB Visualisation",
-        tags$br(),
-        selectInput("zidb_to_show", "Select a ZIDB file to show a preview :",
-            choices = "!!!To Change!!!"),
-         
-        tags$hr(),
+        
         tags$h3("Head of the ZIDB's dataframe"),
-        tableOutput("sample_head"),
+        tableOutput(ns("zidb_head")),
          
         tags$hr(),
-        tags$h3("Metadata of the ZIDB's dataframe"),
-        verbatimTextOutput("sample_attributes"),
+        tags$h3("Metadata of the ZIDB"),
+        verbatimTextOutput(ns("zidb_metadata")),
          
         tags$hr(),
-        tags$h3("Summary of some of the columns of the ZIDB's dataframe"),
-        verbatimTextOutput("sample_summary"),
+        tags$h3("Summary of the ZIDB"),
+        verbatimTextOutput(ns("zidb_summary")),
          
         tags$hr(),
-        tags$h3("Test plot of the ZIDB's dataframe"),
-        plotOutput("sample_test_plot")
+        tags$h3("Plot of the ZIDB"),
+        plotOutput(ns("zidb_plot"))
       ),
-          
+
+# Vignettes Visualisation UI ----------------------------------------------
+
       tabPanel("Vignettes Visualisation",
         tags$br(),
-        selectInput("vignettes_file", "ZIDB file to visualize",
-            choices = "!!!To Change!!!"),
-         
+        textOutput(ns("zidb_selected")),
+        
         selectInput("vignettes_vis", "Vignettes to watch", choices = "None"),
         tags$h3("Visualisation of vignettes"),
         plotOutput("vignettes_plot")
@@ -84,7 +85,7 @@ mod_Samples_main_ui <- function(id){
 #' Samples_main Server Functions
 #'
 #' @noRd 
-mod_Samples_main_server <- function(id, settings_vars){
+mod_Samples_main_server <- function(id, settings_vars, fixed_pannel_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
@@ -92,9 +93,10 @@ mod_Samples_main_server <- function(id, settings_vars){
     data_folder_path_rea <- reactive({ settings_vars$data_folder_path_rea })
     Samples_folder_path <- reactive({ settings_vars$Samples_folder_path })
     smps <- reactive({ settings_vars$smps })
+    
+    zidb_show <- reactive({ fixed_pannel_vars$zidb_show })
 
-
-# ZIDB Preparation --------------------------------------------------------
+# ZIDB Preparation Server --------------------------------------------------------
 
     # Variable : smpfiles(pour avoir la version de cette page, qui s'actualise)
     smpfiles <- reactive({
@@ -143,6 +145,58 @@ mod_Samples_main_server <- function(id, settings_vars){
     output$zidb_existing <- renderText({
       zidb_files()
     })
+
+# ZIDB Visualisation Server -----------------------------------------------
+    
+    # Variable : du chemin vers le ZIDB choisi
+    zidb_selected_path <- reactive({
+      fs::path(data_folder_path_rea(),"Samples",zidb_show())
+    })
+    
+    # Variable : du dataframe du ZIDB choisi
+    zidb_df <- reactive({
+      req(zidb_show())
+      zidbDatRead(zidb_selected_path())
+    })
+    
+    # Affichage // head du ZIDB choisi
+    output$zidb_head <- renderTable({
+      head(zidb_df())
+    })
+    
+    # Affichage // metadata du ZIDB choisi
+    output$zidb_metadata <- renderPrint({
+      attr(zidb_df(), "metadata")
+    })
+    
+    # Affichage // summary du ZIDB choisi
+    output$zidb_summary <- renderPrint({
+      summary(zidb_df())
+    })
+    
+    # Affichage // plot exemple du ZIDB choisi
+    output$zidb_plot <- renderPlot({
+      plot(zidb_df()$Area, zidb_df()$Perim., xlab = "Area", ylab = "Perimeter")
+    })
+    
+    
+    # - Variables à faire sortir (Pour affichage dans le panneau fixe et choix du ZIDB) :
+    zidb_vars <- reactiveValues(
+      zidb_files = NULL,
+    )
+    
+    observe({
+      zidb_vars$zidb_files <- zidb_files()
+    })
+
+# Vignettes Visualisation Server ------------------------------------------
+
+    # Vignettes
+
+# Communication -----------------------------------------------------------
+
+    return(zidb_vars)
+
   })
 }
     

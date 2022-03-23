@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-#' Sample_folder_content <- list.files("~/shared/data/zooimage_data/Sample") 
+#' Sample_folder_content <- list.files(system.file("example","Samples", package = "ZooImageUI")) 
 #' # Attention qu'ici, il vaudrait mieux utiliser un dossier du package, en 
 #' # utilisant des données échantillon du package
 #' samples(Sample_folder_content)
