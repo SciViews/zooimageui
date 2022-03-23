@@ -21,16 +21,18 @@ mod_ZI_Test_ui <- function(id){
 #' ZI_Test Server Functions
 #'
 #' @noRd 
-mod_ZI_Test_server <- function(id, test){
+mod_ZI_Test_server <- function(id, test, all_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
+    
+    zidb_show <- reactive({ all_vars$fixed_pannel_vars$zidb_show })
     
     output$exemple <- renderPrint({
       "Print is working"
     })
     
     output$texte <- renderPrint({
-      test$data_folder_path_rea
+      zidb_show()
     })
     
   })

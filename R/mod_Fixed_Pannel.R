@@ -38,17 +38,17 @@ mod_Fixed_Pannel_ui <- function(id){
 #' Fixed_Pannel Server Functions
 #'
 #' @noRd 
-mod_Fixed_Pannel_server <- function(id, settings_vars, Samples_vars){
+mod_Fixed_Pannel_server <- function(id, all_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
 # Récupération Des Variables ----------------------------------------------
 
     # settings vars
-    data_folder_path <- reactive({ settings_vars$data_folder_path_rea })
+    data_folder_path <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
     # Samples_vars
-    zidb_files <- reactive({ Samples_vars$zidb_files })
+    zidb_files <- reactive({ all_vars$Samples_vars$zidb_files })
 
 # Settings ----------------------------------------------------------------
 

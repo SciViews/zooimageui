@@ -28,3 +28,8 @@ J'ai réussis à le faire fonctionner. \
 
 J'ai regardé avec M. Grosjean afin de check le package, corriger ce qui n'était pas bon (utils, data_folder_path : options(), wordlist)
 Ajout des données exemples, dont les training sets en zip pour éviter les chemins d'accès trop long : warnings \
+
+
+J'ai changé mon système de communication inter modules afin que tous les modules puissent avoir accès à tous les autres, cela simplifie également l'écriture des arguments des différents modules. \
+De plus, on peut choisir de tout actualiser à chaque fois en même temps, ou bien uniquement les modules qui varient en séparant les observe() \
+

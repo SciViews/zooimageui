@@ -85,16 +85,17 @@ mod_Samples_main_ui <- function(id){
 #' Samples_main Server Functions
 #'
 #' @noRd 
-mod_Samples_main_server <- function(id, settings_vars, fixed_pannel_vars){
+mod_Samples_main_server <- function(id, all_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     # Préparation des variables qui viennent de settings
-    data_folder_path_rea <- reactive({ settings_vars$data_folder_path_rea })
-    Samples_folder_path <- reactive({ settings_vars$Samples_folder_path })
-    smps <- reactive({ settings_vars$smps })
+    data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
+    Samples_folder_path <- reactive({ all_vars$settings_vars$Samples_folder_path })
+    smps <- reactive({ all_vars$settings_vars$smps })
     
-    zidb_show <- reactive({ fixed_pannel_vars$zidb_show })
+    # Préparation des variables qui viennent de fixed_pannel
+    zidb_show <- reactive({ all_vars$fixed_pannel_vars$zidb_show })
 
 # ZIDB Preparation Server --------------------------------------------------------
 
