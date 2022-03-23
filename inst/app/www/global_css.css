@@ -41,15 +41,12 @@ h4#fixed_pannel_title {
 /* Colonne de droite */
 /* ================= */
 
-#right_col { /*
-  border: solid;
-  border-width: 2px;
-  border-color: blue; */
+#right_col { 
   margin: 0px;
   padding: 0px;
 }
 
-div#right_col_div {
+div#right_col > div#right_col_div {
   background-color: #333333;
   color: #FFFFFF;
   
@@ -83,7 +80,23 @@ li a {
 /* Samples */
 /* ======= */
 
-/* ZIDB Prep */
-#zidb_prep {
-  border: solid;
+/* Ceci sert à rendre lisible le datatable : bof */
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+  color: #000000;
 }
+
+/* ============= */
+/* Training Sets */
+/* ============= */
+
+
+
+/* ====== */
+/* Models */
+/* ====== */
+
+
+
+/* ======= */
+/* Results */
+/* ======= */

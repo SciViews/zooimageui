@@ -53,8 +53,8 @@ mod_Samples_main_ui <- function(id){
       tabPanel("ZIDB Visualisation",
         
         tags$h3("Head of the ZIDB's dataframe"),
-        tableOutput(ns("zidb_head")),
-         
+        dataTableOutput(ns("zidb_datatable")),
+        
         tags$hr(),
         tags$h3("Metadata of the ZIDB"),
         verbatimTextOutput(ns("zidb_metadata")),
@@ -71,10 +71,14 @@ mod_Samples_main_ui <- function(id){
 # Vignettes Visualisation UI ----------------------------------------------
 
       tabPanel("Vignettes Visualisation",
+               
         tags$br(),
+        tags$h3("ZIDB file selected :"),
         textOutput(ns("zidb_selected")),
+        verbatimTextOutput(ns("buildingshow")),
         
-        selectInput("vignettes_vis", "Vignettes to watch", choices = "None"),
+        tags$br(),
+        selectInput(ns("zidb_vign_vis"), "Vignettes to watch", choices = "None"),
         tags$h3("Visualisation of vignettes"),
         plotOutput("vignettes_plot")
       )
@@ -161,8 +165,8 @@ mod_Samples_main_server <- function(id, all_vars){
     })
     
     # Affichage // head du ZIDB choisi
-    output$zidb_head <- renderTable({
-      head(zidb_df())
+    output$zidb_datatable <- renderDataTable({
+      zidb_df()
     })
     
     # Affichage // metadata du ZIDB choisi
@@ -192,8 +196,42 @@ mod_Samples_main_server <- function(id, all_vars){
 
 # Vignettes Visualisation Server ------------------------------------------
 
-    # Vignettes
-
+    # Affichage // ZIDB sélectionné
+    output$zidb_selected <- renderText({
+      zidb_show()
+    })
+    
+    # Variable : vignettes max pour l'affichage
+    nb_vign_max <- reactive({
+      # Variable : dataframe pour accès simple
+      dataframe_vign <- zidbDatRead(zidb_selected_path())
+      return( max( dataframe_vign["Item"] ))
+    })
+    
+    # Mise à jour du sélecteur de vignettes
+    observeEvent( zidb_show(),{
+      
+      # vignettes de 1-25 ou 26-50, ... 1 -> borne inf / 25 -> borne sup
+      # Variable : borne supérieure 
+      upper_limit <- (1:ceiling(nb_vign_max()/25))*25
+      
+      # Variable : borne inférieur
+      lower_limit <- upper_limit - 24
+      # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
+      upper_limit[length(upper_limit)] <- nb_vign_max()
+      
+      updateSelectInput( session, "zidb_vign_vis", "Vignettes to watch",
+                         choices = paste0( lower_limit, " - ", upper_limit ))
+    })
+    
+    # Variable : Chargement du ZIDB choisi
+    zidb_loaded <- reactive({
+      zidbLink(zidb_selected_path())
+    })
+    
+    # Affichage // Construction aide
+    output$buildingshow <- renderPrint({nb_vign_max()})
+    
 # Communication -----------------------------------------------------------
 
     return(zidb_vars)

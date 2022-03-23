@@ -33,3 +33,6 @@ Ajout des données exemples, dont les training sets en zip pour éviter les chem
 J'ai changé mon système de communication inter modules afin que tous les modules puissent avoir accès à tous les autres, cela simplifie également l'écriture des arguments des différents modules. \
 De plus, on peut choisir de tout actualiser à chaque fois en même temps, ou bien uniquement les modules qui varient en séparant les observe() \
 
+
+En essayant d'implanter le système d'affichage des vignettes, je me suis rendu compte qu'il me faudrait me pencher sur la question des erreurs : \
+Il faut que je puisse tester que les fichiers existent, afin de pouvoir les utiliser, et que les fonctions ne s'éxécutent que si les fichiers existent. \

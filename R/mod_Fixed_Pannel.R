@@ -17,7 +17,7 @@ mod_Fixed_Pannel_ui <- function(id){
       textOutput(ns("data_folder_path")),
       tags$hr(),
       tags$h4("-> Samples"),
-      selectInput(ns("zidb_show"), NULL, choices = "No ZIDB"),
+      selectInput(ns("zidb_show"), NULL, choices = NULL),
       tags$p("- 2"),
       tags$hr(),
       tags$h4("-> Training Sets"),
@@ -68,7 +68,7 @@ mod_Fixed_Pannel_server <- function(id, all_vars){
     )
     
     observe({
-      to_Samples_vars$zidb_show <- input$zidb_show
+      to_Samples_vars$zidb_show <- req(input$zidb_show)
     })
     
     return(to_Samples_vars)
