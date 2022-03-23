@@ -14,22 +14,29 @@ mod_Samples_main_ui <- function(id){
     tabsetPanel(
       
       tabPanel("ZIDB Preparation",
+        tags$br(),
         sidebarLayout(
           
           # Choix de l'échantillon pour la préparation des ZIDB
           sidebarPanel(
-            selectInput(ns("sample_folder"), "Sample folder :",
+            
+            # Choix du Sample
+            selectInput(ns("sel_sample_folder"), "Sample folder :",
                 choices = "No Samples"),
-            actionButton("zidbmake", "Make the ZIDB file"),
+            
+            # Création ZIDB unique
+            actionButton(ns("zidb_make"), "Make the ZIDB file"),
             tags$br(),
             tags$br(),
             
-            actionButton("zidbmakeall", "Make ZIDB file for all of the samples"),
+            # Création tous les ZIDB
+            actionButton(ns("zidb_make_all"), "Make ZIDB file for all of the samples"),
             tags$br(),
             tags$br(),
             
-            tags$h5(style = "font-weight: bold;" ,"Already formated :"),
-            textOutput("zidb_made"),
+            # Montrer les ZIDB
+            tags$h5("Already formated :"),
+            textOutput(ns("zidb_existing")),
           ),
           
           mainPanel(
@@ -82,23 +89,60 @@ mod_Samples_main_server <- function(id, settings_vars){
     ns <- session$ns
     
     # Préparation des variables qui viennent de settings
-    data_folder_path <- reactive({ settings_vars$data_folder_path_rea })
-    smpfiles <- reactive({ settings_vars$smpfiles })
+    data_folder_path_rea <- reactive({ settings_vars$data_folder_path_rea })
+    Samples_folder_path <- reactive({ settings_vars$Samples_folder_path })
     smps <- reactive({ settings_vars$smps })
 
 
 # ZIDB Preparation --------------------------------------------------------
 
+    # Variable : smpfiles(pour avoir la version de cette page, qui s'actualise)
+    smpfiles <- reactive({
+      # Mise à jour si création de zidb
+      input$zidb_make
+      input$zidb_make_all
+      
+      # Si le folder_path est non vide
+      if ( Samples_folder_path() != "" ) {
+        list.files(Samples_folder_path())
+      }
+    })
+    
     # Mise à jour du sélecteur d'échantillons
     observeEvent(smps(), {
-      updateSelectInput(session, "sample_folder", "Sample folder :",choices = smps())
+      updateSelectInput(session, "sel_sample_folder", "Sample folder :",choices = smps())
     })
     
-    # Attention, ça marche, mais il faut que je modifie des éléments du CSS qui perturbent le verbatimOutput
+    # Variable : pour le chemin du Sample choisi
+    sample_selected_path <- reactive({
+      fs::path(data_folder_path_rea(),"Samples",input$sel_sample_folder)
+    })
+    
+    # Affichage // Contenu de l'échantillon
     output$sel_samp_cont <- renderPrint({
-      list.files(fs::path(data_folder_path(),"Samples",input$sample_folder))
+      list.files(sample_selected_path())
     })
     
+    # Création d'un ZIDB sélectionné
+    observeEvent(input$zidb_make, {
+      zidbMake(sample_selected_path())
+    })
+    
+    # Création de tous les ZIDB
+    observeEvent(input$zidb_make_all, {
+      zidbMakeAll(Samples_folder_path(), delete.source = FALSE, replace = TRUE)
+    })
+    
+    # Variable : qui répertorie les fichiers ZIDB dans le dossier "Samples"
+    zidb_files <- reactive({
+      smpfiles()[grepl(".zidb",smpfiles())] # On regarde dans tous les fichiers/dossier,
+                                            # et on prend ceux qui ont l'extension .zidb
+    })
+    
+    # Affichage // ZIDB existants
+    output$zidb_existing <- renderText({
+      zidb_files()
+    })
   })
 }
     

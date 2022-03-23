@@ -1,0 +1,21 @@
+---
+title: "Shiny_Zooimage_J_38"
+output: html_document
+---
+
+Fichier de notes du jour 38. Mercredi 23 Mars 2022. Présentiel.
+
+Il n'y a pas eu de notes durant le jour 37 car j'ai rédigé dans mon rapport de stage partiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je continue de rajouter le contenu à mon application.
+
+La création d'un ou plusieurs ZIDB à partir du sample sélectionné, ou de tous, est maintenant possible. \
+De plus, on peut voir en temps réel les ZIDB qui extistent déjà. \
+
+! -> J'ai recrée la variable smpfiles dans la fenêtre "Samples" plutôt que de reprendre celle des settings car je dois l'actualiser, et je préfère éviter de lier les deux fenêtres dans un cas où ce n'est pas nécessaire. Les settings n'ont pas besoin de cette info. \
+
+Je vais passer à la visualisation et aux vignettes \

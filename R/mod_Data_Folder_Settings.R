@@ -137,7 +137,7 @@ mod_Data_Folder_Settings_server <- function(id){
     
     # Set up du chemin du dossier Samples
     Samples_folder_path <- reactive({
-      path(data_folder_path_rea(),"/Samples")
+      fs::path(data_folder_path_rea(),"/Samples")
     })
     
     smpfiles <- reactive({
@@ -186,12 +186,14 @@ mod_Data_Folder_Settings_server <- function(id){
     # ===== Envoi des variables =====
     vars <- reactiveValues(
       data_folder_path_rea = NULL,
+      Samples_folder_path = NULL,
       smpfiles = NULL,
       smps = NULL,
     )
     
     observe({
       vars$data_folder_path_rea <- data_folder_path_rea()
+      vars$Samples_folder_path <- Samples_folder_path()
       vars$smpfiles <- smpfiles()
       vars$smps <- smps()
     })
