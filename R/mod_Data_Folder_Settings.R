@@ -151,7 +151,11 @@ mod_Data_Folder_Settings_server <- function(id){
     })
     
     output$Samples_show <- renderPrint({
-      smps()
+      if (length(smps()) > 0) {
+        smps()
+      } else {
+        "Folder Empty"
+      }
     })
     
     

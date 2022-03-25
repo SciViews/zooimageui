@@ -80,7 +80,7 @@ mod_Samples_main_ui <- function(id){
         tags$br(),
         selectInput(ns("zidb_vign_vis"), "Vignettes to watch", choices = "None"),
         tags$h3("Visualisation of vignettes"),
-        plotOutput("vignettes_plot")
+        plotOutput(ns("zidb_vignettes_plot")),
       )
     )
   )
@@ -125,19 +125,34 @@ mod_Samples_main_server <- function(id, all_vars){
       fs::path(data_folder_path_rea(),"Samples",input$sel_sample_folder)
     })
     
+    sample_selected_content <- reactive ({
+      list.files(sample_selected_path())
+    })
+    
     # Affichage // Contenu de l'échantillon
     output$sel_samp_cont <- renderPrint({
-      list.files(sample_selected_path())
+      # Que si l'échantillon existe et n'est pas vide
+      if (length(sample_selected_content()) > 0) {
+        sample_selected_content()
+      } else {
+        "Folder Empty"
+      }
     })
     
     # Création d'un ZIDB sélectionné
     observeEvent(input$zidb_make, {
-      zidbMake(sample_selected_path())
+      # Que si l'échantillon existe et n'est pas vide
+      if (length(sample_selected_content()) > 0) {
+        zidbMake(sample_selected_path())
+      }
     })
     
     # Création de tous les ZIDB
     observeEvent(input$zidb_make_all, {
-      zidbMakeAll(Samples_folder_path(), delete.source = FALSE, replace = TRUE)
+      # Que si l'échantillon existe et n'est pas vide
+      if (length(sample_selected_content()) > 0) {
+        zidbMakeAll(Samples_folder_path(), delete.source = FALSE, replace = TRUE)
+      }
     })
     
     # Variable : qui répertorie les fichiers ZIDB dans le dossier "Samples"
@@ -148,7 +163,11 @@ mod_Samples_main_server <- function(id, all_vars){
     
     # Affichage // ZIDB existants
     output$zidb_existing <- renderText({
-      zidb_files()
+      if (length(zidb_files()) > 0) {
+        zidb_files()
+      } else {
+        "No ZIDB file yet"
+      }
     })
 
 # ZIDB Visualisation Server -----------------------------------------------
@@ -198,11 +217,15 @@ mod_Samples_main_server <- function(id, all_vars){
 
     # Affichage // ZIDB sélectionné
     output$zidb_selected <- renderText({
-      zidb_show()
+      if (length(zidb_show()) > 0) {
+        zidb_show()
+      } else {
+        "No ZIDB file selected"
+      }
     })
     
     # Variable : vignettes max pour l'affichage
-    nb_vign_max <- reactive({
+    zidb_nb_vign_max <- reactive({
       # Variable : dataframe pour accès simple
       dataframe_vign <- zidbDatRead(zidb_selected_path())
       return( max( dataframe_vign["Item"] ))
@@ -213,12 +236,12 @@ mod_Samples_main_server <- function(id, all_vars){
       
       # vignettes de 1-25 ou 26-50, ... 1 -> borne inf / 25 -> borne sup
       # Variable : borne supérieure 
-      upper_limit <- (1:ceiling(nb_vign_max()/25))*25
+      upper_limit <- (1:ceiling(zidb_nb_vign_max()/25))*25
       
       # Variable : borne inférieur
       lower_limit <- upper_limit - 24
       # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
-      upper_limit[length(upper_limit)] <- nb_vign_max()
+      upper_limit[length(upper_limit)] <- zidb_nb_vign_max()
       
       updateSelectInput( session, "zidb_vign_vis", "Vignettes to watch",
                          choices = paste0( lower_limit, " - ", upper_limit ))
@@ -229,8 +252,36 @@ mod_Samples_main_server <- function(id, all_vars){
       zidbLink(zidb_selected_path())
     })
     
-    # Affichage // Construction aide
-    output$buildingshow <- renderPrint({nb_vign_max()})
+    # Variable : Noms des images
+    zidb_vignettes <- reactive({
+      ls( zidb_loaded() )[ !grepl( "_dat1", ls( zidb_loaded() )) ]
+    })
+    
+    # Variable : Récupération des bornes inférieures et supérieures pour l'affichage
+    zidb_vignettes_nb <- reactive({
+      
+      splitted <- strsplit( input$zidb_vign_vis, " - ")
+      
+      # Récupération de la limite supérieure et inférieure de vignettes souhaitées
+      c( as.numeric( splitted[[1]][1] ), as.numeric( splitted[[1]][2] ) )
+    })
+    
+    # Affichage // plot des vignettes
+    output$zidb_vignettes_plot <- renderPlot({
+      
+      req( zidb_show(), zidb_vignettes_nb()) # Besoin de vignettes_file et zidb_vignettes_nb pour se faire
+      
+      from_image_nb <- zidb_vignettes_nb()[1]
+      to_image_nb <- zidb_vignettes_nb()[2]
+      
+      zidbPlotNew("Vignettes") # Création du plot
+      
+      for (i in from_image_nb:to_image_nb) # les images num i dans l'intervalle choisie
+        zidbDrawVignette( zidb_loaded()[[zidb_vignettes()[i]]],
+                          item = i - (from_image_nb - 1), nx = 5, ny = 5)
+      # A la position i moins le décalage par rapport à 1 (position dans le plot)
+      # ainsi que nb d'éléments par lignes et colonnes
+    })
     
 # Communication -----------------------------------------------------------
 

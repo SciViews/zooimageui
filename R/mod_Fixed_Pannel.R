@@ -57,7 +57,11 @@ mod_Fixed_Pannel_server <- function(id, all_vars){
 # Samples -----------------------------------------------------------------
 
     observeEvent(zidb_files(), {
-      updateSelectInput(session, "zidb_show", NULL, choices = zidb_files())
+      if (length(zidb_files()) > 0) {
+        updateSelectInput(session, "zidb_show", NULL, choices = zidb_files())
+      } else {
+        updateSelectInput(session, "zidb_show", NULL, choices = "No ZIDB file yet")
+      }
     })
       
 
@@ -68,7 +72,9 @@ mod_Fixed_Pannel_server <- function(id, all_vars){
     )
     
     observe({
-      to_Samples_vars$zidb_show <- req(input$zidb_show)
+      to_Samples_vars$zidb_show <- if (req(input$zidb_show) != "No ZIDB file yet") {
+        input$zidb_show
+      }
     })
     
     return(to_Samples_vars)

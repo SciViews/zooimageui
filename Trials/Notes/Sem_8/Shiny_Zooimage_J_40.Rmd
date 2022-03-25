@@ -1,0 +1,20 @@
+---
+title: "Shiny_Zooimage_J_40"
+output: html_document
+---
+
+Fichier de notes du jour 40. Vendredi 25 Mars 2022.   Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais essayer pour le temps qu'il me reste (après avoir regardé pour mon rapport partiel ainsi qu'à parler un peu de mon TFE avec Guyliann Engels) \
+Comment je pourrais régler le soucis pour les vignettes, et d'une façon générale, pour que du code ne s'exécute pas sans que les arguments ne soient correctes. \
+
+J'ai rajouté un système de vérification que ce que l'on demande n'est pas vide : pour les Samples, pour le sample, pour les ZIDB, et pour le choix du ZIDB (permet que tout ce qui base là desus ne se fasse pas s'il n'y a rien) \
+J'ai également rajouté cette vérification pour l'affichage du ZIDB pour les vignettes, et les vignettes ne s'affichent que si le zidb est choisi et qu'il a une range de vignettes \
+
+Je vais essayer de remettre en place les vignettes \
+
+J'ai réussis à remettre en place l'affichage des vignettes, et pas d'erreurs si mauvais fichiers ou fichiers vides ou inexistants. \
