@@ -9,7 +9,7 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic 
-    fluidPage(theme = shinytheme("cosmo"),
+    fluidPage(theme = shinytheme("cerulean"),
       fluidRow(id="body",
         
         column(width = 2, id = "left_col",
@@ -31,6 +31,20 @@ app_ui <- function(request) {
                 mod_page_samples_ui("page_samples_ui_1")
               ),
               
+              tabPanel("Training Sets",
+                h3("Training Sets"),
+                mod_page_training_sets_ui("page_training_sets_ui_1")
+              ),
+              
+              tabPanel("Models",
+                h3("Models"),
+                mod_page_models_ui("page_models_ui_1")
+              ),
+              
+              tabPanel("Results",
+                h3("Results"),
+                mod_page_results_ui("page_results_ui_1")
+              ),
             )
           )
         )

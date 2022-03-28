@@ -18,3 +18,11 @@ J'ai réassemblé la branche avec le main. J'ai eu peur d'avoir supprimé mon av
 J'ai changé les noms des modules, en espérant que cela ne va pas tout casser. \
 
 J'ai fait du rangement dans mes fichiers. \
+
+J'ai donc changé le nom de mes modules, de certaines variables, ainsi que de ma fonction samples -> find_samples \
+
+Je vais à présent préparer la suite de mes pages. \
+
+
+J'ai préparer mes dernières pages : ajout de training sets, models, results. \
+J'ai changé de thème et simplifié le css pour que ça soit plus simple et clair. \

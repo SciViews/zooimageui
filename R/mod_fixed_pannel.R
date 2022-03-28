@@ -48,7 +48,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     data_folder_path <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
     # Samples_vars
-    zidb_files <- reactive({ all_vars$Samples_vars$zidb_files })
+    zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
     
     # Settings ----------------------------------------------------------------
     

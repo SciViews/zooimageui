@@ -13,6 +13,9 @@ app_server <- function( input, output, session ) {
     fixed_pannel_vars = NULL,
     settings_vars = NULL,
     samples_vars = NULL,
+    # training_sets_vars = NULL,
+    # models_vars = NULL,
+    # results_vars = NULL,
   )
   # On peut tout mettre en un seul observe, mais dans ce cas, tout est toujours actualisé.
   observe({
@@ -24,6 +27,15 @@ app_server <- function( input, output, session ) {
   observe({
     all_vars$samples_vars <- samples_vars
   })
+  # observe({
+  #   all_vars$training_sets_vars <- training_sets_vars
+  # })
+  # observe({
+  #   all_vars$models_vars <- models_vars
+  # })
+  # observe({
+  #   all_vars$results_vars <- results_vars
+  # })
   
   # === Panneau Fixe ===
   fixed_pannel_vars <- mod_fixed_pannel_server("fixed_pannel_ui_1", all_vars = all_vars)
@@ -33,5 +45,14 @@ app_server <- function( input, output, session ) {
   
   # === Samples === (Page)
   samples_vars <- mod_page_samples_server("page_samples_ui_1", all_vars = all_vars)
+  
+  # === Training Sets === (Page)
+  training_sets_vars <- mod_page_training_sets_server("page_training_sets_ui_1", all_vars = all_vars)
+  
+  # === Models === (Page)
+  models_vars <- mod_page_models_server("page_models_ui_1", all_vars = all_vars)
+  
+  # === Results === (Page)
+  results_vars <- mod_page_results_server("page_results_ui_1", all_vars = all_vars)
   
 }

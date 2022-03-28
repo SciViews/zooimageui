@@ -18,8 +18,8 @@
 }
 
 div#fixed_pannel_div {
-  background-color: #333333;
-  color: #FFFFFF;
+  /*background-color: #333333;
+  color: #FFFFFF; */
   
   border: solid;
   border-width: 2px;
@@ -47,8 +47,8 @@ h4#fixed_pannel_title {
 }
 
 div#right_col > div#right_col_div {
-  background-color: #333333;
-  color: #FFFFFF;
+  /*background-color: #FFFFFF;
+  color: #FFFFFF;*/
   
   border-radius: 8px;
   
@@ -60,7 +60,7 @@ div#right_col > div#right_col_div {
 
 /* Mise en forme des sidebar panels */
 form.well {
-  color: #000000;
+  /*color: #000000;*/
   padding-top: 0px;
   padding: 10px;
   border: solid;
@@ -73,7 +73,7 @@ form h2 {
 
 /* Mise en forme des tabs */
 li a {
-  color : white;
+  /*color : white;*/
 }
 
 /* ======= */
@@ -82,7 +82,7 @@ li a {
 
 /* Ceci sert à rendre lisible le datatable : bof */
 .table-striped > tbody > tr:nth-of-type(2n+1) {
-  color: #000000;
+  /*color: #000000;*/
 }
 
 /* ============= */
