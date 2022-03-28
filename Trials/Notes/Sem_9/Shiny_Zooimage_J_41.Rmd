@@ -9,8 +9,9 @@ Fichier de notes du jour 41. Lundi 28 Mars 2022.    Présentiel.
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-J'ai passé la matinée à discuter avec M. Grosjean à propos de mon poster, de mon app et également de mon TFE.
+J'ai passé la matinée à discuter avec M. Grosjean à propos de mon poster, de mon app, de ZooImage et également de mon TFE. \
 
-Je vais à présent essayer de continuer mon app, et d'améliorer les points qui posent problème.
+Je vais à présent essayer de continuer mon app, et d'améliorer les points qui posent problème. \
 
-J'ai réassemblé la branche avec le main.
+J'ai réassemblé la branche avec le main. J'ai eu peur d'avoir supprimé mon avancement. \
+
