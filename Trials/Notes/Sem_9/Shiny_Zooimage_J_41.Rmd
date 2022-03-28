@@ -15,3 +15,6 @@ Je vais à présent essayer de continuer mon app, et d'améliorer les points qui
 
 J'ai réassemblé la branche avec le main. J'ai eu peur d'avoir supprimé mon avancement. \
 
+J'ai changé les noms des modules, en espérant que cela ne va pas tout casser. \
+
+J'ai fait du rangement dans mes fichiers. \

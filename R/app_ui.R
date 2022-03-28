@@ -14,7 +14,7 @@ app_ui <- function(request) {
         
         column(width = 2, id = "left_col",
           
-          mod_Fixed_Pannel_ui("Fixed_Pannel_ui_1")
+          mod_fixed_pannel_ui("fixed_pannel_ui_1")
         ),
         
         column(width = 10, id = "right_col",
@@ -23,34 +23,14 @@ app_ui <- function(request) {
                        
               # Page dans laquelle je peux définir et voir le dossier qui contient mes données
               tabPanel("Settings",
-                mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
+                mod_page_settings_ui("page_settings_ui_1")
               ),
               
               tabPanel("Samples",
                 h3("Samples"),
-                mod_Samples_main_ui("Samples_main_ui_1")
+                mod_page_samples_ui("page_samples_ui_1")
               ),
               
-              # == Tests de com entre modules
-              tabPanel("Communicating modules test",
-                mod_ZI_Test_bis_ui("ZI_Test_bis_ui_1")
-              ),
-              
-              tabPanel("Tests",
-                mod_ZI_Test_ui("ZI_Test_ui_1")
-              ),
-              # == Tests de com entre modules
-              
-              
-              # --- Anciens tests ---
-              # tabPanel("Server folder",
-                # mod_Data_Test_Server_ui("Data_Test_Server_ui_1")
-              # ),
-              
-              # tabPanel("Local Folder",
-                # mod_Data_Test_Local_ui("Data_Test_Local_ui_1")
-              # )
-              # --- Anciens tests ---
             )
           )
         )

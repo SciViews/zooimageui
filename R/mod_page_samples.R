@@ -1,4 +1,4 @@
-#' Samples_main UI Function
+#' page_samples UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_Samples_main_ui <- function(id){
+mod_page_samples_ui <- function(id){
   ns <- NS(id)
   tagList(
     
@@ -86,10 +86,10 @@ mod_Samples_main_ui <- function(id){
   )
 }
     
-#' Samples_main Server Functions
+#' page_samples Server Functions
 #'
 #' @noRd 
-mod_Samples_main_server <- function(id, all_vars){
+mod_page_samples_server <- function(id, all_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
@@ -291,7 +291,7 @@ mod_Samples_main_server <- function(id, all_vars){
 }
     
 ## To be copied in the UI
-# mod_Samples_main_ui("Samples_main_ui_1")
+# mod_page_samples_ui("page_samples_ui_1")
     
 ## To be copied in the server
-# mod_Samples_main_server("Samples_main_ui_1")
+# mod_page_samples_server("page_samples_ui_1")

@@ -12,7 +12,7 @@ app_server <- function( input, output, session ) {
   all_vars <- reactiveValues(
     fixed_pannel_vars = NULL,
     settings_vars = NULL,
-    Samples_vars = NULL,
+    samples_vars = NULL,
   )
   # On peut tout mettre en un seul observe, mais dans ce cas, tout est toujours actualisé.
   observe({
@@ -22,27 +22,16 @@ app_server <- function( input, output, session ) {
     all_vars$settings_vars <- settings_vars
   })
   observe({
-    all_vars$Samples_vars <- Samples_vars
+    all_vars$samples_vars <- samples_vars
   })
   
   # === Panneau Fixe ===
-  fixed_pannel_vars <- mod_Fixed_Pannel_server("Fixed_Pannel_ui_1", all_vars = all_vars)
+  fixed_pannel_vars <- mod_fixed_pannel_server("fixed_pannel_ui_1", all_vars = all_vars)
   
   # === Settings === (Page)
-  settings_vars <- mod_Data_Folder_Settings_server("Data_Folder_Settings_ui_1")
+  settings_vars <- mod_page_settings_server("page_settings_ui_1")
   
   # === Samples === (Page)
-  Samples_vars <- mod_Samples_main_server("Samples_main_ui_1", all_vars = all_vars)
-  
-  # Tests de communication entre modules
-  test <- mod_ZI_Test_bis_server("ZI_Test_bis_ui_1")
-  
-  # Test variables globales
-  mod_ZI_Test_server("ZI_Test_ui_1", test = settings_vars, all_vars = all_vars)
-  
-  # --- Anciens tests ---
-  # mod_Data_Test_Server_server("Data_Test_Server_ui_1")
-  # mod_Data_Test_Local_server("Data_Test_Local_ui_1")
-  # --- Anciens tests ---
+  samples_vars <- mod_page_samples_server("page_samples_ui_1", all_vars = all_vars)
   
 }
