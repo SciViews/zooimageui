@@ -1,0 +1,14 @@
+---
+title: "Shiny_Zooimage_J_41"
+output: html_document
+---
+
+Fichier de notes du jour 41. Lundi 28 Mars 2022.    Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai passé la matinée à discuter avec M. Grosjean à propos de mon poster, de mon app et également de mon TFE.
+
+Je vais à présent essayer de continuer mon app, et d'améliorer les points qui posent problème.
