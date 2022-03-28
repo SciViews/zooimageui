@@ -1,4 +1,4 @@
-#' Data_Folder_Settings UI Function
+#' page_settings UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_Data_Folder_Settings_ui <- function(id){
+mod_page_settings_ui <- function(id){
   ns <- NS(id)
   tagList(
     
@@ -78,10 +78,10 @@ mod_Data_Folder_Settings_ui <- function(id){
   )
 }
     
-#' Data_Folder_Settings Server Functions
+#' page_settings Server Functions
 #'
 #' @noRd 
-mod_Data_Folder_Settings_server <- function(id){
+mod_page_settings_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
       
@@ -147,7 +147,7 @@ mod_Data_Folder_Settings_server <- function(id){
     })
     
     smps <- reactive ({
-      samples(smpfiles())
+      find_samples(smpfiles())
     })
     
     output$Samples_show <- renderPrint({
@@ -207,7 +207,7 @@ mod_Data_Folder_Settings_server <- function(id){
 }
     
 ## To be copied in the UI
-# mod_Data_Folder_Settings_ui("Data_Folder_Settings_ui_1")
+# mod_page_settings_ui("page_settings_ui_1")
     
 ## To be copied in the server
-# mod_Data_Folder_Settings_server("Data_Folder_Settings_ui_1")
+# mod_page_settings_server("page_settings_ui_1")
