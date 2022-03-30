@@ -16,3 +16,16 @@ Je vais continuer dans mon application partie training sets.
 J'ai rajouté le comptage du nb de lignes de l'échantillon dans les informations globales.
 
 Je suis entrain de mettre en place la préparation de training sets.
+
+Je me rends compte qu'il y a un problème avec des fonctions qui agissent quand elles ne devraient pas.
+
+Bon,
+
+req est à utiliser principalement quand on veut que tout ce qui suit s'arrête. Mais on ne peut pas l'utiliser n'importe comment, car cela arrête vraiment toute la réactivité. \
+req considère comme mauvais : FALSE, "", NULL, ... \
+
+il faut plutôt utiliser des if quand on sait qu'on peut avoir différents états, et qu'il faut réagir différemment en fonction de ceux-ci. \
+
+J'ai donc enfin réglé mon problèmes de dépendances : Il faut bien faire attention aux req et if \
+
+J'ai continué à mettre en place la préparation des training sets voir mod training sets \

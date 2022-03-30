@@ -18,6 +18,7 @@ Imports:
     processx,
     shiny (>= 1.7.1),
     shinythemes,
+    stringr,
     zooimage,
     ggplot2,
     rlang,

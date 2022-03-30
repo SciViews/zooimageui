@@ -9,11 +9,12 @@
 #' @docType package
 #' @name ZooImageUI-package
 #' 
-#' @import DT
+#' 
 #' @importFrom fs path
 #' @importFrom ggplot2 ggplot
 #' @import rlang
 #' @import shinythemes
+#' @importFrom stringr str_replace_all
 #' @importFrom utils head read.csv
 #' @import zooimage
 #' 

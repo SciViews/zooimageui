@@ -141,9 +141,7 @@ mod_page_settings_server <- function(id){
     })
     
     smpfiles <- reactive({
-      if ( Samples_folder_path() != "" ) {
-        list.files(Samples_folder_path())
-      }
+      list.files(Samples_folder_path())
     })
     
     smps <- reactive ({

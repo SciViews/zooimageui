@@ -115,9 +115,7 @@ mod_page_samples_server <- function(id, all_vars){
       input$zidb_make_all
       
       # Si le folder_path est non vide
-      if ( Samples_folder_path() != "" ) {
-        list.files(Samples_folder_path())
-      }
+      list.files(Samples_folder_path())
     })
     
     # Mise à jour du sélecteur d'échantillons
@@ -184,6 +182,7 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Variable : du dataframe du ZIDB choisi
     zidb_df <- reactive({
+      req(zidb_show(), data_folder_path_rea())
       zidbDatRead(zidb_selected_path())
     })
     
@@ -230,7 +229,7 @@ mod_page_samples_server <- function(id, all_vars){
       if (length(zidb_show()) > 0) {
         zidb_show()
       } else {
-        "No ZIDB file selected"
+        "No ZIDB file yet"
       }
     })
     
@@ -242,16 +241,19 @@ mod_page_samples_server <- function(id, all_vars){
     })
     
     # Mise à jour du sélecteur de vignettes
-    observeEvent( zidb_show(),{
+    observe({
+      req(zidb_show(), data_folder_path_rea())
+      dataframe_vign <- zidbDatRead(zidb_selected_path())
+      zidb_nb_vign_max <- max(dataframe_vign["Item"])
       
       # vignettes de 1-25 ou 26-50, ... 1 -> borne inf / 25 -> borne sup
       # Variable : borne supérieure 
-      upper_limit <- (1:ceiling(zidb_nb_vign_max()/25))*25
+      upper_limit <- (1:ceiling(zidb_nb_vign_max/25))*25
       
       # Variable : borne inférieur
       lower_limit <- upper_limit - 24
       # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
-      upper_limit[length(upper_limit)] <- zidb_nb_vign_max()
+      upper_limit[length(upper_limit)] <- zidb_nb_vign_max
       
       updateSelectInput( session, "zidb_vign_vis", "Vignettes to watch",
                          choices = paste0( lower_limit, " - ", upper_limit ))
@@ -259,6 +261,7 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Variable : Chargement du ZIDB choisi
     zidb_loaded <- reactive({
+      req(zidb_show(), data_folder_path_rea)
       zidbLink(zidb_selected_path())
     })
     

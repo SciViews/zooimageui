@@ -64,7 +64,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     # Samples -----------------------------------------------------------------
     
     # Mise à jour du choix du ZIDB à montrer dans samples
-    observeEvent(zidb_files(), {
+    observe({
       if (length(zidb_files()) > 0) {
         updateSelectInput(session, "zidb_show", NULL, choices = zidb_files())
       } else {
