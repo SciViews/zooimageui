@@ -2,6 +2,7 @@
 
 export(find_samples)
 export(run_app)
+import(DT)
 import(rlang)
 import(shiny)
 import(shinythemes)

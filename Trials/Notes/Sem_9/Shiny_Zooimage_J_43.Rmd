@@ -1,0 +1,18 @@
+---
+title: "Shiny_Zooimage_J_43"
+output: html_document
+---
+
+Fichier de notes du jour 43.    Mercredi 30 Mars 2022.    Présentiel.
+
+Il n'y a pas de notes du jour 42 car j'ai travaillé sur mon rapport partiel de stage et mon projet de poster.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais continuer dans mon application partie training sets.
+
+J'ai rajouté le comptage du nb de lignes de l'échantillon dans les informations globales.
+
+Je suis entrain de mettre en place la préparation de training sets.

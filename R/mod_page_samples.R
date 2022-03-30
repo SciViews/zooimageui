@@ -50,33 +50,38 @@ mod_page_samples_ui <- function(id){
 
 # ZIDB Visualisation UI ---------------------------------------------------
 
-      tabPanel("ZIDB Visualisation",
+      tabPanel("Sample Visualisation",
         
-        tags$h3("Head of the ZIDB's dataframe"),
+        # Affichage dataframe de l'échantillon
+        tags$h3("Dataframe of the Sample"),
         dataTableOutput(ns("zidb_datatable")),
         
+        # Affichage metadata de l'échantillon
         tags$hr(),
-        tags$h3("Metadata of the ZIDB"),
+        tags$h3("Metadata of the Sample"),
         verbatimTextOutput(ns("zidb_metadata")),
-         
+        
+        # Affichage du summary de l'échantillon
         tags$hr(),
-        tags$h3("Summary of the ZIDB"),
+        tags$h3("Summary of the Sample"),
         verbatimTextOutput(ns("zidb_summary")),
-         
+        
+        # Affichage d'un graphique de l'échantillon
         tags$hr(),
-        tags$h3("Plot of the ZIDB"),
+        tags$h3("Plot of the Sample"),
         plotOutput(ns("zidb_plot"))
       ),
 
 # Vignettes Visualisation UI ----------------------------------------------
 
       tabPanel("Vignettes Visualisation",
-               
-        tags$br(),
-        tags$h3("ZIDB file selected :"),
-        textOutput(ns("zidb_selected")),
-        verbatimTextOutput(ns("buildingshow")),
         
+        # Affichage du ZIDB choisi
+        tags$br(),
+        tags$h3("Sample (zidb)file selected :"),
+        textOutput(ns("zidb_selected")),
+        
+        # Affichage des vignettes
         tags$br(),
         selectInput(ns("zidb_vign_vis"), "Vignettes to watch", choices = "None"),
         tags$h3("Visualisation of vignettes"),
@@ -179,8 +184,11 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Variable : du dataframe du ZIDB choisi
     zidb_df <- reactive({
-      req(zidb_show())
       zidbDatRead(zidb_selected_path())
+    })
+    
+    zidb_df_nrow <- reactive({
+      nrow(zidb_df())
     })
     
     # Affichage // head du ZIDB choisi
@@ -207,10 +215,12 @@ mod_page_samples_server <- function(id, all_vars){
     # - Variables à faire sortir (Pour affichage dans le panneau fixe et choix du ZIDB) :
     zidb_vars <- reactiveValues(
       zidb_files = NULL,
+      zidb_df_nrow = NULL,
     )
     
     observe({
       zidb_vars$zidb_files <- zidb_files()
+      zidb_vars$zidb_df_nrow <- zidb_df_nrow()
     })
 
 # Vignettes Visualisation Server ------------------------------------------
@@ -269,10 +279,10 @@ mod_page_samples_server <- function(id, all_vars){
     # Affichage // plot des vignettes
     output$zidb_vignettes_plot <- renderPlot({
       
-      req( zidb_show(), zidb_vignettes_nb()) # Besoin de vignettes_file et zidb_vignettes_nb pour se faire
+      req( zidb_show(), zidb_vignettes_nb()) # Besoin de zidb_show et zidb_vignettes_nb pour se faire
       
-      from_image_nb <- zidb_vignettes_nb()[1]
-      to_image_nb <- zidb_vignettes_nb()[2]
+      from_image_nb <- zidb_vignettes_nb()[1] # Borne inf
+      to_image_nb <- zidb_vignettes_nb()[2] # Borne sup
       
       zidbPlotNew("Vignettes") # Création du plot
       

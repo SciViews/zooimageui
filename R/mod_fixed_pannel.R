@@ -12,20 +12,27 @@ mod_fixed_pannel_ui <- function(id){
   tagList(
     tags$div(id = "fixed_pannel_div",
              tags$h4("Global Informations", id = "fixed_pannel_title"),
+             
              tags$hr(),
              tags$h4("-> Global Settings"),
+             tags$h5("Data folder path :"),
              textOutput(ns("data_folder_path")),
+             
              tags$hr(),
              tags$h4("-> Samples"),
              selectInput(ns("zidb_show"), NULL, choices = NULL),
+             textOutput(ns("zidb_show_nrow")),
+             
              tags$hr(),
              tags$h4("-> Training Sets"),
              tags$p("- Empty 1"),
              tags$p("- Empty 2"),
+             
              tags$hr(),
              tags$h4("-> Models"),
              tags$p("- Empty 1"),
              tags$p("- Empty 2"),
+             
              tags$hr(),
              tags$h4("-> Results"),
              tags$p("- Empty 1"),
@@ -48,6 +55,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
+    zidb_df_nrow <- reactive({ all_vars$samples_vars$zidb_df_nrow })
     
     # Settings ----------------------------------------------------------------
     
@@ -55,6 +63,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Samples -----------------------------------------------------------------
     
+    # Mise à jour du choix du ZIDB à montrer dans samples
     observeEvent(zidb_files(), {
       if (length(zidb_files()) > 0) {
         updateSelectInput(session, "zidb_show", NULL, choices = zidb_files())
@@ -63,6 +72,14 @@ mod_fixed_pannel_server <- function(id, all_vars){
       }
     })
     
+    # Affichage // Nombre de lignes dans le ZIDB choisi
+    output$zidb_show_nrow <- renderText({
+      if (length(zidb_files()) > 0) {
+        paste0(zidb_df_nrow(), " rows in the sample")
+      } else {
+        "No ZIDB file yet"
+      }
+    })
     
     # Communication -----------------------------------------------------------
     
