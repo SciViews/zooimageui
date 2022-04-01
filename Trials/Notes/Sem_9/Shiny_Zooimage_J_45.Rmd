@@ -18,3 +18,5 @@ Le problème venait bêtement du fait que je n'avais pas bien indiqué ma variab
 Réglé, et j'ai rajouté un timer() pour pouvoir rafraichir directement certaines variables (3 secondes) \
 
 J'ai rajouté toute la préparation du training set, peut-être qu'il pourrait être bien de rajouter une manière de supprimer des dossiers \
+
+Je dois régler un problème pour envoyer mon projet de poster au bon endroit sur teams, qui n'existe pas encore. \
