@@ -71,25 +71,24 @@ form h2 {
   margin: 0px;
 }
 
-/* Mise en forme des tabs */
-li a {
-  /*color : white;*/
-}
 
 /* ======= */
 /* Samples */
 /* ======= */
 
-/* Ceci sert à rendre lisible le datatable : bof */
-.table-striped > tbody > tr:nth-of-type(2n+1) {
-  /*color: #000000;*/
-}
+
 
 /* ============= */
 /* Training Sets */
 /* ============= */
 
-
+/*
+  Options intéressantes
+  white-space: pre-wrap;
+  overflow-y:scroll;
+  max-height: 200px;
+  max-width: 300px;
+*/
 
 /* ====== */
 /* Models */

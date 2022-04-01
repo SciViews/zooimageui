@@ -17,6 +17,8 @@ mod_fixed_pannel_ui <- function(id){
              tags$h4("-> Global Settings"),
              tags$h5("Data folder path :"),
              textOutput(ns("data_folder_path")),
+             tags$h5("Samples folder path :"),
+             textOutput(ns("Samples_folder_path")),
              
              tags$hr(),
              tags$h4("-> Samples"),
@@ -52,6 +54,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # settings vars
     data_folder_path <- reactive({ all_vars$settings_vars$data_folder_path_rea })
+    Samples_folder_path <- reactive({ all_vars$settings_vars$Samples_folder_path})
     
     # Samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
@@ -59,7 +62,10 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Settings ----------------------------------------------------------------
     
+    # Affichage // data_folder_path
     output$data_folder_path <- renderText({ data_folder_path() })
+    # Affichage // Samples_folder_path
+    output$Samples_folder_path <- renderText({ Samples_folder_path() })
     
     # Samples -----------------------------------------------------------------
     

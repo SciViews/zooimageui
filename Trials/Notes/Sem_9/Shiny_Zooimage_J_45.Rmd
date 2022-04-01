@@ -1,0 +1,20 @@
+---
+title: "Shiny_Zooimage_J_45"
+output: html_document
+---
+
+Fichier de notes du jour 45. Vendredi 01 Avril 2022.    Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Ajout de l'affichage du dossier Samples dans le panneau fixe pour info pour construction de l'app. \
+
+Je vais essayer de réparer la création de training set qui bug, et mettre un bon système en place. \
+
+Le problème venait bêtement du fait que je n'avais pas bien indiqué ma variable pour le template. \
+
+Réglé, et j'ai rajouté un timer() pour pouvoir rafraichir directement certaines variables (3 secondes) \
+
+J'ai rajouté toute la préparation du training set, peut-être qu'il pourrait être bien de rajouter une manière de supprimer des dossiers \
