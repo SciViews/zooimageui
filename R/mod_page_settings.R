@@ -24,7 +24,7 @@ mod_page_settings_ui <- function(id){
         
         # Dossier de data défini, on le montre :
         sidebarPanel(id = "dsf_sidebar",
-          tags$h2("Data storage folder :"),
+          tags$h4("Data storage folder :"),
           textOutput(ns("data_folder_path_show")),
           tags$br(),
           
@@ -34,14 +34,14 @@ mod_page_settings_ui <- function(id){
         
         # Montre le contenu
         mainPanel(
-          tags$h2("Data folder content"),
+          tags$h4("Data folder content"),
           verbatimTextOutput(ns("data_folder_content"))
         )
       ),
       
       # Affichage du contenu du dossier Samples si il existe
       tags$hr(),
-      tags$h2("Content of your \"Samples\" folder"),
+      tags$h4("Content of your \"Samples\" folder"),
       verbatimTextOutput(ns("Samples_show")),
       
       
@@ -56,7 +56,7 @@ mod_page_settings_ui <- function(id){
         
         # Dossier de data à choisir :
         sidebarPanel(id = "dsf_sidebar",
-          tags$h2("Data storage folder :"),
+          tags$h4("Data storage folder :"),
           textInput(ns("new_data_folder_path"), "", value = "~/"),
           tags$br(),
           
@@ -68,7 +68,7 @@ mod_page_settings_ui <- function(id){
         
         # Affichage du contenu du dossier choisi en direct.
         mainPanel(
-          tags$h2("Folder content"),
+          tags$h4("Folder content"),
           verbatimTextOutput(ns("choosing_folder_content")),
         )
       ),

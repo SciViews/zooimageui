@@ -33,3 +33,40 @@ Mon système de download et upload est presque bon, mais il y a le problème de 
 Il se passe quelque chose de bizzare si j'essaie de unzip => www \
 
 Voir cela avec M. Grosjean. \
+
+ ! Polices d'écritures trop grandes.
+ ! Sorted et Unsorted training set => montrer l'état de tri
+
+
+odir <- setwd(new_dir)
+zip(...)
+setwd(odir)
+readBin(zip_file)
+
+
+Visualisation : montrer un tableau avec les catégories, le nombre d'items dedans.
+
+
+Onglet local / Onglet server \
+Server : on dl directement, on ne stock pas le training set sur le serveur avant qu'il ne soit trié. \
+Local : on peut voir l'état de tris des différents training sets qui sont dans un seul dossier. \
+
+Local : Quelques infos par rapport au training set. \
+
+Compter les items totaux, non traités et triés dans le training set:
+
+dir <- "ts_roort_dir"
+total <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
+unsorted <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
+sorted = total - unsorted
+
+oldir <- setwd(ltsp_folder_path())
+        on.exit(setwd(oldir))
+
+
+J'ai déjà changé les polices de taille, \
+J'ai changé les pages pour avoir une page local et une server, \
+J'ai unifié les deux dossiers en un, \
+Il faut que je fasse en sorte qu'on puisse créer un training set et le télécharger en même temps => Server, \
+Il faut que je mette l'avancement du tri dans le mode Local, \
+
