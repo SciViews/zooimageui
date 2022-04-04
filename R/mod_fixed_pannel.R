@@ -17,11 +17,12 @@ mod_fixed_pannel_ui <- function(id){
              tags$h4("-> Global Settings"),
              tags$h5("Data folder path :"),
              textOutput(ns("data_folder_path")),
-             tags$h5("Samples folder path :"),
-             textOutput(ns("Samples_folder_path")),
              
              tags$hr(),
              tags$h4("-> Samples"),
+             tags$h5("Samples folder path :"),
+             textOutput(ns("Samples_folder_path")),
+             tags$br(),
              selectInput(ns("zidb_show"), NULL, choices = NULL),
              textOutput(ns("zidb_show_nrow")),
              

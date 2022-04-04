@@ -10,6 +10,7 @@
 mod_page_training_sets_ui <- function(id){
   ns <- NS(id)
   tagList(
+    shinyjs::useShinyjs(),
     
     tabsetPanel(
       
@@ -39,9 +40,48 @@ mod_page_training_sets_ui <- function(id){
         )
       ),
 
+# Training Set Sorting UI ----------------------------------------------------
+
       tabPanel("Training Set Sorting",
+               
+        # Présentation
+        tags$br(),
+        tags$h4("Server MODE NOTE :"),
+        tags$p("In this window, you can download the unsorted 
+               training set that you want to use, unzip it, 
+               and then manually sort the vignettes inside the 
+               good folders. You can then zip the training set 
+               folder (and only this folder), and upload it to 
+               continue in the process."),
+        tags$h4("LOCAL MODE NOTE :"),
+        tags$p("If you are using local mode, you can
+                do it directly in your folders, without zipping
+                and unzipping, nor downloading or uploading."),
+        tags$p("The resulting sorted training set must be putted
+                in the TS_Sorted folder. You can then refresh
+                the page to see it."),
+        tags$br(),
         
+        fluidRow(
+          
+          column(width = 5, offset = 1,
+            sidebarPanel(width = 12,
+              tags$h4("Unsorted Training Set Download :"),
+              selectInput(ns("tss_uts_select"), NULL, choices = NULL, width = "80%"),
+              shinyjs::disabled(downloadButton(ns("tss_uts_download"), "Download .zip")),
+            ),
+          ),
+          
+          column(width = 5,
+            sidebarPanel(width = 12,
+              tags$h4("Sorted Training Set Upload :"),
+              fileInput(ns("tss_sts_upload"), "Upload .zip", multiple = FALSE),
+            ),
+          ),
+        ),
       ),
+
+# Training Set Visualisation UI ----------------------------------------------
 
       tabPanel("Visualisation",
         
@@ -58,6 +98,8 @@ mod_page_training_sets_server <- function(id, all_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    # Taille max pour upload :
+    options(shiny.maxRequestSize=30*1024^2)
     # Variable : timer pour enclencher de la réactivité
     timer <- reactiveTimer(3000)
     
@@ -94,14 +136,16 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
-    # Mise à jour de la sélection du training set non trié pour voir son contenu
+    # Mise à jour de la sélection du training set non trié pour voir son contenu +++ Training Set Sorting !!!
     observe({
       # Si tsp_unsorted_list() change et qu'il est non vide, alors on affiche les ts non triés
       if (length(tsp_unsorted_list()) > 0) {
         updateSelectInput(session, "tsp_folder_select", "Training Set folder's content :", choices = tsp_unsorted_list())
+        updateSelectInput(session, "tss_uts_select", NULL, choices = tsp_unsorted_list())
       # Si pas, alors on affiche rien
       } else {
         updateSelectInput(session, "tsp_folder_select", "Training Set folder's content :", choices = "No unsorted Training Set yet")
+        updateSelectInput(session, "tss_uts_select", NULL, choices = "No unsorted Training Set yet")
       }
     })
     
@@ -142,6 +186,63 @@ mod_page_training_sets_server <- function(id, all_vars){
         tsp_selected_path <- fs::path(tsp_unsorted_folder_path(), req(input$tsp_folder_select))
         list.files(tsp_selected_path)
       }
+    })
+    
+# Training Set Sorting Server ---------------------------------------------
+    
+    # Download : Training Set non trié
+    output$tss_uts_download <- downloadHandler(
+      filename = function() {
+        # Le fichier s'appellera :
+        paste(input$tss_uts_select, ".zip", sep = "")
+      },
+      content = function(file) {
+        # Ce qui doit être téléchargé est :
+        zip(zipfile = file, files = fs::path(tsp_unsorted_folder_path(), input$tss_uts_select)) # ! Problème !
+      }
+    )
+    
+    # Si le training set séléctionné est bon on peut le télécharger sinon le bouton est désactivé
+    observe({
+      if (data_folder_path_rea() != "" && input$tss_uts_select != "No unsorted Training Set yet") {
+        shinyjs::enable("tss_uts_download")
+      } else {
+        shinyjs::disable("tss_uts_download")
+      }
+    })
+    
+    # Variable : chemin du dossier TS_Sorted
+    tss_sorted_folder_path <- reactive({
+      fs::path(data_folder_path_rea(),"TS_Sorted")
+    })
+    
+    # Upload : Training Set trié
+    observeEvent( input$tss_sts_upload, {
+      
+      # Besoin d'un data_folder_path non nul
+      req(data_folder_path_rea())
+      
+      # Désactive le bouton upload, pour ne pas surcharger
+      shinyjs::disable("tss_sts_upload")
+      
+      # Mise en place d'une variable pour récupérer les données dans la table,
+      # et test du contenu de celle-ci
+      tss_sts_upload <- input$tss_sts_upload
+      if ( is.null(tss_sts_upload) )
+        return()
+      
+      # "Copie" du fichier rentrant, pour le stocker dans le système
+      file.copy(tss_sts_upload$datapath, fs::path(tss_sorted_folder_path(), tss_sts_upload$name))
+      unzip(fs::path(tss_sorted_folder_path(), tss_sts_upload$name)) # ! Problème !
+      
+      # Réactive le bouton upload, une fois que tout est fini
+      shinyjs::enable("tss_sts_upload")
+    })
+    
+    # Variable : liste des training sets triés
+    tss_sorted_list <- reactive({
+      timer()
+      list.files(tss_sorted_folder_path())
     })
     
   })

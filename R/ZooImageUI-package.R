@@ -13,6 +13,7 @@
 #' @importFrom fs path
 #' @importFrom ggplot2 ggplot
 #' @import rlang
+#' @import shinyjs
 #' @import shinythemes
 #' @importFrom stringr str_replace_all
 #' @importFrom utils head read.csv

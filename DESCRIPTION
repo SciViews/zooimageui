@@ -17,6 +17,7 @@ Imports:
     htmltools,
     processx,
     shiny (>= 1.7.1),
+    shinyjs,
     shinythemes,
     stringr,
     zooimage,
