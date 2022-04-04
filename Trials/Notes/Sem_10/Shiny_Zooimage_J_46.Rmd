@@ -1,0 +1,19 @@
+---
+title: "Shiny_Zooimage_J_46"
+output: html_document
+---
+
+Fichier de notes du jour 56. Lundi 04 avril 2022.   Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais continuer à ajouter du contenu à mon application.
+
+Il faut : \
+ - Remettre en place le manual sorting \
+ - Mettre en place un système permettant de créer un classifieur via un script \
+ - Pouvoir utiliser ce classifieur \
+ 
+ 
