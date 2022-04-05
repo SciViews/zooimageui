@@ -10,7 +10,7 @@
 #' @name ZooImageUI-package
 #' 
 #' 
-#' @importFrom fs path
+#' @import fs
 #' @importFrom ggplot2 ggplot
 #' @import rlang
 #' @import shinyjs

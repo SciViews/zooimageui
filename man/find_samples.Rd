@@ -16,8 +16,6 @@ The names of the samples' folders from a vector of names
 Find the names of Samples Folders in a given path
 }
 \examples{
-sample_folder_content <- list.files(system.file("example","Samples", package = "ZooImageUI")) 
-# Attention qu'ici, il vaudrait mieux utiliser un dossier du package, en 
-# utilisant des données échantillon du package
+sample_folder_content <- list.files(system.file("example","Samples", package = "ZooImageUI"))
 find_samples(sample_folder_content)
 }

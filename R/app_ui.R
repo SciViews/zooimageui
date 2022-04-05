@@ -23,6 +23,7 @@ app_ui <- function(request) {
                        
               # Page dans laquelle je peux définir et voir le dossier qui contient mes données
               tabPanel("Settings",
+                h3("Settings"),
                 mod_page_settings_ui("page_settings_ui_1")
               ),
               

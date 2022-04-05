@@ -8,9 +8,7 @@
 #' @export
 #'
 #' @examples
-#' sample_folder_content <- list.files(system.file("example","Samples", package = "ZooImageUI")) 
-#' # Attention qu'ici, il vaudrait mieux utiliser un dossier du package, en 
-#' # utilisant des données échantillon du package
+#' sample_folder_content <- list.files(system.file("example","Samples", package = "ZooImageUI"))
 #' find_samples(sample_folder_content)
 find_samples <- function(sample_folder_content) {
   smps <- sample_folder_content[!grepl("Description.zis", sample_folder_content)]

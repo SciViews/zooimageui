@@ -1,0 +1,22 @@
+---
+title: "Shiny_Zooimage_J_47"
+output: html_document
+---
+
+Fichier de notes du jour 47. Mardi 05 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai mis en place le système permettant de créer un training set depuis le mode server. \
+Quand on crée un training set, ça le télécharge directement, et le supprime ensuite pour \
+ne pas garder un training set non trié sur le server. \
+
+J'ai créé une fonction que je vais tester pour voir si elle fonctionne. \
+Elle est sensé vérifier et corriger le nom du training set que je souhaite utiliser. \
+
+Je vais rajouter également un affichage des training sets existants sur le server. \
+
+Ma fonction, fonctionne, par contre j'ai un problème lié au setwd() \
+Je remarque qu'en fait elle ne retourne pas comme elle devrait au oldir ... \
