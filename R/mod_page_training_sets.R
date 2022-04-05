@@ -74,9 +74,6 @@ mod_page_training_sets_ui <- function(id){
               checkboxGroupInput(ns("stsp_zidbs"), label = "" , choices = NULL),
               selectInput(ns("stsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
               shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download .zip")),
-              tags$br(),
-              tags$h5("Existing Training Sets :"),
-              textOutput(ns("stsp_existing_show")),
             ),
           ),
           
@@ -84,6 +81,8 @@ mod_page_training_sets_ui <- function(id){
             sidebarPanel(width = 12,
               tags$h4("Sorted Training Set Upload :"),
               fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
+              tags$h5("Existing Training Sets :"),
+              verbatimTextOutput(ns("stsp_existing_show")),
             ),
           ),
         ),
@@ -263,7 +262,13 @@ mod_page_training_sets_server <- function(id, all_vars){
       
       # "Copie" du fichier rentrant, pour le stocker dans le système
       file.copy(stsp_ts_up$datapath, fs::path(ts_folder_path(), stsp_ts_up$name))
-      unzip(fs::path(ts_folder_path(), stsp_ts_up$name)) # ! Problème !
+      
+      # Changement de dossier pour unzipper correctement
+      oldir <- setwd(ts_folder_path())
+      # A la fin, retour à lancien dossier de travail
+      on.exit(unlink(stsp_ts_up$name))
+      on.exit(setwd(oldir), add = TRUE, after = TRUE)
+      unzip(stsp_ts_up$name)
       
       # Réactive le bouton upload, une fois que tout est fini
       shinyjs::enable("stsp_ts_up")

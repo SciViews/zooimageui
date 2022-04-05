@@ -29,3 +29,10 @@ J'ai fait une vérification du R command Check => Tout est en ordre à présent.
 Attention que shinyjs importe spécifiquement ses fonctions (pour ne pas se confondre avec zooimage) \
 
 Je vais à présent introduire le système pour voir l'état du tri pour le mode local et l'upload du mode server. \
+
+J'ai remis le système d'upload de training set pour le mode server. \
+Quand on upload, cela le met dans le bon dossier, l'unzip, et supprime l'archive. \
+
+Utilisation de on.exit() \
+
+=> Mettre le système pour voir l'état de tri et des éléments dans la partie visualisation. \
