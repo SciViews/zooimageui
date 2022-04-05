@@ -33,16 +33,23 @@ mod_page_training_sets_ui <- function(id){
           sidebarPanel(
             tags$h4("Training Set Preparation"),
             textInput(ns("ltsp_name"), "Name of the new Training Set"),
+            # Choix des zidbs
             checkboxGroupInput(ns("ltsp_zidbs"), label = "" , choices = NULL),
+            # Choix du template ziclass
             selectInput(ns("ltsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
-            actionButton(ns("ltsp_prepare"), "Prepare Training Set"),
+            # Préparer le training set (désactivé de base)
+            shinyjs::disabled(actionButton(ns("ltsp_prepare"), "Prepare Training Set")),
           ),
           
           # Affichage des training sets existants
           mainPanel(
             tags$h4("Existing Training Sets"),
+            # Affichage des training sets existants
             verbatimTextOutput(ns("ltsp_existing_show")),
+            # Choix du training set pour voir le contenu
             selectInput(ns("ltsp_folder_select"), "Training Set folder's content :", choices = NULL ),
+            # Actualiser les choix car sinon ça changerais toutes les 3 secondes
+            actionButton(ns("ltsp_refresh"), "Refresh"),
             verbatimTextOutput(ns("ltsp_folder_content")),
           )
           
@@ -71,8 +78,11 @@ mod_page_training_sets_ui <- function(id){
             sidebarPanel(width = 12,
               tags$h4("Training Set preparation :"),
               textInput(ns("stsp_name"), "Name of the new Training Set"),
+              # Choix des zidbs
               checkboxGroupInput(ns("stsp_zidbs"), label = "" , choices = NULL),
+              # Choix du template ziclass
               selectInput(ns("stsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
+              # Préparer le training set (désactivé de base)
               shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download .zip")),
             ),
           ),
@@ -80,6 +90,7 @@ mod_page_training_sets_ui <- function(id){
           column(width = 5,
             sidebarPanel(width = 12,
               tags$h4("Sorted Training Set Upload :"),
+              # Upload du training set trié
               fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
               tags$h5("Existing Training Sets :"),
               verbatimTextOutput(ns("stsp_existing_show")),
@@ -129,9 +140,13 @@ mod_page_training_sets_server <- function(id, all_vars){
       fs::path(data_folder_path_rea(),"Training_Sets")
     })
     
+    # Variable : Pour actualiser la liste
+    ts_list_update <- reactiveVal(0)
+    
     # Variable : liste des training sets existant
     ts_list <- reactive({
-      timer()
+      ts_list_update()
+      input$ltsp_refresh
       list.files(ts_folder_path())
     })
     
@@ -156,8 +171,8 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Mise à jour de la sélection du training set non trié pour voir son contenu
     observe({
-      # Si ts_list() change et qu'il est non vide, alors on affiche les ts non triés
-      if (length(ts_list()) > 0) {
+      # Si la liste de training sets change et qu'elle est non vide alors :
+      if (length(ts_list() > 0)) {
         # Local
         updateSelectInput(session, "ltsp_folder_select", "Training Set folder's content :", choices = ts_list())
       # Si pas, alors on affiche rien
@@ -176,21 +191,34 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
+    # Variable : nom du training set doit être correct
+    ltsp_name <- reactive({
+      cor_ts_name(input$ltsp_name, ts_list())
+    })
+    
     # Création du training set si on clique sur le bouton (et si le nom est correcte, et que des zidb sont sélectionnés)
     observeEvent( input$ltsp_prepare, {
       
-      # Vérification : Nom TS pas déjà utilisé et non vide
-      ltsp_name <- cor_ts_name(input$ltsp_name, ts_list())
-      
-      req( ltsp_name , length( input$ltsp_zidbs ) > 0)
+      # Test si nom existant et si il y a des zidbs sélectionnés
+      req( ltsp_name() , length( input$ltsp_zidbs ) > 0)
       
       # Variables : Arguments du prepareTrain
-      train_dir <- fs::path(ts_folder_path(),ltsp_name)
+      train_dir <- fs::path(ts_folder_path(),ltsp_name())
       train_files <- fs::path(Samples_folder_path(), input$ltsp_zidbs)
       train_template <- input$ltsp_template
       
       # Création du training set
       prepareTrain( traindir = train_dir, zidbfiles = train_files, template = train_template )
+      
+      # Actualise la liste des training sets
+      ts_list_update(ts_list_update()+1)
+    })
+    
+    # Si nom + zidbs correctes : on peut le créer, sinon bouton désactivé
+    observe({
+      shinyjs::disable("ltsp_prepare")
+      req(data_folder_path_rea(), ltsp_name(), input$ltsp_zidbs) 
+      shinyjs::enable("ltsp_prepare")
     })
     
     # Affichage // Contenu du training set choisi
@@ -223,6 +251,7 @@ mod_page_training_sets_server <- function(id, all_vars){
         # Remet l'ancien dossier de travail
         on.exit(setwd(oldir), add = TRUE, after = TRUE)
         
+        # Test si nom existant et si des zidbs sont sélectionnés
         req( stsp_name() , length( input$stsp_zidbs ) > 0)
         
         # Variables : Arguments du prepareTrain
@@ -269,6 +298,9 @@ mod_page_training_sets_server <- function(id, all_vars){
       on.exit(unlink(stsp_ts_up$name))
       on.exit(setwd(oldir), add = TRUE, after = TRUE)
       unzip(stsp_ts_up$name)
+      
+      # Actualise la liste des training sets
+      ts_list_update(ts_list_update()+1)
       
       # Réactive le bouton upload, une fois que tout est fini
       shinyjs::enable("stsp_ts_up")

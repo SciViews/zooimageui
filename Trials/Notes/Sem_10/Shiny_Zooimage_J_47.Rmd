@@ -36,3 +36,11 @@ Quand on upload, cela le met dans le bon dossier, l'unzip, et supprime l'archive
 Utilisation de on.exit() \
 
 => Mettre le système pour voir l'état de tri et des éléments dans la partie visualisation. \
+
+=> Il y a une actualisation parasite dans l'affichage d'un training set choisi ! \
+
+Empêcher l'actualisation non contrôlée dérangeante : FAIT ! \
+Appliquer shinyjs au mode local : FAIT ! \
+Meilleur système d'actualisation de la liste des training sets : FAIT ! \
+
+
