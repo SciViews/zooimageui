@@ -20,3 +20,12 @@ Je vais rajouter également un affichage des training sets existants sur le serv
 
 Ma fonction, fonctionne, par contre j'ai un problème lié au setwd() \
 Je remarque qu'en fait elle ne retourne pas comme elle devrait au oldir ... \
+
+J'ai réussis à régler mon problème en utilisant des paramètres à on.exit() add et after : \
+        on.exit(unlink(stsp_name(), recursive = TRUE)) \
+        on.exit(setwd(oldir), add = TRUE, after = TRUE) \
+        
+J'ai fait une vérification du R command Check => Tout est en ordre à présent. \
+Attention que shinyjs importe spécifiquement ses fonctions (pour ne pas se confondre avec zooimage) \
+
+Je vais à présent introduire le système pour voir l'état du tri pour le mode local et l'upload du mode server. \

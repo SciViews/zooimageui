@@ -15,7 +15,7 @@ cor_ts_name(ts_name, ts_list)
 Correct Training Set's name or NULL.
 }
 \description{
-Check if the name is already used, or null, and if not, take off the special caracts from the name. If yes, return NULL.
+Check if the name is already used, or null, and if not, take off the special chars from the name. If yes, return NULL.
 }
 \examples{
 ts_list_ex <- c("test1","test2")

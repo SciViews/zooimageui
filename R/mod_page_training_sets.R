@@ -73,8 +73,9 @@ mod_page_training_sets_ui <- function(id){
               textInput(ns("stsp_name"), "Name of the new Training Set"),
               checkboxGroupInput(ns("stsp_zidbs"), label = "" , choices = NULL),
               selectInput(ns("stsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
-              # selectInput(ns("tss_uts_select"), NULL, choices = NULL, width = "80%"),
               shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download .zip")),
+              tags$br(),
+              tags$h5("Existing Training Sets :"),
               textOutput(ns("stsp_existing_show")),
             ),
           ),
@@ -203,11 +204,6 @@ mod_page_training_sets_server <- function(id, all_vars){
     
 # Server TS Preparation Server ---------------------------------------------
     
-    output$wdt <- renderText({
-      timer()
-      getwd()
-    })
-    
     # Variable : Nom du Training Set doit être correcte
     stsp_name <- reactive({
       cor_ts_name(input$stsp_name, ts_list())
@@ -222,7 +218,11 @@ mod_page_training_sets_server <- function(id, all_vars){
       content = function(file) {
         # Set up du dossier de travail enregistré pour remettre l'ancien
         oldir <- setwd(ts_folder_path())
-        on.exit(setwd(oldir))
+        
+        # A la fin (après l'envoi du zip) supprime le dossier et tout son contenu
+        on.exit(unlink(stsp_name(), recursive = TRUE))
+        # Remet l'ancien dossier de travail
+        on.exit(setwd(oldir), add = TRUE, after = TRUE)
         
         req( stsp_name() , length( input$stsp_zidbs ) > 0)
         
@@ -234,8 +234,6 @@ mod_page_training_sets_server <- function(id, all_vars){
         # Création du training set
         prepareTrain( traindir = train_dir, zidbfiles = train_files, template = train_template )
         
-        # A la fin (après l'envoi du zip) supprime le dossier et tout son contenu
-        on.exit(unlink(stsp_name(), recursive = TRUE))
         # Envoi du zip du training set
         return(zip(zipfile = file, files = stsp_name()))
       }
@@ -264,13 +262,16 @@ mod_page_training_sets_server <- function(id, all_vars){
         return()
       
       # "Copie" du fichier rentrant, pour le stocker dans le système
-      file.copy(stsp_ts_up$datapath, fs::path(stsp_folder_path(), stsp_ts_up$name))
-      unzip(fs::path(stsp_folder_path(), stsp_ts_up$name)) # ! Problème !
+      file.copy(stsp_ts_up$datapath, fs::path(ts_folder_path(), stsp_ts_up$name))
+      unzip(fs::path(ts_folder_path(), stsp_ts_up$name)) # ! Problème !
       
       # Réactive le bouton upload, une fois que tout est fini
       shinyjs::enable("stsp_ts_up")
     })
     
+    output$stsp_existing_show <- renderText({
+      ts_list()
+    })
     
   })
 }

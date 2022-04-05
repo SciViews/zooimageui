@@ -13,10 +13,10 @@
 #' @import fs
 #' @importFrom ggplot2 ggplot
 #' @import rlang
-#' @import shinyjs
+#' @importFrom shinyjs disabled disable enable
 #' @import shinythemes
 #' @importFrom stringr str_replace_all
-#' @importFrom utils head read.csv
+#' @importFrom utils head read.csv zip unzip
 #' @import zooimage
 #' 
 NULL

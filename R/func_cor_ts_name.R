@@ -1,6 +1,6 @@
 #' Correctify Training Set Name
 #'
-#' Check if the name is already used, or null, and if not, take off the special caracts from the name. If yes, return NULL.
+#' Check if the name is already used, or null, and if not, take off the special chars from the name. If yes, return NULL.
 #'
 #' @param ts_name Training Set's name to correct
 #' @param ts_list Vector listing the existing Training Sets
