@@ -184,8 +184,9 @@ mod_page_settings_server <- function(id){
       return(result)
     })
     
+# Communication -----------------------------------------------------------
     
-    # ===== Envoi des variables =====
+    # Préparation des variables dans un paquet
     vars <- reactiveValues(
       data_folder_path_rea = NULL,
       Samples_folder_path = NULL,
@@ -193,6 +194,7 @@ mod_page_settings_server <- function(id){
       smps = NULL,
     )
     
+    # Mise à jour des variables dans le paquet
     observe({
       vars$data_folder_path_rea <- data_folder_path_rea()
       vars$Samples_folder_path <- Samples_folder_path()
@@ -200,6 +202,7 @@ mod_page_settings_server <- function(id){
       vars$smps <- smps()
     })
     
+    # Envoi du packet qui contient toutes les variables
     return(vars)
   })
 }

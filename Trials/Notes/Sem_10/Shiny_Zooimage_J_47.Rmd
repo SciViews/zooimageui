@@ -42,5 +42,7 @@ Utilisation de on.exit() \
 Empêcher l'actualisation non contrôlée dérangeante : FAIT ! \
 Appliquer shinyjs au mode local : FAIT ! \
 Meilleur système d'actualisation de la liste des training sets : FAIT ! \
+Ajout de l'affichage de l'état d'avancement du tri pour un training set : FAIT ! \
 
+Envoi de variables depuis la page_training_sets vers le panneau fixe afin de le montrer là ! \
 

@@ -46,10 +46,12 @@ mod_page_training_sets_ui <- function(id){
             tags$h4("Existing Training Sets"),
             # Affichage des training sets existants
             verbatimTextOutput(ns("ltsp_existing_show")),
-            # Choix du training set pour voir le contenu
-            selectInput(ns("ltsp_folder_select"), "Training Set folder's content :", choices = NULL ),
             # Actualiser les choix car sinon ça changerais toutes les 3 secondes
             actionButton(ns("ltsp_refresh"), "Refresh"),
+            tags$br(),
+            tags$br(),
+            # Choix du training set pour voir le contenu
+            selectInput(ns("ltsp_folder_select"), "Training Set folder's content :", choices = NULL ),
             verbatimTextOutput(ns("ltsp_folder_content")),
           )
           
@@ -309,6 +311,23 @@ mod_page_training_sets_server <- function(id, all_vars){
     output$stsp_existing_show <- renderText({
       ts_list()
     })
+    
+# Communication -----------------------------------------------------------
+    
+    # Préparation des variables dans un paquet
+    training_sets_vars <- reactiveValues(
+      ts_list = NULL,
+      ts_folder_path = NULL,
+    )
+    
+    # Mise à jour des variables dans le paquet
+    observe({
+      training_sets_vars$ts_folder_path <- ts_folder_path()
+      training_sets_vars$ts_list <- ts_list()
+    })
+    
+    # Envoi du packet qui contient toutes les variables
+    return(training_sets_vars)
     
   })
 }

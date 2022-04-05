@@ -28,8 +28,8 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Training Sets"),
-             tags$p("- Empty 1"),
-             tags$p("- Empty 2"),
+             selectInput(ns("ts_select"), NULL, choices = NULL),
+             textOutput(ns("ts_prog_show")),
              
              tags$hr(),
              tags$h4("-> Models"),
@@ -53,13 +53,17 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Récupération Des Variables ----------------------------------------------
     
-    # settings vars
+    # settings_vars
     data_folder_path <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     Samples_folder_path <- reactive({ all_vars$settings_vars$Samples_folder_path})
     
-    # Samples_vars
+    # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
     zidb_df_nrow <- reactive({ all_vars$samples_vars$zidb_df_nrow })
+    
+    # training_sets_vars
+    ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
+    ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
     
     # Settings ----------------------------------------------------------------
     
@@ -88,19 +92,42 @@ mod_fixed_pannel_server <- function(id, all_vars){
       }
     })
     
+    # Training Sets -----------------------------------------------------------
+    
+    observe({
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "ts_select", NULL, choices = ts_list())
+      } else {
+        updateSelectInput(session, "ts_select", NULL, choices = "No Training Set yet")
+      }
+    })
+    
+    output$ts_prog_show <- renderText({
+      if (length(ts_list()) > 0) {
+        dir <- fs::path(ts_folder_path(),req(input$ts_select))
+        ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
+        ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
+        ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
+        classed_rate <- (ts_sorted_vign/ts_total_vign) * 100
+        paste("Classed rate : ",classed_rate)
+      } else {
+        "No Training Set yet"
+      }
+    })
+    
     # Communication -----------------------------------------------------------
     
-    to_Samples_vars <- reactiveValues(
+    fixed_pannel_vars <- reactiveValues(
       zidb_show = NULL,
     )
     
     observe({
-      to_Samples_vars$zidb_show <- if (req(input$zidb_show) != "No ZIDB file yet") {
+      fixed_pannel_vars$zidb_show <- if (req(input$zidb_show) != "No ZIDB file yet") {
         input$zidb_show
       }
     })
     
-    return(to_Samples_vars)
+    return(fixed_pannel_vars)
     
   })
 }

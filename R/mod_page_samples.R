@@ -209,18 +209,6 @@ mod_page_samples_server <- function(id, all_vars){
     output$zidb_plot <- renderPlot({
       plot(zidb_df()$Area, zidb_df()$Perim., xlab = "Area", ylab = "Perimeter")
     })
-    
-    
-    # - Variables à faire sortir (Pour affichage dans le panneau fixe et choix du ZIDB) :
-    zidb_vars <- reactiveValues(
-      zidb_files = NULL,
-      zidb_df_nrow = NULL,
-    )
-    
-    observe({
-      zidb_vars$zidb_files <- zidb_files()
-      zidb_vars$zidb_df_nrow <- zidb_df_nrow()
-    })
 
 # Vignettes Visualisation Server ------------------------------------------
 
@@ -297,7 +285,20 @@ mod_page_samples_server <- function(id, all_vars){
     })
     
 # Communication -----------------------------------------------------------
-
+    
+    # Variables : à faire sortir (Pour affichage dans le panneau fixe et choix du ZIDB) :
+    zidb_vars <- reactiveValues(
+      zidb_files = NULL,
+      zidb_df_nrow = NULL,
+    )
+    
+    # Mise à jour des variables du paquet
+    observe({
+      zidb_vars$zidb_files <- zidb_files()
+      zidb_vars$zidb_df_nrow <- zidb_df_nrow()
+    })
+    
+    # Envoi du paquet qui contient toutes les variables
     return(zidb_vars)
 
   })
