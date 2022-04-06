@@ -120,8 +120,8 @@ mod_fixed_pannel_server <- function(id, all_vars){
     })
     
     # Affiche si le Training Set est chargé par zooimage
+    # C'est pas trop clair si je voulais qu'il affiche No ...
     output$ts_active <- renderText({
-      return("Active : No")
       if (req(tsv_is_active()) == TRUE) {
         return("Active : Yes")
       }

@@ -112,6 +112,8 @@ mod_page_training_sets_ui <- function(id){
                # Chargement du Training Set par zooimage
                tags$h4("Getting Training Set in variable"),
                shinyjs::disabled(actionButton(ns("tsv_get_train"), "No Training Set yet")),
+               tags$h4("Visualisation of the training set's classes :"),
+               verbatimTextOutput(ns("tsv_classes")),
       )
       
     )
@@ -319,10 +321,25 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
+    # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
+    tsv_ts_classed_vign <- reactive({
+      # Si data_folder_path_rea() est non vide, et que on a sélectionné un training set
+      if (data_folder_path_rea() != "" && req(input$tsv_ts_select) != "No Training Set yet") {
+        # Préparation du chemin
+        dir <- fs::path(ts_folder_path(), input$tsv_ts_select)
+        # Comptage des vignettes totale dans le Training Set
+        ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
+        # Comptage des vignettes non classées dans le Training Set
+        ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
+        ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
+        return(ts_sorted_vign)
+      }
+    })
+    
     # Mise à jour de l'action button si un Training Set est sélectionné ou non
     observe({
-      # Si le training set est choisi : on peut le charger
-      if (req(input$tsv_ts_select) != "No Training Set yet") {
+      # Si le training set est choisi et qu'il contient des éléments classés : on peut le charger
+      if (req(input$tsv_ts_select) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
         updateActionButton(session, "tsv_get_train", paste("Get ", input$tsv_ts_select))
         shinyjs::enable("tsv_get_train") # Active le bouton
       } else {
@@ -342,9 +359,13 @@ mod_page_training_sets_server <- function(id, all_vars){
     })
     
     # Variable : pour savoir si on a un Training Set de chargé
-    tsv_is_active <- reactive({
-      req(tsv_training_set())
+    tsv_is_active <- eventReactive(tsv_training_set(), {
       return(TRUE)
+    })
+    
+    output$tsv_classes <- renderPrint({
+      req(tsv_is_active(), tsv_training_set())
+      sort(table(tsv_training_set()$Class))
     })
 
 # Communication -----------------------------------------------------------

@@ -30,3 +30,7 @@ J'ai également modifier quelques éléments dans ma page training set, en ajout
 
 Ajout de commentaires \
 
+Ajout d'un affichage des classes avec le nombre d'éléments dans celles-ci \
+
+Modifications au niveau du bouton pour getTrain car il faut qu'il y ait au moins une vignette classée : création d'une variable. \
+
