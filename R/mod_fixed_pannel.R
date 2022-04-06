@@ -28,19 +28,18 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Training Sets"),
-             selectInput(ns("ts_select"), NULL, choices = NULL),
+             tags$h5("Selected :"),
+             textOutput(ns("ts_selected")),
+             tags$h5("Progression :"),
              textOutput(ns("ts_prog_show")),
-             actionButton(ns("ts_fp_refresh"), "Refresh"),
+             tags$br(),
+             textOutput(ns("ts_active")),
              
              tags$hr(),
              tags$h4("-> Models"),
-             tags$p("- Empty 1"),
-             tags$p("- Empty 2"),
              
              tags$hr(),
              tags$h4("-> Results"),
-             tags$p("- Empty 1"),
-             tags$p("- Empty 2"),
     )
   )
 }
@@ -64,7 +63,8 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # training_sets_vars
     ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
-    ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
+    ts_selected <- reactive({ all_vars$training_sets_vars$ts_selected })
+    tsv_is_active <- reactive({ all_vars$training_sets_vars$tsv_is_active })
     
     # Settings ----------------------------------------------------------------
     
@@ -95,17 +95,20 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Training Sets -----------------------------------------------------------
     
-    observe({
-      if (length(ts_list()) > 0) {
-        updateSelectInput(session, "ts_select", NULL, choices = ts_list())
+    # Montre le Training Set sélectionné dans TS visualisation
+    output$ts_selected <- renderText({
+      if (req(ts_selected()) != "No Training Set yet") {
+        ts_selected()
       } else {
-        updateSelectInput(session, "ts_select", NULL, choices = "No Training Set yet")
+        "No Training Set yet"
       }
     })
     
+    # Affiche le nombre de vignettes classées par rapport au nombre total du training set.
+    # Si tout est en ordre, soit si un training set est sélectionné
     output$ts_prog_show <- renderText({
-      if (length(ts_list()) > 0) {
-        dir <- fs::path(ts_folder_path(),req(input$ts_select))
+      if (data_folder_path() != "" && req(ts_selected()) != "No Training Set yet") {
+        dir <- fs::path(ts_folder_path(), ts_selected())
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
@@ -116,24 +119,23 @@ mod_fixed_pannel_server <- function(id, all_vars){
       }
     })
     
+    # Affiche si le Training Set est chargé par zooimage
+    output$ts_active <- renderText({
+      return("Active : No")
+      if (req(tsv_is_active()) == TRUE) {
+        return("Active : Yes")
+      }
+    })
+    
     # Communication -----------------------------------------------------------
     
     fixed_pannel_vars <- reactiveValues(
       zidb_show = NULL,
-      ts_fp_refresh = NULL,
-      ts_select = NULL,
     )
     
     observe({
       fixed_pannel_vars$zidb_show <- if (req(input$zidb_show) != "No ZIDB file yet") {
         input$zidb_show
-      }
-    })
-    
-    observe({
-      fixed_pannel_vars$ts_fp_refresh <- input$ts_fp_refresh
-      fixed_pannel_vars$ts_select <- if (req(input$ts_select) != "No Training Set yet") {
-        input$ts_select
       }
     })
     

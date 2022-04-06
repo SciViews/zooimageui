@@ -46,6 +46,7 @@ mod_page_training_sets_ui <- function(id){
             tags$h4("Existing Training Sets"),
             # Affichage des training sets existants
             verbatimTextOutput(ns("ltsp_existing_show")),
+            actionButton(ns("ltsp_refresh"), "Refresh"),
           )
           
         )
@@ -99,10 +100,18 @@ mod_page_training_sets_ui <- function(id){
       tabPanel("Visualisation",
                tags$br(),
                tags$h4("Training Set's content :"),
-               tags$p("*Can be selected in the fixed pannel"),
-               textOutput(ns("tsv_selected")),
+               # Choix du training set à visualiser
+               selectInput(ns("tsv_ts_select"), NULL, choices = NULL),
+               # Rafraichissement de la liste si on en rajoute manuellement
+               actionButton(ns("tsv_refresh"), "Refresh"),
                tags$br(),
+               tags$br(),
+               # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
+               tags$hr(),
+               # Chargement du Training Set par zooimage
+               tags$h4("Getting Training Set in variable"),
+               shinyjs::disabled(actionButton(ns("tsv_get_train"), "No Training Set yet")),
       )
       
     )
@@ -129,10 +138,6 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
-    
-    # fixed_pannel_vars
-    ts_fp_refresh <- reactive({ all_vars$fixed_pannel_vars$ts_fp_refresh })
-    ts_select <- reactive({ all_vars$fixed_pannel_vars$ts_select })
 
 # Variables Globales -------------------------------------------------------------
 
@@ -146,9 +151,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Variable : liste des training sets existant
     ts_list <- reactive({
-      ts_fp_refresh()
-      ts_list_update()
+      input$tsv_refresh
       input$ltsp_refresh
+      ts_list_update()
       list.files(ts_folder_path())
     })
     
@@ -293,35 +298,69 @@ mod_page_training_sets_server <- function(id, all_vars){
 
 # Visualisation Server ----------------------------------------------------
     
-    output$tsv_selected <- renderText({
-      if (!is.null(ts_select())) {
-        paste("Training Set selected : ", ts_select())
+    # Mise à jour du choix du Training Set
+    observe({
+      # si liste de ts non vide
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "tsv_ts_select", NULL, choices = ts_list())
+      } else {
+        updateSelectInput(session, "tsv_ts_select", NULL, choices = "No Training Set yet")
+      }
+    })
+    
+    # Affichage // Contenu du Training Set sélectionné
+    output$tsv_ts_content <- renderPrint({
+      # Si le training set est choisi : on affiche le contenu
+      if (req(input$tsv_ts_select != "No Training Set yet")) {
+        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+        list.files(path)
       } else {
         "No Training Set yet"
       }
     })
     
-    output$tsv_ts_content <- renderPrint({
-      if (!is.null(ts_select())) {
-        path <- fs::path(ts_folder_path(),ts_select())
-        list.files(path)
+    # Mise à jour de l'action button si un Training Set est sélectionné ou non
+    observe({
+      # Si le training set est choisi : on peut le charger
+      if (req(input$tsv_ts_select) != "No Training Set yet") {
+        updateActionButton(session, "tsv_get_train", paste("Get ", input$tsv_ts_select))
+        shinyjs::enable("tsv_get_train") # Active le bouton
       } else {
-        "No Training Set yet"
+        updateActionButton(session, "tsv_get_train", paste("No Training Set yet"))
+        shinyjs::disable("tsv_get_train") # Désactive le bouton
       }
+    })
+    
+    # Chargement du Training Set si appui sur le bouton
+    tsv_training_set <- eventReactive(input$tsv_get_train, {
+      path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+      train <- getTrain(path)
+      # Il y a un problème avec cette version de zooimage, il faut changer
+      # manuellement la class du Training Set pour qu'il soit en facteur
+      train$Class <- factor(train$Class, levels = basename(attr(train, "path")))
+      return(train)
+    })
+    
+    # Variable : pour savoir si on a un Training Set de chargé
+    tsv_is_active <- reactive({
+      req(tsv_training_set())
+      return(TRUE)
     })
 
 # Communication -----------------------------------------------------------
     
     # Préparation des variables dans un paquet
     training_sets_vars <- reactiveValues(
-      ts_list = NULL,
       ts_folder_path = NULL,
+      ts_selected = NULL,
+      tsv_is_active = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       training_sets_vars$ts_folder_path <- ts_folder_path()
-      training_sets_vars$ts_list <- ts_list()
+      training_sets_vars$ts_selected <- input$tsv_ts_select
+      training_sets_vars$tsv_is_active <- tsv_is_active()
     })
     
     # Envoi du packet qui contient toutes les variables

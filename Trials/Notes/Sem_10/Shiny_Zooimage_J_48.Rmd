@@ -20,3 +20,13 @@ Je pense savoir comment faire, en fait grâce à zooimage. \
 Problème : j'ai essayé de faire un sous module, mais j'ai eu des problèmes d'identifiants, donc j'ai abandonné l'idée pour le moment, pour avancer. \
 
 Je vais mettre en place la visualisation \
+
+J'ai fait un gros paquet de modifications !!! \
+
+J'ai changé mon panneau fixe pour y enlever le choix du training set à visualiser \
+On peut maintenant juste voir des informations telle que : quel training set est choisi, ou encore quel est l'état d'avancement de ce dernier, et est-il chargé par la fonction getTrain de zooimage ? \
+
+J'ai également modifier quelques éléments dans ma page training set, en ajoutant différents éléments notamment le chargement d'un training set, l'affichage du contenu. \
+
+Ajout de commentaires \
+
