@@ -10,3 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 J'ai rajouté à mon panneau fixe un bouton pour rafraichir la liste des training sets. \
+
+J'ai essayé de regarder comment faire un affichage dans un tableau des différentes classes, avec le nombre d'éléments, mais j'ai du mal à me faire une idée de l'aperçu. \
+
+J'essaie de regarder pour mettre l'affichage du contenu d'un training set que ça soit pour le local ou le server. \
+
+Je pense savoir comment faire, en fait grâce à zooimage. \
+
+Problème : j'ai essayé de faire un sous module, mais j'ai eu des problèmes d'identifiants, donc j'ai abandonné l'idée pour le moment, pour avancer. \
+
+Je vais mettre en place la visualisation \

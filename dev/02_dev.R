@@ -20,7 +20,7 @@ usethis::use_package( "thinkr" )
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "page_results" ) # Name of the module
-golem::add_module( name = "page_models" ) # Name of the module
+golem::add_module( name = "ts_visualisation" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*

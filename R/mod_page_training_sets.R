@@ -46,13 +46,6 @@ mod_page_training_sets_ui <- function(id){
             tags$h4("Existing Training Sets"),
             # Affichage des training sets existants
             verbatimTextOutput(ns("ltsp_existing_show")),
-            # Actualiser les choix car sinon ça changerais toutes les 3 secondes
-            actionButton(ns("ltsp_refresh"), "Refresh"),
-            tags$br(),
-            tags$br(),
-            # Choix du training set pour voir le contenu
-            selectInput(ns("ltsp_folder_select"), "Training Set folder's content :", choices = NULL ),
-            verbatimTextOutput(ns("ltsp_folder_content")),
           )
           
         )
@@ -104,9 +97,12 @@ mod_page_training_sets_ui <- function(id){
 # Training Set Visualisation UI ----------------------------------------------
 
       tabPanel("Visualisation",
-        h4("Visualise unsported or sorted ?"),
-        selectInput(ns("tsv_unsorted_or_sorted"), label = NULL, choices = c("Unsorted", "Sorted")),
-        
+               tags$br(),
+               tags$h4("Training Set's content :"),
+               tags$p("*Can be selected in the fixed pannel"),
+               textOutput(ns("tsv_selected")),
+               tags$br(),
+               verbatimTextOutput(ns("tsv_ts_content")),
       )
       
     )
@@ -125,7 +121,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Variable : timer pour enclencher de la réactivité
     timer <- reactiveTimer(3000)
     
-    # Récupération Des Variables ----------------------------------------------
+# Récupération Des Variables ----------------------------------------------
     
     # settings_vars
     data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
@@ -136,9 +132,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # fixed_pannel_vars
     ts_fp_refresh <- reactive({ all_vars$fixed_pannel_vars$ts_fp_refresh })
+    ts_select <- reactive({ all_vars$fixed_pannel_vars$ts_select })
 
-
-# Global Vars -------------------------------------------------------------
+# Variables Globales -------------------------------------------------------------
 
     # Variable : Chemin du dossier des ts
     ts_folder_path <- reactive({
@@ -175,19 +171,6 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
-    # Mise à jour de la sélection du training set non trié pour voir son contenu
-    observe({
-      # Si la liste de training sets change et qu'elle est non vide alors :
-      if (length(ts_list() > 0)) {
-        # Local
-        updateSelectInput(session, "ltsp_folder_select", "Training Set folder's content :", choices = ts_list())
-      # Si pas, alors on affiche rien
-      } else {
-        # Local
-        updateSelectInput(session, "ltsp_folder_select", "Training Set folder's content :", choices = "No Training Set yet")
-      }
-    })
-    
     # Affichage // Liste des training sets existants Local
     output$ltsp_existing_show <- renderPrint ({
       if (length(ts_list()) > 0) {
@@ -220,19 +203,11 @@ mod_page_training_sets_server <- function(id, all_vars){
       ts_list_update(ts_list_update()+1)
     })
     
-    # Si nom + zidbs correctes : on peut le créer, sinon bouton désactivé
+    # shinyjs : Si nom + zidbs correctes : on peut le créer, sinon bouton désactivé
     observe({
       shinyjs::disable("ltsp_prepare")
       req(data_folder_path_rea(), ltsp_name(), input$ltsp_zidbs) 
       shinyjs::enable("ltsp_prepare")
-    })
-    
-    # Affichage // Contenu du training set choisi
-    output$ltsp_folder_content <- renderPrint({
-      if (length(ts_list()) > 0) {
-        ltsp_selected_path <- fs::path(ts_folder_path(), req(input$ltsp_folder_select))
-        list.files(ltsp_selected_path)
-      }
     })
     
 # Server TS Preparation Server ---------------------------------------------
@@ -273,7 +248,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     )
     
-    # Si nom + zidbs correctes : on peut le créer et télécharger sinon le bouton est désactivé
+    # shinyjs : Si nom + zidbs correctes : on peut le créer et télécharger sinon le bouton est désactivé
     observe({
       shinyjs::disable("stsp_ts_dl")
       req(data_folder_path_rea(), stsp_name(), input$stsp_zidbs) 
@@ -315,7 +290,26 @@ mod_page_training_sets_server <- function(id, all_vars){
     output$stsp_existing_show <- renderPrint({
       ts_list()
     })
+
+# Visualisation Server ----------------------------------------------------
     
+    output$tsv_selected <- renderText({
+      if (!is.null(ts_select())) {
+        paste("Training Set selected : ", ts_select())
+      } else {
+        "No Training Set yet"
+      }
+    })
+    
+    output$tsv_ts_content <- renderPrint({
+      if (!is.null(ts_select())) {
+        path <- fs::path(ts_folder_path(),ts_select())
+        list.files(path)
+      } else {
+        "No Training Set yet"
+      }
+    })
+
 # Communication -----------------------------------------------------------
     
     # Préparation des variables dans un paquet

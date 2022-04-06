@@ -121,6 +121,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     fixed_pannel_vars <- reactiveValues(
       zidb_show = NULL,
       ts_fp_refresh = NULL,
+      ts_select = NULL,
     )
     
     observe({
@@ -131,6 +132,9 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     observe({
       fixed_pannel_vars$ts_fp_refresh <- input$ts_fp_refresh
+      fixed_pannel_vars$ts_select <- if (req(input$ts_select) != "No Training Set yet") {
+        input$ts_select
+      }
     })
     
     return(fixed_pannel_vars)
