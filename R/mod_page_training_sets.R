@@ -108,9 +108,6 @@ mod_page_training_sets_ui <- function(id){
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
-               # Chargement du Training Set par zooimage
-               tags$h4("Loading sorted Training Set for further analysis :"),
-               shinyjs::disabled(actionButton(ns("tsv_get_train"), "No Training Set yet")),
                tags$h4("Visualisation of the training set's classes :"),
                verbatimTextOutput(ns("tsv_classes")),
       )
@@ -335,28 +332,19 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
-    # Mise à jour de l'action button si un Training Set est sélectionné ou non
-    observe({
-      # Si le training set est choisi et qu'il contient des éléments classés : on peut le charger
+    # Chargement du Training Set si appui sur le bouton
+    tsv_training_set <- reactive({
       if (req(input$tsv_ts_select) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
-        updateActionButton(session, "tsv_get_train", paste("Get ", input$tsv_ts_select))
-        shinyjs::enable("tsv_get_train") # Active le bouton
-      } else {
-        updateActionButton(session, "tsv_get_train", paste("No Training Set ready"))
-        shinyjs::disable("tsv_get_train") # Désactive le bouton
+        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+        train <- getTrain(path)
+        # Il y a un problème avec cette version de zooimage, il faut changer
+        # manuellement la class du Training Set pour qu'il soit en facteur
+        train$Class <- factor(train$Class, levels = basename(attr(train, "path")))
+        return(train)
       }
     })
     
-    # Chargement du Training Set si appui sur le bouton
-    tsv_training_set <- eventReactive(input$tsv_get_train, {
-      path <- fs::path(ts_folder_path(), input$tsv_ts_select)
-      train <- getTrain(path)
-      # Il y a un problème avec cette version de zooimage, il faut changer
-      # manuellement la class du Training Set pour qu'il soit en facteur
-      train$Class <- factor(train$Class, levels = basename(attr(train, "path")))
-      return(train)
-    })
-    
+    # Affichage // classes du Training Set
     output$tsv_classes <- renderPrint({
       req(tsv_training_set())
       sort(table(tsv_training_set()$Class))

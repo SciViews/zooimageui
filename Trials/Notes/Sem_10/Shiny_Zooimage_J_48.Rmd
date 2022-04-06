@@ -34,6 +34,11 @@ Ajout d'un affichage des classes avec le nombre d'éléments dans celles-ci \
 
 Modifications au niveau du bouton pour getTrain car il faut qu'il y ait au moins une vignette classée : création d'une variable. \
 
+J'ai changé les titres des onglets, et j'ai également fait en sorte que le getTrain se réalise directement si on sélectionne un Training Set. Il ne se fait que si le Training Set est correcte. \
+
+
+
+
 Notes de discussion : \
 
 ? modules dans modules ?
