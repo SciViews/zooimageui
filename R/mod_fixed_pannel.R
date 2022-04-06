@@ -30,6 +30,7 @@ mod_fixed_pannel_ui <- function(id){
              tags$h4("-> Training Sets"),
              selectInput(ns("ts_select"), NULL, choices = NULL),
              textOutput(ns("ts_prog_show")),
+             actionButton(ns("ts_fp_refresh"), "Refresh"),
              
              tags$hr(),
              tags$h4("-> Models"),
@@ -109,7 +110,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
         ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
         classed_rate <- (ts_sorted_vign/ts_total_vign) * 100
-        paste("Classed rate : ",classed_rate)
+        paste("Sorted : ", ts_sorted_vign, " / ",ts_total_vign)
       } else {
         "No Training Set yet"
       }
@@ -119,12 +120,17 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     fixed_pannel_vars <- reactiveValues(
       zidb_show = NULL,
+      ts_fp_refresh = NULL,
     )
     
     observe({
       fixed_pannel_vars$zidb_show <- if (req(input$zidb_show) != "No ZIDB file yet") {
         input$zidb_show
       }
+    })
+    
+    observe({
+      fixed_pannel_vars$ts_fp_refresh <- input$ts_fp_refresh
     })
     
     return(fixed_pannel_vars)

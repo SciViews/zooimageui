@@ -133,6 +133,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
+    
+    # fixed_pannel_vars
+    ts_fp_refresh <- reactive({ all_vars$fixed_pannel_vars$ts_fp_refresh })
 
 
 # Global Vars -------------------------------------------------------------
@@ -147,6 +150,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Variable : liste des training sets existant
     ts_list <- reactive({
+      ts_fp_refresh()
       ts_list_update()
       input$ltsp_refresh
       list.files(ts_folder_path())
@@ -308,7 +312,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       shinyjs::enable("stsp_ts_up")
     })
     
-    output$stsp_existing_show <- renderText({
+    output$stsp_existing_show <- renderPrint({
       ts_list()
     })
     

@@ -1,0 +1,12 @@
+---
+title: "Shiny_Zooimage_J_48"
+output: html_document
+---
+
+Fichier de notes du jour 48. Mercredi 06 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai rajouté à mon panneau fixe un bouton pour rafraichir la liste des training sets. \
