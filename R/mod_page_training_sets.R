@@ -16,7 +16,7 @@ mod_page_training_sets_ui <- function(id){
       
 # Local TS Preparation UI ------------------------------------------------
       
-      tabPanel("Local TS Preparation",
+      tabPanel("Prepare Local Training Set",
         tags$br(),
         tags$h4("LOCAL MODE NOTE :"),
         tags$p("If you are using local mode, you can
@@ -54,7 +54,7 @@ mod_page_training_sets_ui <- function(id){
 
 # Server TS Preparation UI ----------------------------------------------------
 
-      tabPanel("Server TS Preparation",
+      tabPanel("Prepare Server Training Set",
                
         # Présentation
         tags$br(),
@@ -65,7 +65,6 @@ mod_page_training_sets_ui <- function(id){
                good folders. You can then zip the training set 
                folder (and only this folder), and upload it to 
                continue in the process."),
-        textOutput(ns("wdt")),
         tags$br(),
         
         fluidRow(
@@ -103,14 +102,14 @@ mod_page_training_sets_ui <- function(id){
                # Choix du training set à visualiser
                selectInput(ns("tsv_ts_select"), NULL, choices = NULL),
                # Rafraichissement de la liste si on en rajoute manuellement
-               actionButton(ns("tsv_refresh"), "Refresh"),
+               actionButton(ns("tsv_refresh"), "Refresh the list"),
                tags$br(),
                tags$br(),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
                # Chargement du Training Set par zooimage
-               tags$h4("Getting Training Set in variable"),
+               tags$h4("Loading sorted Training Set for further analysis :"),
                shinyjs::disabled(actionButton(ns("tsv_get_train"), "No Training Set yet")),
                tags$h4("Visualisation of the training set's classes :"),
                verbatimTextOutput(ns("tsv_classes")),
@@ -343,7 +342,7 @@ mod_page_training_sets_server <- function(id, all_vars){
         updateActionButton(session, "tsv_get_train", paste("Get ", input$tsv_ts_select))
         shinyjs::enable("tsv_get_train") # Active le bouton
       } else {
-        updateActionButton(session, "tsv_get_train", paste("No Training Set yet"))
+        updateActionButton(session, "tsv_get_train", paste("No Training Set ready"))
         shinyjs::disable("tsv_get_train") # Désactive le bouton
       }
     })
@@ -358,13 +357,8 @@ mod_page_training_sets_server <- function(id, all_vars){
       return(train)
     })
     
-    # Variable : pour savoir si on a un Training Set de chargé
-    tsv_is_active <- eventReactive(tsv_training_set(), {
-      return(TRUE)
-    })
-    
     output$tsv_classes <- renderPrint({
-      req(tsv_is_active(), tsv_training_set())
+      req(tsv_training_set())
       sort(table(tsv_training_set()$Class))
     })
 
@@ -374,14 +368,12 @@ mod_page_training_sets_server <- function(id, all_vars){
     training_sets_vars <- reactiveValues(
       ts_folder_path = NULL,
       ts_selected = NULL,
-      tsv_is_active = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       training_sets_vars$ts_folder_path <- ts_folder_path()
       training_sets_vars$ts_selected <- input$tsv_ts_select
-      training_sets_vars$tsv_is_active <- tsv_is_active()
     })
     
     # Envoi du packet qui contient toutes les variables

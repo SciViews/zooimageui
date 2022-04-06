@@ -34,3 +34,59 @@ Ajout d'un affichage des classes avec le nombre d'éléments dans celles-ci \
 
 Modifications au niveau du bouton pour getTrain car il faut qu'il y ait au moins une vignette classée : création d'une variable. \
 
+Notes de discussion : \
+
+? modules dans modules ?
+? faire quelque chose si variable est NULL ?
+
+Détecter pour l'upload si :
+
+- Même nom
+- Upload d'un mauvais fichier (par exemple pas zippé)
+- Vérifier si le training set a une structure correcte
+
+=> Déziper dans un dossier temporarie + Vérifier que tout est bon + Mettre dans le bon dossier que si c'est correcte + mettre un message si jamais il y a erreur
+
+
+Upload du fichier : fonction \
+   -> gérer le zippage ou dézippage \
+   -> test avec getTrain \
+
+Si ça fonctionne : on a un training set en plus \
+Si ça fonctionne pas : il faut envoyer un message d'erreur qui doit pouvoir être traité \
+
+
+getTrain renvoie de manière invisible FALSE
+
+
+--- Gestion erreurs : \
+Dans un premier temps, avoir un système pour traiter les erreurs, sans s'occuper de l'erreur que c'est \
+
+Ensuite, dans les options : Tester les différentes erreurs, et informer sur l'erreur dont il s'agit \
+
+On pourrait aussi imaginer, si ça marche, envoyer d'autres informations comme le chemin d'accès \
+
+-> Script R exemple
+
+--- Titres onglets : \
+Prepare Local TS \
+Prepare Server TS \
+Choose TS \
+
+--- Simplifier : \
+getTrain directement en sélectionnant le Training Set \
+
+
+--- Models : \
+Liste de modèles correspondants aux scripts disponibles : \
+
+Sélection d'un modèle : si Ts sélectionné : calcul le modèle et donne les statistiques relatives \
+                        si pas TS sélectionné : Rien \
+
+
+--- Résumé : \
+=> Toujours séparer les fonctions de l'interface \
+=> Simplifier l'interface \
+
+
+=> Finir pour le 19 Avril \

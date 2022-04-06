@@ -32,8 +32,6 @@ mod_fixed_pannel_ui <- function(id){
              textOutput(ns("ts_selected")),
              tags$h5("Progression :"),
              textOutput(ns("ts_prog_show")),
-             tags$br(),
-             textOutput(ns("ts_active")),
              
              tags$hr(),
              tags$h4("-> Models"),
@@ -64,7 +62,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
     # training_sets_vars
     ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
     ts_selected <- reactive({ all_vars$training_sets_vars$ts_selected })
-    tsv_is_active <- reactive({ all_vars$training_sets_vars$tsv_is_active })
     
     # Settings ----------------------------------------------------------------
     
@@ -116,14 +113,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
         paste("Sorted : ", ts_sorted_vign, " / ",ts_total_vign)
       } else {
         "No Training Set yet"
-      }
-    })
-    
-    # Affiche si le Training Set est chargé par zooimage
-    # C'est pas trop clair si je voulais qu'il affiche No ...
-    output$ts_active <- renderText({
-      if (req(tsv_is_active()) == TRUE) {
-        return("Active : Yes")
       }
     })
     
