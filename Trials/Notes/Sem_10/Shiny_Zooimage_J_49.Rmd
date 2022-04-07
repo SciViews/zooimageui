@@ -1,0 +1,19 @@
+---
+title: "Shiny_Zooimage_J_49"
+output: html_document
+---
+
+Fichier de notes du jour 49. Jeudi 07 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais commencer par essayer le système gestion d'erreurs.
+
+J'ai fait des tests d'une fonction qui unzip et unlink, et renvoie des messages d'erreur si jamais ça plante. \
+
+Après avoir plus ou moins compris comment cela fonctionne, j'ai essayé de me lancer dans la création de ma fonction pour l'upload. \
+J'ai donc écrit cette fonction mais je ne suis pas sûr qu'elle va fonctionner. \
+
+Je lui ai également mis un squelette roxygen \

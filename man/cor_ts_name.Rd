@@ -12,7 +12,7 @@ cor_ts_name(ts_name, ts_list)
 \item{ts_list}{Vector listing the existing Training Sets}
 }
 \value{
-Correct Training Set's name or NULL.
+Correct Training Set's name or NULL
 }
 \description{
 Check if the name is already used, or null, and if not, take off the special chars from the name. If yes, return NULL.
@@ -21,6 +21,8 @@ Check if the name is already used, or null, and if not, take off the special cha
 ts_list_ex <- c("test1","test2")
 ts_name1 <- "test1"
 ts_name2 <- "test3"
+ts_name3 <- "test_4"
 cor_ts_name(ts_name1,ts_list_ex)
 cor_ts_name(ts_name2,ts_list_ex)
+cor_ts_name(ts_name_3,ts_list_ex)
 }
