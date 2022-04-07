@@ -12,63 +12,80 @@
 #' # Need a reactive context
 upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   
+  # TEST : Input NULL ? oui -> stop et renvoie FALSE + message
   if (is.null(upload_input)) {
     res <- FALSE
     attr(res, "error") <- "File is NULL"
     return(res)
   }
   
+  # Variable : Training Sets existants
+  # Si pas NULL : ajoute l'extension .zip pour vérifier par rapport à l'input
   if (!is.null(existing_ts)) {
     existing_ts <- paste0(existing_ts, ".zip")
+  # Si NULL : met un élément vide qui permettra d'entrer n'importe quel fichier
   } else {
     existing_ts <- ""
   }
   
+  # Option : utiliser les warnings comme erreur
   op <- options(warn = 2)
   
+  # On essaie de se mettre dans le dossier de travail
   oldir <- try(setwd(ts_folder_path), silent = TRUE)
-  
-  if (grepl(".zip", upload_input$name) && !(upload_input$name %in% existing_ts)) {
-    fc_res <- try(file.copy(upload_input$datapath, upload_input$name), silent = TRUE)
-  } else {
-    res <- FALSE
-    if (!grepl(".zip", upload_input$name)) {
-      attr(res, "error") <- "File doesn't have .zip ext"
-    } else {
-      attr(res, "error") <- "Training Set's name already used"
-    }
-    setwd(oldir)
-    return(res)
-  }
-  
-  zip_res <- try(unzip(upload_input$name), silent = TRUE)
-  unlink_res <- try(unlink(upload_input$name), silent = TRUE)
+  # Si ça plante, on remet l'ancien dossier
   on.exit(setwd(oldir))
   
-  options(op)
-  
+  # TEST : Erreur ? Stop et renvoie FALSE + message
   oldir_inh <- inherits(oldir, "try-error")
-  fc_inh <- inherits(fc_res, "try-error")
-  zip_inh <- inherits(zip_res, "try-error")
-  unlink_inh <- inherits(unlink_res, "try-error")
-  
-  if (oldir_inh || fc_inh || zip_inh || unlink_inh) {
+  if (oldir_inh) {
     res <- FALSE
-    if (oldir_inh) {
-      attr(res, "error") <- attr(oldir, "condition")
-    } else if (fc_inh) {
-      attr(res, "error") <- attr(fc_res, "condition")
-    } else if (zip_inh) {
-      attr(res, "error") <- attr(zip_res, "condition")
-    } else if (unlink_inh) {
-      attr(res, "error") <- attr(unlink_res, "condition")
-    }
-    
+    attr(res, "error") <- attr(oldir, "condition")
     return(res)
-  } else {
-    return(TRUE)
   }
   
+  # TEST : Input contient ".zip" ? Oui -> stop et renvoie FALSE + message
+  if (!grepl(".zip", upload_input$name)) {
+    res <- FALSE
+    attr(res, "error") <- "File doesn't have .zip ext"
+    return(res)
+  }
+  
+  # TEST : Nom Input déjà utilisé ? Oui -> stop et renvoie FALSE + message
+  if (upload_input$name %in% existing_ts) {
+    res <- FALSE
+    attr(res, "error") <- "Training Set's name already used. If you want to update it, you should first delete it (button beneath), and then upload it again. Otherwise, name your training set differently."
+    return(res)
+  }
+  
+  # On essaie de récupérer l'Input sur le serveur
+  fc_res <- try(file.copy(upload_input$datapath, upload_input$name), silent = TRUE)
+  # TEST : Erreur ? Stop et renvoie FALSE + message
+  fc_inh <- inherits(fc_res, "try-error")
+  if (fc_inh) {
+    res <- FALSE
+    attr(res, "error") <- attr(fc_res, "condition")
+    return(res)
+  }
+  
+  # On essaie de unziper le nouveau fichier sur le serveur
+  unzip_res <- try(unzip(upload_input$name), silent = TRUE)
+  # TEST : Erreur ? Stop et renvoie FALSE + message
+  unzip_inh <- inherits(unzip_res, "try-error")
+  if (unzip_inh) {
+    res <- FALSE
+    attr(res, "error") <- attr(unzip_res, "condition")
+    return(res)
+  }
+  
+  # Enfin si tout s'est bien passé : On supprime le ZIP
+  unlink(upload_input$name)
+  
+  # Remet l'option de warning
+  options(op)
+  
+  # Renvoie TRUE si tout a fonctionné
+  return(TRUE)
 }
 
 # test <- unzip_and_unlink("get.zip")

@@ -87,8 +87,11 @@ mod_page_training_sets_ui <- function(id){
               tags$h4("Sorted Training Set Upload :"),
               # Upload du training set trié
               fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
-              verbatimTextOutput(ns("stsp_up_error"), placeholder = FALSE),
+              textOutput(ns("stsp_up_error")),
               tags$h5("Existing Training Sets :"),
+              actionButton(ns("stsp_refresh"), "Refresh"),
+              tags$br(),
+              tags$br(),
               verbatimTextOutput(ns("stsp_existing_show")),
               selectInput(ns("stsp_ts_to_delete"), "Training Set to delete :", choices = NULL),
               shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
@@ -154,6 +157,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     ts_list <- reactive({
       input$tsv_refresh
       input$ltsp_refresh
+      input$stsp_refresh
       ts_list_update()
       list.files(ts_folder_path())
     })
@@ -261,6 +265,16 @@ mod_page_training_sets_server <- function(id, all_vars){
       shinyjs::enable("stsp_ts_dl")
     })
     
+    # Mise à jour du fileInput pour ne pas pouvoir le faire quand le chemin du data folder est vide
+    observe({
+      ts_folder_path()
+      if (data_folder_path_rea() == "") {
+        shinyjs::disable("stsp_ts_up")
+      } else {
+        shinyjs::enable("stsp_ts_up")
+      }
+    })
+    
     # Upload : Training Set trié
     stsp_is_uploaded <- eventReactive( input$stsp_ts_up, {
       
@@ -281,7 +295,8 @@ mod_page_training_sets_server <- function(id, all_vars){
       return(result)
     })
     
-    output$stsp_up_error <- renderPrint({
+    # Affichage // Message d'erreur lors de l'upload ou Done ! si fonctionne
+    output$stsp_up_error <- renderText({
       if (!stsp_is_uploaded()) {
         attr(stsp_is_uploaded(), "error")
       } else {
@@ -289,10 +304,12 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
+    # Affichage des Training Sets existants
     output$stsp_existing_show <- renderPrint({
       ts_list()
     })
     
+    # Mise à jour de la sélection d'un Training Set à supprimer
     observe({
       # si liste de ts non vide
       if (length(ts_list()) > 0) {
@@ -302,6 +319,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
+    # Mise à jour du bouton delete pour empêcher la suppresion quand pas possible
     observe({
       if (req(input$stsp_ts_to_delete) != "No Training Set yet") {
         shinyjs::enable("stsp_delete")
@@ -310,6 +328,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       }
     })
     
+    # Suppression du Training Set désiré
     observeEvent(input$stsp_delete, {
       oldir <- setwd(ts_folder_path())
       on.exit(setwd(oldir))

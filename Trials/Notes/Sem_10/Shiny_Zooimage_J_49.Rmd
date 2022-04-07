@@ -29,3 +29,21 @@ Je vais essayer de rajouter une option pour supprimer un training set existant. 
 J'ai mis en place un système pour effacer un training set existant sur le serveur. \
 
 Vérifie que le nom du training set choisi existe ! \
+
+Je vais réaliser les modifications proposées par M. Grosjean : \
+
+J'ai donc changé les tests de place, pour qu'ils suivent directement la fonction qu'ils testent. \
+J'ai également rajouté des commentaires. \
+J'ai changé le on.exit(setwd()). \
+J'ai supprimé les tests pour la fonction unlink. \
+J'ai changé des explications. \
+
+Ensuite j'ai testé ma fonction dans ma page Training Set. \
+
+J'essaie de faire en sorte qu'il y ait un système qui désactive le bouton input si cela. \
+
+J'ai réussis à mettre cela en place, j'avais un petit problème de réactivité. \
+
+Je pourrais mettre ma fonction de préparation d'un training set dans une fonction. \
+
+
