@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' # Need a reactive context
-upload_ts <- function(upload_input, ts_folder_path) {
+upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   
   if (is.null(upload_input)) {
     res <- FALSE
@@ -18,21 +18,32 @@ upload_ts <- function(upload_input, ts_folder_path) {
     return(res)
   }
   
+  if (!is.null(existing_ts)) {
+    existing_ts <- paste0(existing_ts, ".zip")
+  } else {
+    existing_ts <- ""
+  }
+  
   op <- options(warn = 2)
   
   oldir <- try(setwd(ts_folder_path), silent = TRUE)
   
-  if (grepl(".zip", upload_input$name)) {
+  if (grepl(".zip", upload_input$name) && !(upload_input$name %in% existing_ts)) {
     fc_res <- try(file.copy(upload_input$datapath, upload_input$name), silent = TRUE)
   } else {
     res <- FALSE
-    attr(res, "error") <- "File doesn't have .zip ext"
+    if (!grepl(".zip", upload_input$name)) {
+      attr(res, "error") <- "File doesn't have .zip ext"
+    } else {
+      attr(res, "error") <- "Training Set's name already used"
+    }
+    setwd(oldir)
     return(res)
   }
   
-  zip_res <- try(unzip(file_path), silent = TRUE)
-  unlink_res <- try(unlink(file_path), silent = TRUE)
-  set_back_dir <- try(setwd(oldir), silent = TRUE)
+  zip_res <- try(unzip(upload_input$name), silent = TRUE)
+  unlink_res <- try(unlink(upload_input$name), silent = TRUE)
+  on.exit(setwd(oldir))
   
   options(op)
   
@@ -40,9 +51,8 @@ upload_ts <- function(upload_input, ts_folder_path) {
   fc_inh <- inherits(fc_res, "try-error")
   zip_inh <- inherits(zip_res, "try-error")
   unlink_inh <- inherits(unlink_res, "try-error")
-  set_back_dir_inh <- inherits(set_back_dir, "try-error")
   
-  if (oldir_inh || fc_inh || zip_inh || unlink_inh || set_back_dir_inh) {
+  if (oldir_inh || fc_inh || zip_inh || unlink_inh) {
     res <- FALSE
     if (oldir_inh) {
       attr(res, "error") <- attr(oldir, "condition")
@@ -52,9 +62,8 @@ upload_ts <- function(upload_input, ts_folder_path) {
       attr(res, "error") <- attr(zip_res, "condition")
     } else if (unlink_inh) {
       attr(res, "error") <- attr(unlink_res, "condition")
-    } else if (set_back_dir_inh) {
-      attr(res, "error") <- attr(set_back_dir, "condition")
     }
+    
     return(res)
   } else {
     return(TRUE)

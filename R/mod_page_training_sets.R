@@ -87,6 +87,7 @@ mod_page_training_sets_ui <- function(id){
               tags$h4("Sorted Training Set Upload :"),
               # Upload du training set trié
               fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
+              verbatimTextOutput(ns("stsp_up_error")),
               tags$h5("Existing Training Sets :"),
               verbatimTextOutput(ns("stsp_existing_show")),
             ),
@@ -259,7 +260,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     })
     
     # Upload : Training Set trié
-    observeEvent( input$stsp_ts_up, {
+    stsp_is_uploaded <- eventReactive( input$stsp_ts_up, {
       
       # Besoin d'un data_folder_path non nul
       req(data_folder_path_rea())
@@ -267,27 +268,23 @@ mod_page_training_sets_server <- function(id, all_vars){
       # Désactive le bouton upload, pour ne pas surcharger
       shinyjs::disable("stsp_ts_up")
       
-      # Mise en place d'une variable pour récupérer les données dans la table,
-      # et test du contenu de celle-ci
-      stsp_ts_up <- input$stsp_ts_up
-      if ( is.null(stsp_ts_up) )
-        return()
-      
-      # "Copie" du fichier rentrant, pour le stocker dans le système
-      file.copy(stsp_ts_up$datapath, fs::path(ts_folder_path(), stsp_ts_up$name))
-      
-      # Changement de dossier pour unzipper correctement
-      oldir <- setwd(ts_folder_path())
-      # A la fin, retour à lancien dossier de travail
-      on.exit(unlink(stsp_ts_up$name))
-      on.exit(setwd(oldir), add = TRUE, after = TRUE)
-      unzip(stsp_ts_up$name)
+      result <- upload_ts(input$stsp_ts_up, ts_folder_path(), ts_list())
       
       # Actualise la liste des training sets
       ts_list_update(ts_list_update()+1)
       
       # Réactive le bouton upload, une fois que tout est fini
       shinyjs::enable("stsp_ts_up")
+      
+      return(result)
+    })
+    
+    output$stsp_up_error <- renderPrint({
+      if (!stsp_is_uploaded()) {
+        attr(stsp_is_uploaded(), "error")
+      } else {
+        "Done !"
+      }
     })
     
     output$stsp_existing_show <- renderPrint({

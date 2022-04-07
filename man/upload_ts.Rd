@@ -4,7 +4,7 @@
 \alias{upload_ts}
 \title{Upload TS}
 \usage{
-upload_ts(upload_input, ts_folder_path)
+upload_ts(upload_input, ts_folder_path, existing_ts)
 }
 \arguments{
 \item{upload_input}{Shiny input file}

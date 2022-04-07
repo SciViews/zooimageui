@@ -17,3 +17,11 @@ Après avoir plus ou moins compris comment cela fonctionne, j'ai essayé de me l
 J'ai donc écrit cette fonction mais je ne suis pas sûr qu'elle va fonctionner. \
 
 Je lui ai également mis un squelette roxygen \
+
+J'ai mis en place ma fonction dans ma page training set et elle fonctionne. \
+
+J'ai également rajouté une vérification du nom du training set afin que cela ne se fasse pas si le training set existe déjà. \
+
+On peut voir le message d'erreur. \
+
+Je vais essayer de rajouter une option pour supprimer un training set existant. \
