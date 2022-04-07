@@ -25,3 +25,7 @@ J'ai également rajouté une vérification du nom du training set afin que cela 
 On peut voir le message d'erreur. \
 
 Je vais essayer de rajouter une option pour supprimer un training set existant. \
+
+J'ai mis en place un système pour effacer un training set existant sur le serveur. \
+
+Vérifie que le nom du training set choisi existe ! \
