@@ -1,0 +1,32 @@
+---
+title: "Shiny_Zooimage_J_50"
+output: html_document
+---
+
+Fichier de notes du jour 50. Vendredi 08 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Après midi. \
+
+Il faut absolument que je mette en place le système de script : \
+
+- Des scripts sont dans le bon répertoire \
+
+- On en voit la liste \
+
+- On peut sélectionner l'un d'entre eux et l'éxécuter et utiliser le résultat \
+
+J'ai mis en place la première page de Models. \
+
+J'ai ajouté différents éléments tels qu'un select input pour choisir le script à utiliser, des boutons, pour l'utiliser, du shinyjs, également un affichage de la liste des différents scripts qui existent. \
+
+J'ai également fait un test avec un script assez basic, pour récupérer une variable et en afficher le résultat. \
+Cela a fonctionné. \
+
+Je n'ai "plus qu'à" revoir comment fonctionne les scripts, les modèles, et à créer des scripts de tests. \
+Ensuite, mettre en place le reste de la page. \
+
+
