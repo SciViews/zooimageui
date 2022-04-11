@@ -28,8 +28,8 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Training Sets"),
-             tags$h5("Selected :"),
-             textOutput(ns("ts_selected")),
+             selectInput(ns("ts_select"), NULL, choices = "No Training Set yet"),
+             actionButton(ns("ts_refresh"), "Refresh"),
              tags$h5("Progression :"),
              textOutput(ns("ts_prog_show")),
              
@@ -61,7 +61,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # training_sets_vars
     ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
-    ts_selected <- reactive({ all_vars$training_sets_vars$ts_selected })
+    ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
     
     # Settings ----------------------------------------------------------------
     
@@ -92,22 +92,23 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Training Sets -----------------------------------------------------------
     
-    # Montre le Training Set sélectionné dans TS visualisation
-    output$ts_selected <- renderText({
-      if (req(ts_selected()) != "No Training Set yet") {
-        ts_selected()
+    # Mise à jour du sélecteur de Training Set
+    observe({
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "ts_select", NULL, choices = ts_list())
       } else {
-        "No Training Set yet"
+        updateSelectInput(session, "ts_select", NULL, "No Training Set yet")
       }
     })
     
     # Affiche le nombre de vignettes classées par rapport au nombre total du training set.
     # Si tout est en ordre, soit si un training set est sélectionné
     output$ts_prog_show <- renderText({
-      if (data_folder_path() != "" && req(ts_selected()) != "No Training Set yet") {
-        dir <- fs::path(ts_folder_path(), ts_selected())
+      if (data_folder_path() != "" && req(input$ts_select) != "No Training Set yet") {
+        dir <- fs::path(ts_folder_path(), input$ts_select)
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
-        ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
+        ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
+        if (inherits(ts_unsorted_vign, "try-error")) { return("Folder Incorrect") }
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
         classed_rate <- (ts_sorted_vign/ts_total_vign) * 100
         paste("Sorted : ", ts_sorted_vign, " / ",ts_total_vign)
@@ -120,6 +121,8 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     fixed_pannel_vars <- reactiveValues(
       zidb_show = NULL,
+      ts_select = NULL,
+      ts_refresh = NULL,
     )
     
     observe({
@@ -127,6 +130,12 @@ mod_fixed_pannel_server <- function(id, all_vars){
         input$zidb_show
       }
     })
+    
+    # Envoi du TS choisi
+    observe({ fixed_pannel_vars$ts_select <- input$ts_select })
+    
+    # Envoi du Rafraichissement de la liste
+    observe({ fixed_pannel_vars$ts_refresh <- input$ts_refresh })
     
     return(fixed_pannel_vars)
     

@@ -109,12 +109,6 @@ mod_page_training_sets_ui <- function(id){
       tabPanel("Finalisation and Visualisation",
                tags$br(),
                tags$h4("Training Set's content :"),
-               # Choix du training set à visualiser
-               selectInput(ns("tsv_ts_select"), NULL, choices = NULL),
-               # Rafraichissement de la liste si on en rajoute manuellement
-               actionButton(ns("tsv_refresh"), "Refresh the list"),
-               tags$br(),
-               tags$br(),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
@@ -147,6 +141,10 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
+    
+    # fixed_pannel_vars
+    ts_select <- reactive({ all_vars$fixed_pannel_vars$ts_select })
+    ts_refresh <- reactive({ all_vars$fixed_pannel_vars$ts_refresh })
 
 # Variables Globales -------------------------------------------------------------
 
@@ -160,7 +158,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Variable : liste des training sets existant
     ts_list <- reactive({
-      input$tsv_refresh
+      ts_refresh()
       input$ltsp_refresh
       input$stsp_refresh
       ts_list_update()
@@ -343,21 +341,11 @@ mod_page_training_sets_server <- function(id, all_vars){
 
 # Visualisation Server ----------------------------------------------------
     
-    # Mise à jour du choix du Training Set
-    observe({
-      # si liste de ts non vide
-      if (length(ts_list()) > 0) {
-        updateSelectInput(session, "tsv_ts_select", NULL, choices = ts_list())
-      } else {
-        updateSelectInput(session, "tsv_ts_select", NULL, choices = "No Training Set yet")
-      }
-    })
-    
     # Affichage // Contenu du Training Set sélectionné
     output$tsv_ts_content <- renderPrint({
       # Si le training set est choisi : on affiche le contenu
-      if (req(input$tsv_ts_select != "No Training Set yet")) {
-        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+      if (req(ts_select() != "No Training Set yet")) {
+        path <- fs::path(ts_folder_path(), ts_select())
         list.files(path)
       } else {
         "No Training Set yet"
@@ -367,22 +355,23 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     tsv_ts_classed_vign <- reactive({
       # Si data_folder_path_rea() est non vide, et que on a sélectionné un training set
-      if (data_folder_path_rea() != "" && req(input$tsv_ts_select) != "No Training Set yet") {
+      if (data_folder_path_rea() != "" && req(ts_select()) != "No Training Set yet") {
         # Préparation du chemin
-        dir <- fs::path(ts_folder_path(), input$tsv_ts_select)
+        dir <- fs::path(ts_folder_path(), ts_select())
         # Comptage des vignettes totale dans le Training Set
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         # Comptage des vignettes non classées dans le Training Set
-        ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
+        ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
+        if (inherits(ts_unsorted_vign, "try-error")) { return(NULL) }
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
         return(ts_sorted_vign)
       }
     })
     
-    # Chargement du Training Set si appui sur le bouton
+    # Chargement du Training Set si correct
     tsv_training_set <- reactive({
-      if (req(input$tsv_ts_select) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
-        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+      if (req(ts_select()) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
+        path <- fs::path(ts_folder_path(), ts_select())
         train <- getTrain(path)
         # Il y a un problème avec cette version de zooimage, il faut changer
         # manuellement la class du Training Set pour qu'il soit en facteur
@@ -403,7 +392,6 @@ mod_page_training_sets_server <- function(id, all_vars){
     training_sets_vars <- reactiveValues(
       ts_folder_path = NULL,
       ts_list = NULL,
-      ts_selected = NULL,
       ts_training_set = NULL,
     )
     
@@ -411,7 +399,6 @@ mod_page_training_sets_server <- function(id, all_vars){
     observe({
       training_sets_vars$ts_folder_path <- ts_folder_path()
       training_sets_vars$ts_list <- ts_list()
-      training_sets_vars$ts_selected <- input$tsv_ts_select
       training_sets_vars$ts_training_set <- tsv_training_set()
     })
     

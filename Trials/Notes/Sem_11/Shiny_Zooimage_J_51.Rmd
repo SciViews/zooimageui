@@ -33,6 +33,10 @@ J'ai mis en place un test pour voir si la méthode utilisée est le mlRforest \
 
 Je vais mettre en place le choix du training set à partir de l'onglet models car sinon, ce n'est pas clair \
 
+J'ai finalement mis le choix du training set dans le panneau fixe. \
+
+Je regarde également pour clarifier l'onglet models. \
+
 ----- Réunion : \
 
 Script qui crée une fonction ou qui crée des objets
