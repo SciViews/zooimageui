@@ -12,6 +12,7 @@
 #' 
 #' @import fs
 #' @importFrom ggplot2 ggplot
+#' @import mlearning
 #' @import rlang
 #' @importFrom shinyjs disabled disable enable
 #' @import shinythemes

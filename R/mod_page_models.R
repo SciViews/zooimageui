@@ -48,7 +48,12 @@ mod_page_models_ui <- function(id){
 # Visualise Classifier UI -------------------------------------------------
       
       tabPanel("Visualise Classifier",
-        
+        tags$h4("Current Classifier :"),
+        textOutput(ns("modvis_cur_clas")),
+        tags$h4("Summary of the Classifier :"),
+        verbatimTextOutput(ns("modvis_clas_sum")),
+        tags$h4("Confusion Matrix of the Classifier :"),
+        verbatimTextOutput(ns("modvis_clas_conf")),
       ),
       
     )
@@ -131,18 +136,35 @@ mod_page_models_server <- function(id, all_vars){
     })
     
     # Variable : Si on utilise le script, retourne la variable result de ce dernier
-    test <- eventReactive(input$modcre_use_selected_script, {
+    modcre_classif <- eventReactive(input$modcre_use_selected_script, {
+      
       # Variable qui prend le training set chargé pour le script
-      ts <- ts_training_set()
+      training_set <- ts_training_set()
+      
       # Il faut un local = TRUE au source afin que l'environnement utilisé soit celui de l'app
       source(fs::path(models_folder_path(), input$modcre_selected_script), local = TRUE)
-      return(classif)
+      
+      # Si la variable classif existe bien, on la renvoie
+      if (exists("classif")) {
+        attr(classif, "is_mlRforest") <- is_mlRforest
+        return(classif)
+      } else {
+        return(NULL)
+      }
     })
     
     # Affichage // Test de récupérer le résultat d'un script
     output$modcre_test <- renderPrint({
-      req(input$modcre_use_selected_script)
-      test()
+      req(modcre_classif())
+    })
+    
+    # Variable : Matrice de confusion du classifieur
+    modcre_classif_conf <- eventReactive(req(modcre_classif()), {
+      if (attr(req(modcre_classif()), "is_mlRforest")) {
+        return(confusion(modcre_classif(), predict(modcre_classif(), method = "oob")))
+      } else {
+        return(confusion(modcre_classif()))
+      }
     })
     
 # Test Classifier Server --------------------------------------------------
@@ -151,7 +173,20 @@ mod_page_models_server <- function(id, all_vars){
     
 # Visualise Classifier Server ---------------------------------------------
     
+    # Affichage // script de classifieur utilisé
+    output$modvis_cur_clas <- renderText({
+      input$modcre_selected_script
+    })
     
+    # Affichage // Summary du classifieur
+    output$modvis_clas_sum <- renderPrint({
+      summary(req(modcre_classif()))
+    })
+    
+    # Affichage // Matrice de confusion du classifieur
+    output$modvis_clas_conf <- renderPrint({
+      req(modcre_classif_conf())
+    })
     
   })
 }

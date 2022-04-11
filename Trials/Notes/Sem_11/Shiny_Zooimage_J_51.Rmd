@@ -20,3 +20,13 @@ J'ai réussis à faire en sorte que le script utilise une variable qui est le tr
 J'ai également ajouté un affichage du training set choisi, ainsi qu'une vérification qu'il soit chargé pour pouvoir l'utiliser avec le script ! \
 
 Une fois que on a choisi un script, et que le training set sélectionné est bien chargé, on peut utiliser le script et avoir un affichage du classifieur créé. \
+
+J'ai donc mis en place la création d'un classifieur en choisissant un script. On peut utiliser une variable et on peut également récupérer les résultats. \
+
+J'ai ajouté quelques affichages par rapport au classifieur crée tel qu'un sommaire, la matrice de confusion \
+
+J'ai buggé sur un problème tout bête de fonction réactive. J'avais mal écrit ma fonction. \
+
+Ajout du package mlearning à la liste. \
+
+J'ai mis en place un test pour voir si la méthode utilisée est le mlRforest \

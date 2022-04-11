@@ -87,12 +87,16 @@ mod_page_training_sets_ui <- function(id){
               tags$h4("Sorted Training Set Upload :"),
               # Upload du training set trié
               fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
+              # Message d'erreur ou de succès
               textOutput(ns("stsp_up_error")),
               tags$h5("Existing Training Sets :"),
+              # Rafraichir la liste
               actionButton(ns("stsp_refresh"), "Refresh"),
               tags$br(),
               tags$br(),
+              # Montrer les ts qui existent
               verbatimTextOutput(ns("stsp_existing_show")),
+              # Suppression d'un training set
               selectInput(ns("stsp_ts_to_delete"), "Training Set to delete :", choices = NULL),
               shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
             ),
@@ -102,7 +106,7 @@ mod_page_training_sets_ui <- function(id){
 
 # Training Set Visualisation UI ----------------------------------------------
 
-      tabPanel("Visualisation",
+      tabPanel("Finalisation and Visualisation",
                tags$br(),
                tags$h4("Training Set's content :"),
                # Choix du training set à visualiser
@@ -114,6 +118,7 @@ mod_page_training_sets_ui <- function(id){
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
+               # Affichage des classes et du nombre d'éléments dans celles-ci
                tags$h4("Visualisation of the training set's classes :"),
                verbatimTextOutput(ns("tsv_classes")),
       )
