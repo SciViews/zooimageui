@@ -23,6 +23,7 @@ mod_page_models_ui <- function(id){
             selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
             h4("Chosen Traing Set :"),
             textOutput(ns("modcre_selected_ts")),
+            selectInput(ns("modcre_select_ts"), NULL, choices = NULL),
             tags$br(),
             shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Use Script")),
           ),
@@ -73,7 +74,8 @@ mod_page_models_server <- function(id, all_vars){
     data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
     # Training Sets Vars :
-    ts_name <- reactive({ all_vars$training_sets_vars$ts_name })
+    ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
+    ts_name <- reactive({ all_vars$training_sets_vars$ts_selected })
     ts_training_set <- reactive({ all_vars$training_sets_vars$ts_training_set })
     
     
@@ -112,6 +114,39 @@ mod_page_models_server <- function(id, all_vars){
     output$modcre_selected_ts <- renderText({
       ts_name()
     })
+    
+    # Mise à jour de la sélection d'un training set
+    observe({
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "modcre_select_ts", NULL, choices = ts_list())
+      } else {
+        updateSelectInput(session, "modcre_select_ts", NULL, choices = "No Training Set yet")
+      }
+    })
+    
+    # # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
+    # tsv_ts_classed_vign <- reactive({
+    #   # Voir com dans page training set
+    #   if (data_folder_path_rea() != "" && req(input$modcre_select_ts) != "No Training Set yet") {
+    #     dir <- fs::path(ts_folder_path(), input$modcre_select_ts)
+    #     ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
+    #     ts_unsorted_vign <- length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE))
+    #     ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
+    #     return(ts_sorted_vign)
+    #   }
+    # })
+    # 
+    # # Chargement du Training Set si appui sur le bouton
+    # tsv_training_set <- reactive({
+    #   if (req(input$modcre_select_ts) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
+    #     path <- fs::path(ts_folder_path(), input$modcre_select_ts)
+    #     train <- getTrain(path)
+    #     # Il y a un problème avec cette version de zooimage, il faut changer
+    #     # manuellement la class du Training Set pour qu'il soit en facteur
+    #     train$Class <- factor(train$Class, levels = basename(attr(train, "path")))
+    #     return(train)
+    #   }
+    # })
     
     # Mise à jour du bouton pour utiliser un script models
     observe({

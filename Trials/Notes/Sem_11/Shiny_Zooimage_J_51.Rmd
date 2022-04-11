@@ -30,3 +30,66 @@ J'ai buggé sur un problème tout bête de fonction réactive. J'avais mal écri
 Ajout du package mlearning à la liste. \
 
 J'ai mis en place un test pour voir si la méthode utilisée est le mlRforest \
+
+Je vais mettre en place le choix du training set à partir de l'onglet models car sinon, ce n'est pas clair \
+
+----- Réunion : \
+
+Script qui crée une fonction ou qui crée des objets
+
+Une fonction peut prendre des arguments
+
+Liste de modèles
+
+formals (fonction pour lire les arguments et les vérifier)
+
+L'idée c'est de sourcer un script, qui renvoie une fonction avec des arguments et des résultats \
+
+Tester si la fonction existe,
+Tester les arguments (noms correctes),
+
+
+Etant donné que c'est une fonction, on peut la vérifier avant même de l'éxécuter, tester si elle existe, ses arguments, et pas besoin d'avoir un training set
+
+--- Idée : \
+=1=> Sélectionne le TS -> Vérif du TS \
+=2=> Sélectionne le Modèle -> Vérif de fonction \
+=Enfin=> Création du classifieur \
+
+
+rm permet d'enlever l'ancienne fonction 
+
+--- Différents algorithmes : \
+svm / mlRforest / différent mlRforest \
+
+!!! Mettre un système pour avoir une explication du modèle à utiliser
+
+!!! Choix du training set dans le panneau fixe
+
+!!! Simplifier l'affichage (models au lieux de scripts)
+
+--- Classifieur : \
+=> Création d'un classifieur + Sauvegarde + Chargement \
+
+
+--- Résultats : \
+Pour les résultats, tous les paramètres seront à créer dans le script \
+Il prendra deux arguments : échantillon et classifieur \
+
+
+--- En résumé : \
+Sélectionné un training set \ 
+Sélectionné un modèle \
+Calcul du classifieur \
+Onglet suivant \
+Script qui calcul les résultat \
+Click compute => Calcul \
+Download => Récupère les résultats \
+
+
+--- Contenu additionnel : \
+Pas de priors pour le moment \
+Comparer : Peut-être \
+Tests : Ca serait utile mais dans un second temps (EXTENSION IMPORTANTE) \
+Choix de la profondeur du training set \
+

@@ -402,16 +402,16 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Préparation des variables dans un paquet
     training_sets_vars <- reactiveValues(
       ts_folder_path = NULL,
+      ts_list = NULL,
       ts_selected = NULL,
-      ts_name = NULL,
       ts_training_set = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       training_sets_vars$ts_folder_path <- ts_folder_path()
+      training_sets_vars$ts_list <- ts_list()
       training_sets_vars$ts_selected <- input$tsv_ts_select
-      training_sets_vars$ts_name <- input$tsv_ts_select
       training_sets_vars$ts_training_set <- tsv_training_set()
     })
     
