@@ -64,6 +64,9 @@ mod_page_models_server <- function(id, all_vars){
     # Settings Vars :
     data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
+    # Training Sets Vars :
+    ts_training_set <- reactive({ all_vars$training_sets_vars$ts_training_set })
+    
     
 # Variables Globales ------------------------------------------------------
     
@@ -94,7 +97,7 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour du bouton pour utiliser un script models
     observe({
       shinyjs::disable("modcre_use_selected_script")
-      if (req(input$modcre_selected_script) != "No Script yet") {
+      if (req(input$modcre_selected_script) != "No Script yet" && grepl(".R", req(input$modcre_selected_script))) {
         shinyjs::enable("modcre_use_selected_script")
       }
     })
@@ -110,20 +113,15 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable : Si on utilise le script, retourne la variable result de ce dernier
     test <- eventReactive(input$modcre_use_selected_script, {
-      if (req(input$modcre_selected_script) != "No Script yet" && grepl(".R", req(input$modcre_selected_script))) {
-        source(fs::path(models_folder_path(), input$modcre_selected_script))
-        return(result)
-      }
+      isolate(ts_training_set())
+      source(fs::path(models_folder_path(), input$modcre_selected_script))
+      return(result)
     })
     
     # Affichage // Test de récupérer le résultat d'un script
     output$modcre_test <- renderPrint({
       req(input$modcre_use_selected_script)
-      if (!grepl(".R", isolate(req(input$modcre_selected_script)))) {
-        "Nothing happened"
-      } else {
-        test()
-      }
+      test()
     })
     
 # Test Classifier Server --------------------------------------------------

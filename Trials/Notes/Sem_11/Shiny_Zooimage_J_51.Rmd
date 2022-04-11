@@ -1,0 +1,13 @@
+---
+title: "Shiny_Zooimage_J_51"
+output: html_document
+---
+
+Fichier de notes du jour 51. Lundi 11 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais avancer dans ma page models. 
+
