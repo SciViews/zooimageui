@@ -11,3 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Je vais avancer dans ma page models. 
 
+Attention, j'ai réalisé un script de test réalisant une fonction de ZooImage mais qui ne fonctionne pas encore car il faut que je trouve comment passer un argument à mon script sourcé. \
+
+J'ai fait quelques modifications des boutons, donc on ne peut plus utiliser un script du tout s'il semble mauvais. \
+
