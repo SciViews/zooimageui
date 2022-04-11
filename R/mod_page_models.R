@@ -21,6 +21,9 @@ mod_page_models_ui <- function(id){
           sidebarPanel(
             h4("Chose the Script to use :"),
             selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
+            h4("Chosen Traing Set :"),
+            textOutput(ns("modcre_selected_ts")),
+            tags$br(),
             shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Use Script")),
           ),
           
@@ -65,10 +68,16 @@ mod_page_models_server <- function(id, all_vars){
     data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
     # Training Sets Vars :
+    ts_name <- reactive({ all_vars$training_sets_vars$ts_name })
     ts_training_set <- reactive({ all_vars$training_sets_vars$ts_training_set })
     
     
 # Variables Globales ------------------------------------------------------
+    
+    # Variable : Chemin vers le dossier des TS !! Peut être pas nécessaire
+    ts_folder_path <- reactive({
+      fs::path(data_folder_path_rea(),"Traing_Sets")
+    })
     
     # Variable : Chemin vers le dossier des scripts models
     models_folder_path <- reactive({
@@ -94,18 +103,28 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
+    # Affichage // Training Set Choisi
+    output$modcre_selected_ts <- renderText({
+      ts_name()
+    })
+    
     # Mise à jour du bouton pour utiliser un script models
     observe({
       shinyjs::disable("modcre_use_selected_script")
-      if (req(input$modcre_selected_script) != "No Script yet" && grepl(".R", req(input$modcre_selected_script))) {
+      # Si script choisi, script est .R, TS chargé, alors bouton actif
+      if (req(input$modcre_selected_script) != "No Script yet" && 
+          grepl(".R", req(input$modcre_selected_script)) && 
+          !is.null(ts_training_set())) {
         shinyjs::enable("modcre_use_selected_script")
       }
     })
     
     # Affichage // Liste des scipts dans le dossier Models
     output$modcre_existing_script_show <- renderPrint({
+      # Si il y en a :
       if (length(scripts_list()) > 0) {
         scripts_list()
+      # Si pas :
       } else {
         "No Script yet"
       }
@@ -113,9 +132,11 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable : Si on utilise le script, retourne la variable result de ce dernier
     test <- eventReactive(input$modcre_use_selected_script, {
-      isolate(ts_training_set())
-      source(fs::path(models_folder_path(), input$modcre_selected_script))
-      return(result)
+      # Variable qui prend le training set chargé pour le script
+      ts <- ts_training_set()
+      # Il faut un local = TRUE au source afin que l'environnement utilisé soit celui de l'app
+      source(fs::path(models_folder_path(), input$modcre_selected_script), local = TRUE)
+      return(classif)
     })
     
     # Affichage // Test de récupérer le résultat d'un script

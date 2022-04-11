@@ -15,3 +15,8 @@ Attention, j'ai réalisé un script de test réalisant une fonction de ZooImage 
 
 J'ai fait quelques modifications des boutons, donc on ne peut plus utiliser un script du tout s'il semble mauvais. \
 
+J'ai réussis à faire en sorte que le script utilise une variable qui est le training set.
+
+J'ai également ajouté un affichage du training set choisi, ainsi qu'une vérification qu'il soit chargé pour pouvoir l'utiliser avec le script ! \
+
+Une fois que on a choisi un script, et que le training set sélectionné est bien chargé, on peut utiliser le script et avoir un affichage du classifieur créé. \
