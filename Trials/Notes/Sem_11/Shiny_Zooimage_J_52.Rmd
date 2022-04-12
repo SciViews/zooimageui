@@ -23,3 +23,20 @@ Je vais essayer de le refaire, mais en mieux, allant étape par étape au lieu d
 J'ai déjà réussis à vérifier qu'un script ressort une fonction d'un tel nom. \
 
 Je vais devoir tester ensuite si je peux utiliser cette fonction ailleurs dans mon application. \
+
+J'ai mis en place un système de massage qui indique si le chargement du modèle fonctionne correctement ou non. \
+Il indique également en cas de problème, la nature de celui-ci pour communication au codeur ! \
+
+Je suis entrain d'essayer de récupérer la fonction et de l'utiliser pour créer un classifieur mais j'ai des problèmes avec les arguments : object 'mlRforest' of mode 'function' was not found \
+
+J'ai mis en place la création d'un classifieur via les tests et le bouton. \
+
+Je peut bien récupérer ma fonction depuis le script, et ensuite créer un classifieur à partir de celle-ci. \
+
+Je peux afficher ce classifieur. \
+
+J'ai juste un problème qui est que quand je vérifie si j'ai déjà une variable qui s'appelle get_classif, il me dit que oui, or ensuite si j'essaie de la supprimer, cela ne fonctionne pas. \
+
+En fait cela voyait la variable dans mon environnement de travail et pas dans mon environnement d'application. \
+
+J'ai également rajouté le commentaire de mon modèle dans l'affichage de la page models \
