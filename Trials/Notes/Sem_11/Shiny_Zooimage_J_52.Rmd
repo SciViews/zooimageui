@@ -16,3 +16,10 @@ Pour le training set cela fonctionne correctement, par contre, pour le modèle j
 La réactivité de mon application toute entière a un soucis à présent. \
 
 J'essaie de comprendre en quoi mes tests et ma réactivité pose problème. \
+
+Après avoir remis en place mon application comme elle était ce matin car trop de choses posaient problèmes, je me suis mis à faire des tests plus étape par étapes afin de mettre en place les tests de scripts contenant une fonction. \
+
+Je vais essayer de le refaire, mais en mieux, allant étape par étape au lieu de courir. \ 
+J'ai déjà réussis à vérifier qu'un script ressort une fonction d'un tel nom. \
+
+Je vais devoir tester ensuite si je peux utiliser cette fonction ailleurs dans mon application. \

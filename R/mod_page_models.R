@@ -21,6 +21,7 @@ mod_page_models_ui <- function(id){
           sidebarPanel(
             h4("Model :"),
             selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
+            verbatimTextOutput(ns("test_test")),
             h4("Traing Set :"),
             textOutput(ns("modcre_selected_ts")),
             tags$br(),
@@ -117,6 +118,19 @@ mod_page_models_server <- function(id, all_vars){
     output$modcre_selected_ts <- renderText({
       test <- if (modcre_is_ts_loaded()) { "(Correct)" } else { "(Not Correct)" }
       paste(ts_name(), test)
+    })
+    
+    test <- reactive({
+      if (req(input$modcre_selected_script) != "No Model yet" &&
+          grepl(".R", input$modcre_selected_script)) {
+        source(fs::path(models_folder_path(), input$modcre_selected_script), local = TRUE)
+        res <- exists("bonjour")
+        rm(bonjour)
+        return(res)
+      }
+    })
+    output$test_test <- renderPrint({
+      test()
     })
     
     # Mise à jour du bouton pour utiliser un script models
