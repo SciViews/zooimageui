@@ -21,6 +21,7 @@ mod_page_models_ui <- function(id){
           sidebarPanel(
             h4("Model :"),
             selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
+            textOutput(ns("modcre_is_mod_good")),
             h4("Traing Set :"),
             textOutput(ns("modcre_selected_ts")),
             tags$br(),
@@ -104,22 +105,86 @@ mod_page_models_server <- function(id, all_vars){
         updateSelectInput(session, "modcre_selected_script", NULL, choices = scripts_list())
       # Si pas :
       } else {
-        updateSelectInput(session, "modcre_selected_script", NULL, choices = "No Script yet")
+        updateSelectInput(session, "modcre_selected_script", NULL, choices = "No Model yet")
       }
     })
     
     # Affichage // Training Set Choisi
     output$modcre_selected_ts <- renderText({
-      ts_name()
+      test <- if (modcre_is_ts_loaded()) { "(Correct)" } else { "(Not Correct)" }
+      paste(ts_name(), test)
+    })
+    
+    # Test de l'input pour le script
+    modcre_input_scrip_correct <- reactive({
+      if (req(input$modcre_selected_script) != "No Model yet" &&
+        grepl(".R", req(input$modcre_selected_script))) { 
+        TRUE 
+      } else {
+        FALSE
+      }
+    })
+    
+    test <- reactiveVal(0)
+    
+    # Observe le script sélectionné et le test
+    observe({
+      if (modcre_input_scrip_correct()) {
+        
+        # Si la fonction existe déjà, on la supprime
+        if (exists("get_classif", mode = "function")) { rm(get_classif) }
+        
+        # Variable : chemin au script
+        path_to_script <- fs::path(models_folder_path(),input$modcre_selected_script)
+        try(source(path_to_script, local = TRUE))
+        test(test()+1)
+      } else {
+        test(test()+1)
+      }
+    })
+    
+    # Test 1 ! Training Set Chargé ?
+    modcre_is_ts_loaded <- reactive({
+      !is.null(ts_training_set())
+    })
+    # Test 2 ! Modèle correct ?
+    modcre_is_mod_correct <- reactive({
+      test()
+      # Modèle n'a pas un bon nom ?
+      if (!isolate(modcre_input_scrip_correct())) {
+        res <- FALSE
+        attr(res, "error") <- "Selected Model doesn't have .R extension"
+        return(res)
+      # Modèle ne renvoie pas une fonction appelée get_classif ?
+      } else if (!exists("get_classif", mode = "function")) {
+        res <- FALSE
+        attr(res, "error") <- "Selected Model doesn't return a function called get_classif"
+        return(res)
+      # Modèle n'utilise pas un argument appelé training_set ?
+      } else if (any(!"training_set" %in% names(formals(get_classif)))) {
+        res <- FALSE
+        attr(res, "error") <- "Selected Model doesn't have a training_set argument"
+        return(res)
+      # Si tout le reste est faux, alors le modèle est bon 
+      } else {
+        return(TRUE)
+      }
+    })
+    
+    # Affichage // Est-ce que le modèle est bon ?
+    output$modcre_is_mod_good <- renderText({
+      if (modcre_is_mod_correct()) {
+        "Model : ok"
+      } else {
+        attr(modcre_is_mod_correct(), "error")
+      }
     })
     
     # Mise à jour du bouton pour utiliser un script models
     observe({
       shinyjs::disable("modcre_use_selected_script")
       # Si script choisi, script est .R, TS chargé, alors bouton actif
-      if (req(input$modcre_selected_script) != "No Script yet" && 
-          grepl(".R", req(input$modcre_selected_script)) && 
-          !is.null(ts_training_set())) {
+      if (modcre_is_mod_correct() && modcre_is_ts_loaded()) {
         shinyjs::enable("modcre_use_selected_script")
       }
     })
@@ -131,7 +196,7 @@ mod_page_models_server <- function(id, all_vars){
         scripts_list()
       # Si pas :
       } else {
-        "No Script yet"
+        "No Model yet"
       }
     })
     

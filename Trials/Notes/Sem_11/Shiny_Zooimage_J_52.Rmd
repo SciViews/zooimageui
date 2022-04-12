@@ -1,0 +1,18 @@
+---
+title: "Shiny_Zooimage_J_52"
+output: html_document
+---
+
+Fichier de notes du jour 52. Mardi 12 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai essayé de mettre en place un test du training set et un test du modèle pour l'onglet Models. \
+
+Pour le training set cela fonctionne correctement, par contre, pour le modèle j'ai quelques soucis. \
+
+La réactivité de mon application toute entière a un soucis à présent. \
+
+J'essaie de comprendre en quoi mes tests et ma réactivité pose problème. \

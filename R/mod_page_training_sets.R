@@ -97,7 +97,7 @@ mod_page_training_sets_ui <- function(id){
               # Montrer les ts qui existent
               verbatimTextOutput(ns("stsp_existing_show")),
               # Suppression d'un training set
-              selectInput(ns("stsp_ts_to_delete"), "Training Set to delete :", choices = NULL),
+              selectInput(ns("stsp_ts_to_delete"), "Training Set to Delete :", choices = NULL),
               shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
             ),
           ),
@@ -113,7 +113,7 @@ mod_page_training_sets_ui <- function(id){
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
                # Affichage des classes et du nombre d'éléments dans celles-ci
-               tags$h4("Visualisation of the training set's classes :"),
+               tags$h4("Visualisation of the Training Set's Classes :"),
                verbatimTextOutput(ns("tsv_classes")),
       )
       
@@ -377,6 +377,8 @@ mod_page_training_sets_server <- function(id, all_vars){
         # manuellement la class du Training Set pour qu'il soit en facteur
         train$Class <- factor(train$Class, levels = basename(attr(train, "path")))
         return(train)
+      } else {
+        return(NULL)
       }
     })
     
