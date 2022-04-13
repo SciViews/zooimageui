@@ -1,0 +1,22 @@
+---
+title: "Shiny_Zooimage_J_53"
+output: html_document
+---
+
+Fichier de notes du Jour 53. Mercredi 13 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais continuer à avancer dans mon app. \
+=> Partie Models \
+
+J'ai fait quelques vérifications par rapport au build et réparé différents problèmes. \
+J'ai également "simplifié" la création de la matrice de confusion. \
+
+Je vais tenter rapidement de faire une fonction qui fait la grosse validation du modèle. \
+
+J'ai donc réussis à transformer mon gros bloc de code en une fonction pour rendre mon code plus court et plus clair ainsi que plus fonctionnel. \
+
+Je vais à présent continuer d'implanter des nouveautés. \

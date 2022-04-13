@@ -43,9 +43,9 @@ mod_page_models_ui <- function(id){
       
 # Test Classifier UI ------------------------------------------------------
       
-      tabPanel("Test Classifier",
-        
-      ),
+      # tabPanel("Test Classifier",
+      #   
+      # ),
       
 # Visualise Classifier UI -------------------------------------------------
       
@@ -128,37 +128,8 @@ mod_page_models_server <- function(id, all_vars){
     modcre_is_mod_correct <- reactive({
       req(input$modcre_selected_script, data_folder_path_rea())
       
-      # Tout d'abord, test du nom du fichier : si ne ressemble pas à un script R, on arrête avec message d'erreur
-      if ( input$modcre_selected_script == "No Model yet" || !grepl(".R", input$modcre_selected_script)) {
-        res <- FALSE
-        attr(res, "message") <- "Selected Model doesn't have .R extension"
-        return(res)
-      } else {
-      # Ensuite, si jamais le nom est bon :
-      
-        # Supprime la possible ancienne fonction et source le nouveau script
-        if (exists("get_classif")) { rm(get_classif) }
-        script_path <- fs::path(models_folder_path(), input$modcre_selected_script)
-        try(source(script_path , local = TRUE), silent = TRUE)
-        
-        # Test si une fonction get_classif est récupérée
-        if (!exists("get_classif")) {
-          res <- FALSE
-          attr(res, "message") <- "Selected Model doesn't return a function called get_classif"
-          return(res)
-        # Test si la fonction a un argument training_set
-        } else if (any(!"training_set" %in% names(formals(get_classif)))) {
-          res <- FALSE
-          attr(res, "message") <- "Selected Model doesn't have a training_set argument"
-          return(res)
-        # Enfin, si ça passe, alors le modèle est bon
-        } else {
-          res <- exists("get_classif")
-          attr(res, "message") <- "Model : Ok"
-          return(res)
-        }
-        
-      }
+      # Vérification de mon modèle
+      is_script_good_model(models_folder_path(), input$modcre_selected_script)
     })
     
     # Affichage // Message lié au modèle choisi
@@ -217,16 +188,12 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable : Matrice de confusion du classifieur
     modcre_classif_conf <- eventReactive(req(modcre_classif()), {
-      if (attr(req(modcre_classif()), "is_mlRforest")) {
-        return(confusion(modcre_classif(), predict(modcre_classif(), method = "oob")))
-      } else {
-        return(confusion(modcre_classif()))
-      }
+      confusion(req(modcre_classif()))
     })
     
 # Test Classifier Server --------------------------------------------------
     
-    
+    # Peut-être plus tard.
     
 # Visualise Classifier Server ---------------------------------------------
     

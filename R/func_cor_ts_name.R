@@ -15,7 +15,7 @@
 #' ts_name3 <- "test_4"
 #' cor_ts_name(ts_name1,ts_list_ex)
 #' cor_ts_name(ts_name2,ts_list_ex)
-#' cor_ts_name(ts_name_3,ts_list_ex)
+#' cor_ts_name(ts_name3,ts_list_ex)
 cor_ts_name <- function(ts_name,ts_list) {
   
   invalid_names <- append(ts_list, "")

@@ -10,6 +10,8 @@ upload_ts(upload_input, ts_folder_path, existing_ts)
 \item{upload_input}{Shiny input file}
 
 \item{ts_folder_path}{Path to folder to put ts in}
+
+\item{existing_ts}{List of the existing training sets}
 }
 \value{
 TRUE if it worked, FALSE if an error occured
