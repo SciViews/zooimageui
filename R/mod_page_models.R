@@ -16,20 +16,48 @@ mod_page_models_ui <- function(id){
 
       tabPanel("Create Classifier",
         tags$br(),
-        sidebarLayout(
+        
+        fluidRow(
           
-          sidebarPanel(
-            h4("Model :"),
-            selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
-            verbatimTextOutput(ns("modcre_mod_message")),
-            verbatimTextOutput(ns("modcre_mod_comment")),
-            h4("Traing Set :"),
-            textOutput(ns("modcre_selected_ts")),
-            tags$br(),
-            shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Use Script")),
+          column(width = 4,
+                 
+            fluidRow(
+              sidebarPanel(width = 12,
+                h4("Model :"),
+                # Choix du script
+                selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
+                # Messages d'aide
+                verbatimTextOutput(ns("modcre_mod_message")),
+                textOutput(ns("modcre_mod_comment")),
+                # Affichage Training Set sélectionné
+                h4("Training Set :"),
+                textOutput(ns("modcre_selected_ts")),
+                tags$br(),
+                # Choix du nom pour sauvegarde
+                h4("Save Name :"),
+                textInput(ns("modcre_save_name"), NULL),
+                # Création du classifieur
+                shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Use Script")),
+                tags$br(),
+                tags$br(),
+                verbatimTextOutput(ns("modcre_is_saved")),
+              ),
+            ),
+            
+            fluidRow(
+              sidebarPanel(width = 12,
+                tags$h4("Load a Classifier :"),
+                selectInput(ns("modcre_sel_sav_cla"), NULL, choices = NULL),
+                actionButton(ns("sa_re"), "Refresh"),
+                shinyjs::disabled(actionButton(ns("modcre_use_saved_class"), "Use Saved Classif")),
+                
+                tags$h4("Delete a Classifier :"),
+              )
+            ),
           ),
           
-          mainPanel(
+          column(width = 8,
+            # Scripts existants
             h4("Existing Models :"),
             actionButton(ns("modcre_refresh"), "Refresh Models List"),
             tags$br(),
@@ -50,12 +78,29 @@ mod_page_models_ui <- function(id){
 # Visualise Classifier UI -------------------------------------------------
       
       tabPanel("Visualise Classifier",
-        tags$h4("Current Classifier :"),
-        textOutput(ns("modvis_cur_clas")),
-        tags$h4("Summary of the Classifier :"),
-        verbatimTextOutput(ns("modvis_clas_sum")),
-        tags$h4("Confusion Matrix of the Classifier :"),
-        verbatimTextOutput(ns("modvis_clas_conf")),
+        tags$br(),
+        # Différents choix de visualisation
+        navlistPanel( widths = c(3,9),
+          
+          # Affichage // Summary
+          tabPanel("Summary",
+            tags$h4("Summary of the Classifier :"),
+            verbatimTextOutput(ns("modvis_clas_sum")),
+          ),
+          
+          # Affichage // Matrice de Confusion
+          tabPanel("Confusion Matrix",
+            tags$h4("Confusion Matrix of the Classifier :"),
+            verbatimTextOutput(ns("modvis_clas_conf")),
+          ),
+          
+          # Affichage // Plots de la Matrice de Confusion
+          tabPanel("Plots",
+            tags$h4("Plots of the Confusion Matrix"),
+            selectInput(ns("modvis_plot_type"), "Type of Plot :", choices = c("image", "dendrogram", "barplot", "stars")),
+            plotOutput(ns("modvis_conf_plot"), height = "700px"),
+          ),
+        ),
       ),
       
     )
@@ -164,10 +209,84 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
+    # Variable : Liste des classifieurs sauvegardés
+    modcre_saved_classif_list <- reactive({
+      input$sa_re
+      path <- fs::path(data_folder_path_rea(), "Saved_Classif")
+      list.files(path)
+    })
+    
+    # Mise à jour de la sélection d'un classifieur sauvegardé
+    observe({
+      if (length(modcre_saved_classif_list()) > 0) {
+        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = modcre_saved_classif_list())
+      } else {
+        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = "No Saved Classif yet")
+      }
+    })
+    
+    # Mise à jour du bouton pour utiliser le classifieur sauvegardé
+    observe({
+      shinyjs::disable("modcre_use_saved_class")
+      if (req(input$modcre_sel_sav_cla) != "No Saved Classif yet") {
+        shinyjs::enable("modcre_use_saved_class")
+      }
+    })
+    
     # Variable : Classifieur si appui sur le bouton
-    modcre_classif <- eventReactive(input$modcre_use_selected_script, {
+    modcre_classif_new <- eventReactive(input$modcre_use_selected_script, {
+      req(data_folder_path_rea())
+      shinyjs::disable("modcre_use_selected_script")
+      
       # Crée le classifieur
-      return(modcre_model()(ts_training_set()))
+      classifier <- modcre_model()(ts_training_set())
+      # Variable : Nom pour la sauvegarde
+      name_without_special_char <- stringr::str_replace_all(input$modcre_save_name, "[^[:alnum:]]", "")
+      cla_name <- paste(name_without_special_char, ".RData", sep = "")
+      # Variable : Chemin du dossier pour la sauvegarde
+      saved_classif_dir <- fs::path(data_folder_path_rea(), "Saved_Classif")
+      
+      # Création du dossier si il n'existe pas (pour sauvergade)
+      if (!"Saved_Classif" %in% list.files(data_folder_path_rea())) {
+        fs::dir_create(saved_classif_dir)
+      }
+      
+      # Test si existe déjà
+      if (input$modcre_save_name == "") {
+        attr(classifier, "is_saved") <- "Not saved, name empty."
+      } else if (!cla_name %in% list.files(saved_classif_dir)) {
+        save(classifier, file = fs::path(saved_classif_dir, cla_name))
+        attr(classifier, "is_saved") <- "Saved !"
+      } else {
+        attr(classifier, "is_saved") <- "Not saved, model already used. If you want to save a new one, please delete the old one first."
+      }
+      
+      return(classifier)
+      shinyjs::enable("modcre_use_selected_script")
+    })
+    
+    # Variable : classifieur
+    modcre_classif <- reactiveVal()
+    # Si on Crée un classifieur, alors le classifieur utilisé sera celui là
+    observe({
+      modcre_classif(req(modcre_classif_new()))
+    })
+    # Si on charge un classifieur sauvegardé, alors le classifieur utilisé sera celui là
+    observeEvent(input$modcre_use_saved_class, {
+      # Si classifier existe déjà (d'un autre .RData) on le supprime
+      if (exists("classifier")) { rm(classifier)}
+      path <- fs::path(data_folder_path_rea(),"Saved_Classif",input$modcre_sel_sav_cla)
+      load(path)
+      # Récupération de la variable classifier depuis le .RData
+      modcre_classif(classifier)
+    })
+    
+    # Affichage // Est-ce que le classifieur a été sauvegardé ?
+    output$modcre_is_saved <- renderText({
+      req(modcre_classif(), data_folder_path_rea())
+      if (!is.null(attr(modcre_classif(), "is_saved"))) {
+        attr(modcre_classif(), "is_saved")
+      }
     })
     
     # Affichage // Liste des scipts dans le dossier Models
@@ -197,9 +316,10 @@ mod_page_models_server <- function(id, all_vars){
     
 # Visualise Classifier Server ---------------------------------------------
     
-    # Affichage // script de classifieur utilisé
-    output$modvis_cur_clas <- renderText({
-      input$modcre_selected_script
+    # Variable : Nom du classifieur actif
+    modvis_clas_name <- eventReactive(modcre_classif(), {
+      req(modcre_is_mod_correct(), data_folder_path_rea())
+      sub("\\.R$", "", input$modcre_selected_script)
     })
     
     # Affichage // Summary du classifieur
@@ -211,6 +331,27 @@ mod_page_models_server <- function(id, all_vars){
     output$modvis_clas_conf <- renderPrint({
       req(modcre_classif_conf())
     })
+    
+    # Affichage // Plot de Matrice de Confusion
+    output$modvis_conf_plot <- renderPlot({
+      req(data_folder_path_rea())
+      plot(req(modcre_classif_conf()), type = input$modvis_plot_type)
+    })
+    
+# Communication -----------------------------------------------------------
+    
+    # Préparation des variables dans un paquet
+    models_vars <- reactiveValues(
+      modvis_clas_name = NULL
+    )
+    
+    # Mise à jour des variables dans le paquet
+    observe({
+      models_vars$modvis_clas_name <- modvis_clas_name()
+    })
+    
+    # Envoi du packet qui contient toutes les variables
+    return(models_vars)
     
   })
 }

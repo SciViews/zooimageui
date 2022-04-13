@@ -362,6 +362,7 @@ mod_page_training_sets_server <- function(id, all_vars){
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         # Comptage des vignettes non classées dans le Training Set
         ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
+        # Si le sous-dossier _ n'existe pas :
         if (inherits(ts_unsorted_vign, "try-error")) { return(NULL) }
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
         return(ts_sorted_vign)

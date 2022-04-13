@@ -35,6 +35,8 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Models"),
+             tags$h5("Active classifier :"),
+             textOutput(ns("mod_act_clas")),
              
              tags$hr(),
              tags$h4("-> Results"),
@@ -62,6 +64,9 @@ mod_fixed_pannel_server <- function(id, all_vars){
     # training_sets_vars
     ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
     ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
+    
+    # models_vars
+    mod_clas_name <- reactive({ all_vars$models_vars$modvis_clas_name })
     
     # Settings ----------------------------------------------------------------
     
@@ -105,15 +110,31 @@ mod_fixed_pannel_server <- function(id, all_vars){
     # Si tout est en ordre, soit si un training set est sélectionné
     output$ts_prog_show <- renderText({
       if (data_folder_path() != "" && req(input$ts_select) != "No Training Set yet") {
+        # Variable : dossier
         dir <- fs::path(ts_folder_path(), input$ts_select)
+        # Calcul du nombre de vignettes au total dans le dossier
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
+        # Calcul du nombre de vignettes dans le sous-dossier des non triés
         ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
+        # Dans le cas où il n'y a pas de dossier _ :
         if (inherits(ts_unsorted_vign, "try-error")) { return("Folder Incorrect") }
+        # Calcul du nombre de vignettes triées
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
-        classed_rate <- (ts_sorted_vign/ts_total_vign) * 100
+        # classed_rate <- (ts_sorted_vign/ts_total_vign) * 100
         paste("Sorted : ", ts_sorted_vign, " / ",ts_total_vign)
       } else {
         "No Training Set yet"
+      }
+    })
+    
+    # Models ------------------------------------------------------------------
+    
+    # Affichage // Classifieur actif
+    output$mod_act_clas <- renderText({
+      if (!is.null(mod_clas_name())) {
+        mod_clas_name()
+      } else {
+        "No active Classifier"
       }
     })
     

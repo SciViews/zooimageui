@@ -14,7 +14,7 @@ app_server <- function( input, output, session ) {
     settings_vars = NULL,
     samples_vars = NULL,
     training_sets_vars = NULL,
-    # models_vars = NULL,
+    models_vars = NULL,
     # results_vars = NULL,
   )
   # On peut tout mettre en un seul observe, mais dans ce cas, tout est toujours actualisé.
@@ -30,9 +30,9 @@ app_server <- function( input, output, session ) {
   observe({
     all_vars$training_sets_vars <- training_sets_vars
   })
-  # observe({
-  #   all_vars$models_vars <- models_vars
-  # })
+  observe({
+    all_vars$models_vars <- models_vars
+  })
   # observe({
   #   all_vars$results_vars <- results_vars
   # })

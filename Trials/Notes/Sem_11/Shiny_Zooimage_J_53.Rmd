@@ -20,3 +20,18 @@ Je vais tenter rapidement de faire une fonction qui fait la grosse validation du
 J'ai donc réussis à transformer mon gros bloc de code en une fonction pour rendre mon code plus court et plus clair ainsi que plus fonctionnel. \
 
 Je vais à présent continuer d'implanter des nouveautés. \
+
+J'ai mis en place un affichage du classifieur actif dans le panneau fixe. \
+
+J'ai rajouté dans la partie visualisation un visionnage des plots en plus d'un navlistpanel pour mieux s'y retrouver. \
+
+J'ai mis en place un système de sauvegarde de classifieur créé, je vais maintenant essayer de mettre en place un chargement. \
+
+J'ai fini de mettre au point le système de sauvegarde et de chargement d'un classifieur. \
+
+J'ai un peu galéré, mais cela fonctionne. \
+Le classifieur utilisé est soit celui crée, soit si on en charge un, celui là. \
+
+Je vais ensuite mettre au point un système pour supprimer un classifieur sauvegardé et ensuite continuer pour la suite. \
+
+Attention ! Nom du classifieur pour affichage. \
