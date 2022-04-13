@@ -35,3 +35,16 @@ Le classifieur utilisé est soit celui crée, soit si on en charge un, celui là
 Je vais ensuite mettre au point un système pour supprimer un classifieur sauvegardé et ensuite continuer pour la suite. \
 
 Attention ! Nom du classifieur pour affichage. \
+
+2 problèmes :
+Le bouton pour créer un classifieur ne se remet pas disponible directement.
+La réactivité de la liste des classifieurs sauvegardé ne fonctionne pas correctement par rapport aux autres éléments réactifs. \
+
+J'ai réglé tous les problèmes de réactivité, j'avais mal utilisé mon reactiveVal(0!) \
+
+J'ai bien mis en place mon système de suppression de Classifieur sauvegardé. \
+
+J'ai également fait en sorte que le bouton pour créer une classifieur se réactive en fin de création si les inputs sont toujours les bons. \
+
+J'ai rajouté deux scripts exemples. (un avec mlSvm) \
+

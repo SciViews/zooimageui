@@ -23,21 +23,22 @@ mod_page_models_ui <- function(id){
                  
             fluidRow(
               sidebarPanel(width = 12,
-                h4("Model :"),
+                h4("Create a classifier :"),
+                h5("Model :"),
                 # Choix du script
                 selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
                 # Messages d'aide
                 verbatimTextOutput(ns("modcre_mod_message")),
                 textOutput(ns("modcre_mod_comment")),
                 # Affichage Training Set sélectionné
-                h4("Training Set :"),
+                h5("Training Set :"),
                 textOutput(ns("modcre_selected_ts")),
                 tags$br(),
                 # Choix du nom pour sauvegarde
-                h4("Save Name :"),
+                h5("Save Name :"),
                 textInput(ns("modcre_save_name"), NULL),
                 # Création du classifieur
-                shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Use Script")),
+                shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Create Classifier")),
                 tags$br(),
                 tags$br(),
                 verbatimTextOutput(ns("modcre_is_saved")),
@@ -52,6 +53,8 @@ mod_page_models_ui <- function(id){
                 shinyjs::disabled(actionButton(ns("modcre_use_saved_class"), "Use Saved Classif")),
                 
                 tags$h4("Delete a Classifier :"),
+                selectInput(ns("modcre_sel_todel"), NULL, choices = NULL),
+                shinyjs::disabled(actionButton(ns("modcre_delete"), "Delete")),
               )
             ),
           ),
@@ -147,6 +150,8 @@ mod_page_models_server <- function(id, all_vars){
     
 # Create Classifier Server ------------------------------------------------
     
+    # ---------- Création d'un classifieur ----------
+    
     # Mise à jour du sélecteur de scripts models
     observe({
       # Si il y a des scripts :
@@ -200,18 +205,60 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
+    # Variable pour mettre à jour le bouton pour créer le classifieur
+    modcre_create_up <- reactiveVal(0)
+    
     # Mise à jour du bouton pour utiliser un script models
     observe({
-      shinyjs::disable("modcre_use_selected_script")
+      modcre_create_up()
       # Si le modèle est correcte et que le TS est chargé alors on peut créer le classifieur
       if (modcre_is_mod_correct() && modcre_is_ts_loaded()) {
         shinyjs::enable("modcre_use_selected_script")
+      # Si pas, on ne peut pas
+      } else {
+        shinyjs::disable("modcre_use_selected_script")
       }
     })
+    
+    # Variable : Classifieur si appui sur le bouton
+    modcre_classif_new <- eventReactive(input$modcre_use_selected_script, {
+      req(data_folder_path_rea())
+      shinyjs::disable("modcre_use_selected_script")
+      on.exit(modcre_create_up(modcre_create_up()+1))
+      
+      # Crée le classifieur
+      classifier <- modcre_model()(ts_training_set())
+      # Variable : Nom pour la sauvegarde
+      name_without_special_char <- stringr::str_replace_all(input$modcre_save_name, "[^[:alnum:]]", "")
+      cla_name <- paste(name_without_special_char, ".RData", sep = "")
+      # Variable : Chemin du dossier pour la sauvegarde
+      saved_classif_dir <- fs::path(data_folder_path_rea(), "Saved_Classif")
+      
+      # Création du dossier si il n'existe pas (pour sauvergade)
+      if (!"Saved_Classif" %in% list.files(data_folder_path_rea())) {
+        fs::dir_create(saved_classif_dir)
+      }
+      
+      # Test si existe déjà
+      if (input$modcre_save_name == "") {
+        attr(classifier, "is_saved") <- "Not saved, name empty."
+      } else if (!cla_name %in% list.files(saved_classif_dir)) {
+        save(classifier, file = fs::path(saved_classif_dir, cla_name))
+        modcre_saved_update(modcre_saved_update()+1)
+        attr(classifier, "is_saved") <- "Saved !"
+      } else {
+        attr(classifier, "is_saved") <- "Not saved, model already used. If you want to save a new one, please delete the old one first."
+      }
+      
+      return(classifier)
+    })
+    
+    # ---------- Classifieurs sauvegardés ----------
     
     # Variable : Liste des classifieurs sauvegardés
     modcre_saved_classif_list <- reactive({
       input$sa_re
+      modcre_saved_update()
       path <- fs::path(data_folder_path_rea(), "Saved_Classif")
       list.files(path)
     })
@@ -233,45 +280,26 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
-    # Variable : Classifieur si appui sur le bouton
-    modcre_classif_new <- eventReactive(input$modcre_use_selected_script, {
-      req(data_folder_path_rea())
-      shinyjs::disable("modcre_use_selected_script")
-      
-      # Crée le classifieur
-      classifier <- modcre_model()(ts_training_set())
-      # Variable : Nom pour la sauvegarde
-      name_without_special_char <- stringr::str_replace_all(input$modcre_save_name, "[^[:alnum:]]", "")
-      cla_name <- paste(name_without_special_char, ".RData", sep = "")
-      # Variable : Chemin du dossier pour la sauvegarde
-      saved_classif_dir <- fs::path(data_folder_path_rea(), "Saved_Classif")
-      
-      # Création du dossier si il n'existe pas (pour sauvergade)
-      if (!"Saved_Classif" %in% list.files(data_folder_path_rea())) {
-        fs::dir_create(saved_classif_dir)
+    # Affichage // Est-ce que le classifieur a été sauvegardé ?
+    output$modcre_is_saved <- renderText({
+      req(modcre_classif(), data_folder_path_rea())
+      if (!is.null(attr(modcre_classif(), "is_saved"))) {
+        attr(modcre_classif(), "is_saved")
       }
-      
-      # Test si existe déjà
-      if (input$modcre_save_name == "") {
-        attr(classifier, "is_saved") <- "Not saved, name empty."
-      } else if (!cla_name %in% list.files(saved_classif_dir)) {
-        save(classifier, file = fs::path(saved_classif_dir, cla_name))
-        attr(classifier, "is_saved") <- "Saved !"
-      } else {
-        attr(classifier, "is_saved") <- "Not saved, model already used. If you want to save a new one, please delete the old one first."
-      }
-      
-      return(classifier)
-      shinyjs::enable("modcre_use_selected_script")
     })
+    
+    # ---------- Récupère soit un nouveau classif, soit un sauvegardé ----------
     
     # Variable : classifieur
     modcre_classif <- reactiveVal()
     # Si on Crée un classifieur, alors le classifieur utilisé sera celui là
+    new_cla <- reactiveVal() # Pour activer la réactivité du nom spécifiquement
     observe({
       modcre_classif(req(modcre_classif_new()))
+      new_cla(new_cla()+1) # Fait réagir spécifiquement
     })
     # Si on charge un classifieur sauvegardé, alors le classifieur utilisé sera celui là
+    saved_cla <- reactiveVal() # Pour activer la réactivité du nom spécifiquement
     observeEvent(input$modcre_use_saved_class, {
       # Si classifier existe déjà (d'un autre .RData) on le supprime
       if (exists("classifier")) { rm(classifier)}
@@ -279,14 +307,7 @@ mod_page_models_server <- function(id, all_vars){
       load(path)
       # Récupération de la variable classifier depuis le .RData
       modcre_classif(classifier)
-    })
-    
-    # Affichage // Est-ce que le classifieur a été sauvegardé ?
-    output$modcre_is_saved <- renderText({
-      req(modcre_classif(), data_folder_path_rea())
-      if (!is.null(attr(modcre_classif(), "is_saved"))) {
-        attr(modcre_classif(), "is_saved")
-      }
+      saved_cla(saved_cla()+1) # Fait réagir spécifiquement
     })
     
     # Affichage // Liste des scipts dans le dossier Models
@@ -310,6 +331,45 @@ mod_page_models_server <- function(id, all_vars){
       confusion(req(modcre_classif()))
     })
     
+    # ---------- Suppression d'un classifieur sauvegardé ----------
+    
+    # Mise à jour de la sélection du classifieur à supprimer
+    observe({
+      if (length(modcre_saved_classif_list()) > 0) {
+        updateSelectInput(session, "modcre_sel_todel", NULL, choices = modcre_saved_classif_list())
+      } else {
+        updateSelectInput(session, "modcre_sel_todel", NULL, choices = "No Saved Classif yet")
+      }
+    })
+    
+    # Mise à jour du bouton pour supprimer un classif sauvegardé
+    observe({
+      shinyjs::disable("modcre_delete")
+      if (req(input$modcre_sel_todel) != "No Saved Classif yet") {
+        shinyjs::enable("modcre_delete")
+      }
+    })
+    
+    # Variable : Mise à jour de la liste des classif sauvegardés
+    modcre_saved_update <- reactiveVal(0)
+    
+    # Suppression du classif sauvegardé si appui
+    observeEvent(input$modcre_delete, {
+      # Chemin
+      path <- fs::path(data_folder_path_rea(), "Saved_Classif")
+      oldir <- setwd(path)
+      on.exit(setwd(oldir))
+      # Suppression du fichier
+      unlink(input$modcre_sel_todel)
+      # Mise à jour de la liste
+      modcre_saved_update(modcre_saved_update()+1)
+      # Si il était actif, on désactive le classifieur
+      if (input$modcre_sel_todel == paste0(modvis_clas_name(), ".RData")) {
+        modcre_classif(NULL)
+        modvis_clas_name(NULL)
+      }
+    })
+    
 # Test Classifier Server --------------------------------------------------
     
     # Peut-être plus tard.
@@ -317,9 +377,16 @@ mod_page_models_server <- function(id, all_vars){
 # Visualise Classifier Server ---------------------------------------------
     
     # Variable : Nom du classifieur actif
-    modvis_clas_name <- eventReactive(modcre_classif(), {
-      req(modcre_is_mod_correct(), data_folder_path_rea())
-      sub("\\.R$", "", input$modcre_selected_script)
+    modvis_clas_name <- reactiveVal()
+    # Soit le nom d'un nouveau
+    observeEvent(new_cla(), {
+      req(modcre_classif(), data_folder_path_rea())
+      modvis_clas_name(sub("\\.R$", "", input$modcre_selected_script))
+    })
+    # Soit le nom d'un sauvegardé
+    observeEvent(saved_cla(), {
+      req(modcre_classif(), data_folder_path_rea())
+      modvis_clas_name(sub("\\.RData$", "", input$modcre_sel_sav_cla))
     })
     
     # Affichage // Summary du classifieur
