@@ -66,7 +66,7 @@ mod_page_models_ui <- function(id){
             tags$br(),
             tags$br(),
             verbatimTextOutput(ns("modcre_existing_script_show")),
-            verbatimTextOutput(ns("modcre_test")),
+            verbatimTextOutput(ns("modcre_show_classif")),
           ),
           
         ),
@@ -88,6 +88,7 @@ mod_page_models_ui <- function(id){
           # Affichage // Summary
           tabPanel("Summary",
             tags$h4("Summary of the Classifier :"),
+            checkboxInput(ns("modvis_clas_showall"), "Show all variables"),
             verbatimTextOutput(ns("modvis_clas_sum")),
           ),
           
@@ -322,13 +323,19 @@ mod_page_models_server <- function(id, all_vars){
     })
     
     # Affichage // Test de récupérer le résultat d'un script
-    output$modcre_test <- renderPrint({
+    output$modcre_show_classif <- renderPrint({
       req(modcre_classif())
     })
     
     # Variable : Matrice de confusion du classifieur
     modcre_classif_conf <- eventReactive(req(modcre_classif()), {
-      confusion(req(modcre_classif()))
+      # Pour la méthode mlRforest, j'utilise les éléments out-of-bag
+      # Le choix de leur utilisation pourrait être laissé à l'utilisateur
+      if (attr(modcre_classif(), "method") == "mlRforest") {
+        res <- confusion(modcre_classif(), predict(classif, method = "oob"))
+      } else {
+        confusion(modcre_classif())
+      }
     })
     
     # ---------- Suppression d'un classifieur sauvegardé ----------
@@ -391,7 +398,11 @@ mod_page_models_server <- function(id, all_vars){
     
     # Affichage // Summary du classifieur
     output$modvis_clas_sum <- renderPrint({
-      summary(req(modcre_classif()))
+      if (!input$modvis_clas_showall) {
+        summary(req(modcre_classif()), type = c("Fscore", "Recall", "Precision"))
+      } else {
+        summary(req(modcre_classif()))
+      }
     })
     
     # Affichage // Matrice de confusion du classifieur
@@ -409,12 +420,14 @@ mod_page_models_server <- function(id, all_vars){
     
     # Préparation des variables dans un paquet
     models_vars <- reactiveValues(
-      modvis_clas_name = NULL
+      modvis_clas_name = NULL,
+      modcre_classif = NULL
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       models_vars$modvis_clas_name <- modvis_clas_name()
+      models_vars$modcre_classif <- modcre_classif()
     })
     
     # Envoi du packet qui contient toutes les variables

@@ -1,0 +1,38 @@
+---
+title: "Shiny_Zooimage_J_54"
+output: html_document
+---
+
+Fichier de notes du jour 54. Jeudi 14 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+--- Je pourrais rajouter plus tard :
+-> Choix de la méthode oob pour le modèle
+-> Choix des priors
+-> Possibilité de comparaison
+-> Il faudrait que je change la mise en place du choix du classifieur dans le panneau fixe
+
+Je regarde à rajouter les éléments importants de la suite de l'application. \
+
+J'ai rajouté un choix pour le sommaire. \
+
+Relecture d'explications par rapport à ZooImage afin de d'introduire la partie results. \
+
+J'ai commencé à créer la page results. \
+
+Mise en place d'un affichage du Sample choisi et du classifieur acitf. \
+
+Indication de si les données sont prêtes à être utilisées par rapport au Sample et au classifieur. \
+
+Tests liés au Sample et classifieur sont réalisés. \
+Des messages indiquent ce qu'il manque. \
+
+Mise en place d'une sélection d'un script pour les calculs à effectuer. \
+
+Mise en place du bouton activé ou désactivé en fonction du Sample, du classifieur mais également du script. \
+Mise en place d'une fonction qui vérifie le script. \
+Mise en place d'un script exemple pour calculer des résultats. \
+Mise en place d'un message par rapport au chargement du script et d'un commentaire expliquant le script. \

@@ -224,6 +224,7 @@ processSample(dat2, keep = zoo) # 0.3 zooplankton individual per liter
 ## Now, we also want to calculate separate abundances for most abundant classes
 ## i.e., those with at least 50 individuals measured
 detail <- zoo[zoo %in% levels(dat2$Class)[table(dat2$Class) >= 50]]
+detail <- zoo[zoo %in% levels(dat2$Predicted)[table(dat2$Predicted) >= 50]]
 detail
 processSample(dat2, keep = zoo, detail = detail)
 
