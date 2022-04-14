@@ -39,10 +39,10 @@ res_save <- function(data_folder_path, name, res) {
     fs::dir_create(save_folder_path)
   }
   
+  # Nom pour le .RData
+  name <- paste0(name,".RData")
   # Test si le nom existe déjà
   if (!name %in% list.files(save_folder_path)) {
-    # Nom pour le .RData
-    name <- paste0(name,".RData")
     # Chemin pour sauver le .RData
     rdata_path <- fs::path(save_folder_path,name)
     save(res, file = rdata_path)
