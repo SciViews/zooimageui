@@ -36,3 +36,5 @@ Mise en place du bouton activé ou désactivé en fonction du Sample, du classif
 Mise en place d'une fonction qui vérifie le script. \
 Mise en place d'un script exemple pour calculer des résultats. \
 Mise en place d'un message par rapport au chargement du script et d'un commentaire expliquant le script. \
+
+Mise en place du calcul des résultat et d'un premier affichage de test. \

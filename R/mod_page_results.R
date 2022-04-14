@@ -16,9 +16,9 @@ mod_page_results_ui <- function(id){
 
       tabPanel("Calculation of Statistics",
         tags$br(),
-        sidebarLayout(
+        fluidRow(
           
-          sidebarPanel(
+          sidebarPanel( width = 3,
             # Montre le Sample choisi
             tags$h4("Selected Sample :"),
             textOutput(ns("calc_sel_smp")),
@@ -30,7 +30,7 @@ mod_page_results_ui <- function(id){
             textOutput(ns("calc_is_data_ready")),
           ),
           
-          sidebarPanel(
+          sidebarPanel( width = 3,
             # Choix du script
             tags$h4("Chose Calculations :"),
             selectInput(ns("calc_selected_script"), NULL, choices = NULL),
@@ -41,6 +41,10 @@ mod_page_results_ui <- function(id){
             # Boutons pour rafraichir la liste de scripts et pour faire les calculs
             actionButton(ns("calc_refresh"), "Refresh"),
             shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate"))
+          ),
+          
+          sidebarPanel( width = 6,
+            verbatimTextOutput(ns("test")),
           ),
         ),
       ),
@@ -197,6 +201,19 @@ mod_page_results_server <- function(id, all_vars){
     # Variable : Résultat des calculs
     results <- eventReactive(input$calc_use_script, {
       req(data_folder_path_rea())
+      
+      # Désactivation du bouton
+      shinyjs::disable("calc_use_script")
+      
+      res <- calc_results()(calc_dat())
+      return(res)
+      
+      # Réactivation du bouton
+      shinyjs::enable("calc_use_script")
+    })
+    
+    output$test <- renderPrint({
+      results()
     })
     
 # Visualisation Server ----------------------------------------------------
