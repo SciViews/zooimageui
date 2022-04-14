@@ -44,3 +44,18 @@ Ajout de l'affichage du nom du script utilisé. \
 Mise en place de l'affichage du script utilisé dans le panneau fixe, et donc de la communication depuis l'onglet results. \
 
 Changement de l'affichage de l'onglet création des résultats. \
+
+Mise en place de nouveaux scripts pour de nouveaux résultats : biomass et spectres de taille. \
+
+J'ai réalisé des recherches afin de voir comment je pourrais rendre les résultats plus visibles par rapport à leur format. \
+
+Je mets en place un système pour sauvegarder et télécharger les résultats. \
+
+
+J'ai tenté de mettre en place un système pour sauvegarder les résultats. \
+Cela semble fonctionner à partir de ma fonction. A confirmer. \
+
+J'ai détecté un problème, l'un de mes scripts pour avoir des résultats est mal écrit, résultat, mon application plante => Il faut que je corrige le script et que je rajoute une vérification afin que l'application ne plante plus pour cette raison. \
+Il faut également que je m'assure qu'il y ait assez de commentaires et explications claires dans mon code pour ces dernières parties. \
+
+

@@ -54,8 +54,14 @@ mod_page_results_ui <- function(id){
                
       tags$br(),
       tags$h4("Visualisation of the Result :"),
-      verbatimTextOutput(ns("test")),
+      verbatimTextOutput(ns("vis_res_show")),
+      tags$hr(),
       
+      tags$h4("Save Results :"),
+      textInput(ns("vis_res_name"), "Name :"),
+      shinyjs::disabled(actionButton(ns("vis_res_save"), "Save in Local")),
+      shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
+      verbatimTextOutput(ns("vis_res_save_worked")),
       ),
       
     )
@@ -224,13 +230,31 @@ mod_page_results_server <- function(id, all_vars){
       }
     })
     
+# Visualisation Server ----------------------------------------------------
+    
     # Affichage // Résultat du calcul
-    output$test <- renderPrint({
+    output$vis_res_show <- renderPrint({
       results()
     })
     
-# Visualisation Server ----------------------------------------------------
+    # Mise à jour du bouton pour enregistrer le résultat
+    observe({
+      if (!is.null(results())) {
+        shinyjs::enable("vis_res_save")
+      } else {
+        shinyjs::disable("vis_res_save")
+      }
+    })
     
+    # Variable : Est-ce que la sauvegarde a fonctionné ?
+    vis_save <- eventReactive(input$vis_res_save, {
+      res_save(req(data_folder_path_rea()), req(input$vis_res_name), req(results()))
+    })
+    
+    # Affichage // Est-ce que la sauvegarde a fonctionné ?
+    output$vis_res_save_worked <- renderPrint({
+      vis_save()
+    })
 
 # Communication -----------------------------------------------------------
     
