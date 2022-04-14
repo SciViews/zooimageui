@@ -35,11 +35,13 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Models"),
-             tags$h5("Active classifier :"),
+             tags$h5("Active Classifier :"),
              textOutput(ns("mod_act_clas")),
              
              tags$hr(),
              tags$h4("-> Results"),
+             tags$h5("Made Calculation :"),
+             textOutput(ns("res_calc_name")),
     )
   )
 }
@@ -67,6 +69,9 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # models_vars
     mod_clas_name <- reactive({ all_vars$models_vars$modvis_clas_name })
+    
+    # results_vars
+    calc_name <- reactive({ all_vars$results_vars$calc_name })
     
     # Settings ----------------------------------------------------------------
     
@@ -135,6 +140,17 @@ mod_fixed_pannel_server <- function(id, all_vars){
         mod_clas_name()
       } else {
         "No active Classifier"
+      }
+    })
+    
+    # Results -----------------------------------------------------------------
+    
+    # Affichage // Nom du scrip utilisé pour résultats
+    output$res_calc_name <- renderText({
+      if (!is.null(calc_name())) {
+        calc_name()
+      } else {
+        "No made Calculation"
       }
     })
     

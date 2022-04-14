@@ -18,41 +18,44 @@ mod_page_results_ui <- function(id){
         tags$br(),
         fluidRow(
           
-          sidebarPanel( width = 3,
+          sidebarPanel( width = 4,
             # Montre le Sample choisi
             tags$h4("Selected Sample :"),
             textOutput(ns("calc_sel_smp")),
+            tags$hr(),
             # Montre le Classifieur actif
             tags$h4("Active Classifier :"),
             textOutput(ns("calc_act_clas")),
+            tags$hr(),
             # Indique si on peut passer à la suite
             tags$h4("Data ready ?"),
             textOutput(ns("calc_is_data_ready")),
           ),
           
-          sidebarPanel( width = 3,
+          sidebarPanel( width = 8,
             # Choix du script
             tags$h4("Chose Calculations :"),
-            selectInput(ns("calc_selected_script"), NULL, choices = NULL),
+            selectInput(ns("calc_selected_script"), NULL, choices = NULL, width = "50%"),
             # Messages d'aide
             verbatimTextOutput(ns("calc_res_message")),
-            textOutput(ns("calc_res_comment")),
+            verbatimTextOutput(ns("calc_res_comment")),
             tags$br(),
             # Boutons pour rafraichir la liste de scripts et pour faire les calculs
             actionButton(ns("calc_refresh"), "Refresh"),
             shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate"))
           ),
           
-          sidebarPanel( width = 6,
-            verbatimTextOutput(ns("test")),
-          ),
         ),
       ),
 
 # Visualisation UI --------------------------------------------------------
 
-      tabPanel("Visualisation of Statistics"
-
+      tabPanel("Visualisation of Statistics",
+               
+      tags$br(),
+      tags$h4("Visualisation of the Result :"),
+      verbatimTextOutput(ns("test")),
+      
       ),
       
     )
@@ -147,7 +150,7 @@ mod_page_results_server <- function(id, all_vars){
         # Lecture du sample
         res <- zidbDatRead(smp_path)
         # Ajout d'une colonne prédiction par rapport au classifieur
-        res <- predict(classif, res, class.only = FALSE)
+        res <- predict(mod_classif(), res, class.only = FALSE)
       }
     })
     
@@ -170,12 +173,12 @@ mod_page_results_server <- function(id, all_vars){
     
     # Affichage // Script message
     output$calc_res_message <- renderText({
-      attr(calc_is_script_good, "message")
+      attr(calc_is_script_good(), "message")
     })
     
     # Affichage // Script commentaire
     output$calc_res_comment <- renderText({
-      comment(calc_results())
+      paste0("Description : ",comment(calc_results()))
     })
     
     # Variable : fonction du modèle
@@ -205,19 +208,44 @@ mod_page_results_server <- function(id, all_vars){
       # Désactivation du bouton
       shinyjs::disable("calc_use_script")
       
-      res <- calc_results()(calc_dat())
-      return(res)
+      return(calc_results()(calc_dat()))
       
       # Réactivation du bouton
       shinyjs::enable("calc_use_script")
     })
     
+    # Variable : Nom du script choisi
+    calc_name <- reactive({
+      req(data_folder_path_rea())
+      if (!is.null(results())) {
+        sub("\\.R$", "", input$calc_selected_script)
+      } else {
+        print("No Calculations yet")
+      }
+    })
+    
+    # Affichage // Résultat du calcul
     output$test <- renderPrint({
       results()
     })
     
 # Visualisation Server ----------------------------------------------------
     
+
+# Communication -----------------------------------------------------------
+    
+    # Préparation des variables dans un paquet
+    results_vars <- reactiveValues(
+      calc_name = NULL,
+    )
+    
+    # Mise à jour des variables dans le paquet
+    observe({
+      results_vars$calc_name <- calc_name()
+    })
+    
+    # Envoi du packet qui contient toutes les variables
+    return(results_vars)
     
   })
 }

@@ -38,3 +38,9 @@ Mise en place d'un script exemple pour calculer des résultats. \
 Mise en place d'un message par rapport au chargement du script et d'un commentaire expliquant le script. \
 
 Mise en place du calcul des résultat et d'un premier affichage de test. \
+
+Ajout de l'affichage du nom du script utilisé. \
+
+Mise en place de l'affichage du script utilisé dans le panneau fixe, et donc de la communication depuis l'onglet results. \
+
+Changement de l'affichage de l'onglet création des résultats. \
