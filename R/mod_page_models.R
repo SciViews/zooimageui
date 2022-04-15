@@ -23,23 +23,20 @@ mod_page_models_ui <- function(id){
                  
             fluidRow(
               sidebarPanel(width = 12,
-                h4("Create a classifier :"),
-                h5("Model :"),
+                h4("Model :"),
                 # Choix du script
                 selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
                 # Messages d'aide
-                verbatimTextOutput(ns("modcre_mod_message")),
+                textOutput(ns("modcre_mod_message")),
                 textOutput(ns("modcre_mod_comment")),
                 # Affichage Training Set sélectionné
-                h5("Training Set :"),
+                h4("Training Set :"),
                 textOutput(ns("modcre_selected_ts")),
-                tags$br(),
                 # Est-ce que tout fonctionne ?
-                h5("Everything ok :"),
-                verbatimTextOutput(ns("modcre_is_everything_ok")),
-                tags$br(),
+                h4("Everything ok :"),
+                textOutput(ns("modcre_is_everything_ok")),
                 # Choix du nom pour sauvegarde
-                h5("Save Name :"),
+                h4("Save Name :"),
                 textInput(ns("modcre_save_name"), NULL),
                 # Création du classifieur
                 shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Create Classifier")),

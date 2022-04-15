@@ -31,3 +31,23 @@ J'ai rajouté quelques commentaires. \
 J'ai également ajouté une vérification que les results ne soient pas une erreur pour récupérer le nom du résultat. \
 
 J'ai modifié l'affichage de la sauvegarde et du téléchargement. \
+
+----------------------
+
+=> Il faudrait à présent que : \
+-> Je trouve un meilleur affichage des résultats. \
+-> Je corrige les quelques petits problèmes d'affichage des autres pages. \
+-> Mise en place d'idées d'ajouts. \
+
+Après midi : \
+
+Début des améliorations générales \
+
+Idées : \
+
+Meilleur visualisation Sample - \
+Meilleur visualisation TS - \
+Meilleur visualisation Results - \
+
+Changements dans mes interfaces de mes différentes pages pour rendre le tout plus clair et convivial. \
+Changements d'apparitions contrôlées \

@@ -21,9 +21,9 @@ mod_page_training_sets_ui <- function(id){
         tags$h4("LOCAL MODE NOTE :"),
         tags$p("If you are using local mode, you can
                 do it directly in your folders, without zipping
-                and unzipping, nor downloading or uploading."),
+                and unzipping."),
         tags$p("The resulting sorted training set must be putted
-                in the TS_Sorted folder. You can then refresh
+                in the Training_Sets folder. You can then refresh
                 the page to see it."),
         tags$br(),
         
@@ -90,14 +90,14 @@ mod_page_training_sets_ui <- function(id){
               # Message d'erreur ou de succès
               textOutput(ns("stsp_up_error")),
               tags$h5("Existing Training Sets :"),
+              # Montrer les ts qui existent
+              verbatimTextOutput(ns("stsp_existing_show")),
               # Rafraichir la liste
               actionButton(ns("stsp_refresh"), "Refresh"),
               tags$br(),
-              tags$br(),
-              # Montrer les ts qui existent
-              verbatimTextOutput(ns("stsp_existing_show")),
+              tags$h4("Training Set Delete :"),
               # Suppression d'un training set
-              selectInput(ns("stsp_ts_to_delete"), "Training Set to Delete :", choices = NULL),
+              selectInput(ns("stsp_ts_to_delete"), NULL, choices = NULL),
               shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
             ),
           ),
@@ -189,7 +189,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       if (length(ts_list()) > 0) {
         ts_list()
       } else {
-        "No Training Set found"
+        "No Training Set yet"
       }
     })
     
@@ -309,16 +309,20 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Affichage des Training Sets existants
     output$stsp_existing_show <- renderPrint({
-      ts_list()
+      if (length(ts_list()) > 0) {
+        ts_list()
+      } else {
+        "No Training Set yet"
+      }
     })
     
     # Mise à jour de la sélection d'un Training Set à supprimer
     observe({
       # si liste de ts non vide
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "stsp_ts_to_delete", "Training Set to delete :", choices = ts_list())
+        updateSelectInput(session, "stsp_ts_to_delete", NULL, choices = ts_list())
       } else {
-        updateSelectInput(session, "stsp_ts_to_delete", "Training Set to delete :", choices = "No Training Set yet")
+        updateSelectInput(session, "stsp_ts_to_delete", NULL, choices = "No Training Set yet")
       }
     })
     

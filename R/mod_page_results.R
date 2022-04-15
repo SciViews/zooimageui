@@ -37,15 +37,17 @@ mod_page_results_ui <- function(id){
             tags$h4("Chose Calculations :"),
             selectInput(ns("calc_selected_script"), NULL, choices = NULL, width = "50%"),
             # Messages d'aide
-            verbatimTextOutput(ns("calc_res_message")),
-            verbatimTextOutput(ns("calc_res_comment")),
-            tags$br(),
+            tags$hr(),
+            textOutput(ns("calc_res_message")),
+            uiOutput(ns("calc_comment_hr")),
+            textOutput(ns("calc_res_comment")),
+            tags$hr(),
             # Boutons pour rafraichir la liste de scripts et pour faire les calculs
             actionButton(ns("calc_refresh"), "Refresh"),
             shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate")),
             tags$br(),
             # Affichage d'un message d'erreur si le script plante
-            verbatimTextOutput(ns("calc_error")),
+            textOutput(ns("calc_error")),
           ),
           
         ),
@@ -71,7 +73,7 @@ mod_page_results_ui <- function(id){
       tags$br(),
       # Messages lié à la sauvegarde et au téléchargement
       verbatimTextOutput(ns("vis_dl_name_good")),
-      tags$h5("Save Worked :"),
+      uiOutput(ns("vis_title")),
       textOutput(ns("vis_res_save_worked")),
       ),
       
@@ -193,6 +195,13 @@ mod_page_results_server <- function(id, all_vars){
       attr(calc_is_script_good(), "message")
     })
     
+    # Affichage // barre qui va avec le commentaire
+    output$calc_comment_hr <- renderUI({
+      if (!is.null(comment(calc_results()))) {
+        tags$hr()
+      }
+    })
+    
     # Affichage // Script commentaire
     output$calc_res_comment <- renderText({
       paste0("Description : ",comment(calc_results()))
@@ -304,6 +313,12 @@ mod_page_results_server <- function(id, all_vars){
     # Variable : Est-ce que la sauvegarde a fonctionné ?
     vis_save <- eventReactive(input$vis_res_save, {
       res_save(req(data_folder_path_rea()), req(input$vis_res_name), req(results()))
+    })
+    
+    # Affichage // Titre est-ce que ça a fonctionné
+    output$vis_title <- renderUI({
+      vis_save()
+      return(tags$h5("Save Worked :"))
     })
     
     # Affichage // Est-ce que la sauvegarde a fonctionné ?
