@@ -61,6 +61,7 @@ mod_page_results_ui <- function(id){
       tags$br(),
       tags$h4("Visualisation of the Result :"),
       verbatimTextOutput(ns("vis_res_show")),
+      plotOutput(ns("vis_test_plot")),
       tags$hr(),
       
       # Sauvegarde des résultats
@@ -277,6 +278,23 @@ mod_page_results_server <- function(id, all_vars){
     output$vis_res_show <- renderPrint({
       if (!is_results_error()) {
         results()
+      }
+    })
+    
+    # Affichage // Test de plot
+    output$vis_test_plot <- renderPlot({
+      if (!is_results_error()) {
+        transformed_res <- t(results())
+        abd <- TRUE %in% grepl("Abd", names(results()))
+        bio <- TRUE %in% grepl("Bio", names(results()))
+        ylab <- if (abd && !bio) {
+          "Abundance"
+        } else if (bio && !abd) {
+          "Biomass"
+        } else {
+          "Mix of Abundance and Biomass"
+        }
+        plot(transformed_res[2:length(transformed_res),], ylab = ylab)
       }
     })
     

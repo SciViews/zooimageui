@@ -114,6 +114,7 @@ mod_page_training_sets_ui <- function(id){
                tags$hr(),
                # Affichage des classes et du nombre d'éléments dans celles-ci
                tags$h4("Visualisation of the Training Set's Classes :"),
+               selectInput(ns("tsv_depth"), "Depth :", choices = c(1:5), selected = 5),
                verbatimTextOutput(ns("tsv_classes")),
       )
       
@@ -390,7 +391,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Affichage // classes du Training Set
     output$tsv_classes <- renderPrint({
       req(tsv_training_set())
-      sort(table(tsv_training_set()$Class))
+      sort(table(recode(tsv_training_set(), depth = input$tsv_depth )$Class))
     })
 
 # Communication -----------------------------------------------------------

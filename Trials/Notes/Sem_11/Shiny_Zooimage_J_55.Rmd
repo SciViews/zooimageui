@@ -51,3 +51,15 @@ Meilleur visualisation Results - \
 
 Changements dans mes interfaces de mes différentes pages pour rendre le tout plus clair et convivial. \
 Changements d'apparitions contrôlées \
+
+Je vais tout d'abord essayer d'améliorer la visualisation dans Samples car elle n'est pas incroyable. \
+
+J'ai rajouté tout une possibilité de choix pour le graphique de samples. \
+
+J'ai également rajouté le choix de la profondeur pour l'affichage des classes du training set. \
+
+J'ai trouvé comment faire un graphique à partir de résultats. \
+
+Tentative de mettre un graphique du résultat dans mon application, mais c'est pas terrible... \
+
+Je ne sais pas comment traiter correctement le format du résultat. \

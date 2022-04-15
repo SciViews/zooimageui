@@ -52,24 +52,36 @@ mod_page_samples_ui <- function(id){
 
       tabPanel("Sample Visualisation",
         
-        # Affichage dataframe de l'échantillon
-        tags$h3("Dataframe of the Sample"),
-        dataTableOutput(ns("zidb_datatable")),
+        tags$br(),
+        navlistPanel(widths = c(2,10),
         
-        # Affichage metadata de l'échantillon
-        tags$hr(),
-        tags$h3("Metadata of the Sample"),
-        verbatimTextOutput(ns("zidb_metadata")),
+        tabPanel("Dataframe",
+          # Affichage dataframe de l'échantillon
+          tags$h3("Dataframe of the Sample"),
+          dataTableOutput(ns("zidb_datatable")),
+        ),
         
-        # Affichage du summary de l'échantillon
-        tags$hr(),
-        tags$h3("Summary of the Sample"),
-        verbatimTextOutput(ns("zidb_summary")),
+        tabPanel("Metadata",
+          # Affichage metadata de l'échantillon
+          tags$h3("Metadata of the Sample"),
+          verbatimTextOutput(ns("zidb_metadata")),
+        ),
         
-        # Affichage d'un graphique de l'échantillon
-        tags$hr(),
-        tags$h3("Plot of the Sample"),
-        plotOutput(ns("zidb_plot"))
+        tabPanel("Summary",
+          # Affichage du summary de l'échantillon
+          tags$h3("Summary of the Sample"),
+          verbatimTextOutput(ns("zidb_summary")),
+        ),
+        
+        tabPanel("Plot",
+          # Affichage d'un graphique de l'échantillon
+          tags$h3("Plot of the Sample"),
+          selectInput(ns("zidb_plot_x"), NULL, choices = NULL),
+          selectInput(ns("zidb_plot_y"), NULL, choices = NULL),
+          plotOutput(ns("zidb_plot"))
+        ),
+      
+        ),
       ),
 
 # Vignettes Visualisation UI ----------------------------------------------
@@ -205,9 +217,26 @@ mod_page_samples_server <- function(id, all_vars){
       summary(zidb_df())
     })
     
+    # Mise à jour du choix de la variable en x et y
+    observe({
+      data_folder_path_rea()
+      updateSelectInput(session, "zidb_plot_x", "X :", choices = "")
+      updateSelectInput(session, "zidb_plot_y", "Y :", choices = "")
+      if (!is.null(req(zidb_df()))) {
+        choices = names(zidb_df())
+        updateSelectInput(session, "zidb_plot_x", "X :", choices = choices)
+        updateSelectInput(session, "zidb_plot_y", "Y :", choices = choices)
+      }
+    })
+    
     # Affichage // plot exemple du ZIDB choisi
     output$zidb_plot <- renderPlot({
-      plot(zidb_df()$Area, zidb_df()$Perim., xlab = "Area", ylab = "Perimeter")
+      req(zidb_df(), input$zidb_plot_x, input$zidb_plot_y)
+      if (input$zidb_plot_x != "" && input$zidb_plot_y != "") {
+        x <- zidb_df()[,input$zidb_plot_x]
+        y <- zidb_df()[,input$zidb_plot_y]
+        try(plot(x, y, xlab = input$zidb_plot_x, ylab = input$zidb_plot_y), silent = TRUE)
+      }
     })
 
 # Vignettes Visualisation Server ------------------------------------------
