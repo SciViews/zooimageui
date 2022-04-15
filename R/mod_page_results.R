@@ -42,7 +42,10 @@ mod_page_results_ui <- function(id){
             tags$br(),
             # Boutons pour rafraichir la liste de scripts et pour faire les calculs
             actionButton(ns("calc_refresh"), "Refresh"),
-            shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate"))
+            shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate")),
+            tags$br(),
+            # Affichage d'un message d'erreur si le script plante
+            verbatimTextOutput(ns("calc_error")),
           ),
           
         ),
@@ -52,15 +55,19 @@ mod_page_results_ui <- function(id){
 
       tabPanel("Visualisation of Statistics",
                
+      # Visualisation des résultats
       tags$br(),
       tags$h4("Visualisation of the Result :"),
       verbatimTextOutput(ns("vis_res_show")),
       tags$hr(),
       
+      # Sauvegarde des résultats
       tags$h4("Save Results :"),
       textInput(ns("vis_res_name"), "Name :"),
       shinyjs::disabled(actionButton(ns("vis_res_save"), "Save in Local")),
+      # Téléchargement des résultats
       shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
+      tags$br(),
       verbatimTextOutput(ns("vis_res_save_worked")),
       ),
       
@@ -207,6 +214,8 @@ mod_page_results_server <- function(id, all_vars){
       }
     })
     
+    # --- Global ---
+    
     # Variable : Résultat des calculs
     results <- eventReactive(input$calc_use_script, {
       req(data_folder_path_rea())
@@ -214,10 +223,29 @@ mod_page_results_server <- function(id, all_vars){
       # Désactivation du bouton
       shinyjs::disable("calc_use_script")
       
-      return(calc_results()(calc_dat()))
+      res <- try(calc_results()(calc_dat()), silent = TRUE)
+      if (inherits(res, "try-error")) {
+        res <- paste0("Error in Calculation script : ", attr(res, "condition"))
+        class(res) <- "try-error"
+        return(res)
+      } else {
+        return(res)
+      }
       
       # Réactivation du bouton
       shinyjs::enable("calc_use_script")
+    })
+    is_results_error <- reactive({
+      inherits(results(), "try-error")
+    })
+    
+    # Affichage // Erreur éventuelle lors de l'utilisation du script
+    output$calc_error <- renderText({
+      if (is_results_error()) {
+        results()
+      } else {
+        NULL
+      }
     })
     
     # Variable : Nom du script choisi
@@ -226,7 +254,7 @@ mod_page_results_server <- function(id, all_vars){
       if (!is.null(results())) {
         sub("\\.R$", "", input$calc_selected_script)
       } else {
-        print("No Calculations yet")
+        "No Calculations yet"
       }
     })
     
@@ -234,12 +262,14 @@ mod_page_results_server <- function(id, all_vars){
     
     # Affichage // Résultat du calcul
     output$vis_res_show <- renderPrint({
-      results()
+      if (!is_results_error()) {
+        results()
+      }
     })
     
     # Mise à jour du bouton pour enregistrer le résultat
     observe({
-      if (!is.null(results())) {
+      if (!is.null(results()) && !is_results_error()) {
         shinyjs::enable("vis_res_save")
       } else {
         shinyjs::disable("vis_res_save")
@@ -252,8 +282,12 @@ mod_page_results_server <- function(id, all_vars){
     })
     
     # Affichage // Est-ce que la sauvegarde a fonctionné ?
-    output$vis_res_save_worked <- renderPrint({
-      vis_save()
+    output$vis_res_save_worked <- renderText({
+      if (!vis_save()) {
+        attr(vis_save(), "error")
+      } else {
+        "Saved !"
+      }
     })
 
 # Communication -----------------------------------------------------------

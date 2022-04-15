@@ -34,6 +34,10 @@ mod_page_models_ui <- function(id){
                 h5("Training Set :"),
                 textOutput(ns("modcre_selected_ts")),
                 tags$br(),
+                # Est-ce que tout fonctionne ?
+                h5("Everything ok :"),
+                verbatimTextOutput(ns("modcre_is_everything_ok")),
+                tags$br(),
                 # Choix du nom pour sauvegarde
                 h5("Save Name :"),
                 textInput(ns("modcre_save_name"), NULL),
@@ -206,6 +210,36 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
+    # Test global
+    modcre_everything_ok <- reactive({
+      data_folder_path_rea
+      result <- FALSE
+      attr(result, "message") <- "Training Set or Model not ready"
+      # Si le reste est bon
+      if (modcre_is_mod_correct() && modcre_is_ts_loaded()) {
+        # On essaie de d'utiliser la fonction car pourrait bugger
+        script_path <- fs::path(models_folder_path(), input$modcre_selected_script)
+        source(script_path, local = TRUE)
+        res <- try(get_classif(ts_training_set()), silent = TRUE)
+        # Renvoie FALSE si la fonction bug et un message qui explique
+        if (inherits(res, "try-error")) {
+          result <- FALSE
+          attr(result, "message") <- paste0("Error in Model : ",attr(res, "condition"))
+          return(result)
+        } else {
+          result <- TRUE
+          attr(result, "message") <- "Everything is okay"
+          return(result)
+        }
+      }
+      return(result)
+    })
+    
+    # Affichage // Tout est ok pour la suite ?
+    output$modcre_is_everything_ok <- renderText({
+      attr(modcre_everything_ok(), "message")
+    })
+    
     # Variable pour mettre à jour le bouton pour créer le classifieur
     modcre_create_up <- reactiveVal(0)
     
@@ -213,7 +247,7 @@ mod_page_models_server <- function(id, all_vars){
     observe({
       modcre_create_up()
       # Si le modèle est correcte et que le TS est chargé alors on peut créer le classifieur
-      if (modcre_is_mod_correct() && modcre_is_ts_loaded()) {
+      if (modcre_everything_ok()) {
         shinyjs::enable("modcre_use_selected_script")
       # Si pas, on ne peut pas
       } else {

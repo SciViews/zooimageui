@@ -32,6 +32,7 @@ res_save <- function(data_folder_path, name, res) {
     return(res)
   }
   
+  # Pas de test car le chemin est testé dans l'app via un req() de shiny
   # Création du chemin du dossier de sauvegardes
   save_folder_path <- fs::path(data_folder_path, "Saved_Results")
   # Création du dossier si il n'existe pas (pour sauvergade)
