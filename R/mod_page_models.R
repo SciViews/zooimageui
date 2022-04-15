@@ -366,7 +366,7 @@ mod_page_models_server <- function(id, all_vars){
       # Pour la méthode mlRforest, j'utilise les éléments out-of-bag
       # Le choix de leur utilisation pourrait être laissé à l'utilisateur
       if (attr(modcre_classif(), "method") == "mlRforest") {
-        res <- confusion(modcre_classif(), predict(classif, method = "oob"))
+        res <- confusion(modcre_classif(), predict(modcre_classif(), method = "oob"))
       } else {
         confusion(modcre_classif())
       }

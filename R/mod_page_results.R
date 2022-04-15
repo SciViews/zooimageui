@@ -68,7 +68,11 @@ mod_page_results_ui <- function(id){
       # Téléchargement des résultats
       shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
       tags$br(),
-      verbatimTextOutput(ns("vis_res_save_worked")),
+      tags$br(),
+      # Messages lié à la sauvegarde et au téléchargement
+      verbatimTextOutput(ns("vis_dl_name_good")),
+      tags$h5("Save Worked :"),
+      textOutput(ns("vis_res_save_worked")),
       ),
       
     )
@@ -251,7 +255,7 @@ mod_page_results_server <- function(id, all_vars){
     # Variable : Nom du script choisi
     calc_name <- reactive({
       req(data_folder_path_rea())
-      if (!is.null(results())) {
+      if (!is.null(results()) && !is_results_error()) {
         sub("\\.R$", "", input$calc_selected_script)
       } else {
         "No Calculations yet"
@@ -267,9 +271,30 @@ mod_page_results_server <- function(id, all_vars){
       }
     })
     
+    # Variable : Est-ce que le nom pour sauvegarder est correct ?
+    vis_is_name_good <- reactive({
+      # Enlèvement des caractères spéciaux
+      name <- stringr::str_replace_all( input$vis_res_name, "[^[:alnum:]]", "")
+      # Test que le nom ne soit pas vide
+      if (name == "") {
+        res <- FALSE
+        attr(res, "error") <- "Name is empty or only contains specials characters."
+        return(res)
+      } else {
+        res <- TRUE
+        attr(res, "error") <- "Name is correct."
+        return(res)
+      }
+    })
+    
+    # Affichage // Est-ce que le nom est correct
+    output$vis_dl_name_good <- renderText({
+      attr(vis_is_name_good(), "error")
+    })
+    
     # Mise à jour du bouton pour enregistrer le résultat
     observe({
-      if (!is.null(results()) && !is_results_error()) {
+      if (!is.null(results()) && !is_results_error() && vis_is_name_good()) {
         shinyjs::enable("vis_res_save")
       } else {
         shinyjs::disable("vis_res_save")
@@ -289,6 +314,28 @@ mod_page_results_server <- function(id, all_vars){
         "Saved !"
       }
     })
+    
+    # Mise à jour du bouton pour télécharger le résultat
+    observe({
+      if (!is.null(results()) && !is_results_error() && vis_is_name_good()) {
+        shinyjs::enable("vis_res_dl")
+      } else {
+        shinyjs::disable("vis_res_dl")
+      }
+    })
+    
+    # Mise au point du téléchargement des résultats
+    output$vis_res_dl <- downloadHandler(
+      filename = function() {
+        # Le fichier s'appellera :
+        paste(stringr::str_replace_all( input$vis_res_name, "[^[:alnum:]]", ""), ".zip", sep = "")
+      },
+      # Contenu du fichier
+      content = function(file) {
+        # fonction qui crée le zip des résultats
+        res_dl(data_folder_path_rea(),input$vis_res_name, results(), file = file)
+      }
+    )
 
 # Communication -----------------------------------------------------------
     

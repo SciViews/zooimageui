@@ -18,3 +18,16 @@ Je pourrais faire en sorte qu'il ne faille plus créer une deuxième fois le cla
 
 J'ai rajouté quelques commentaires dans la partie Results et dans ma fonction pour sauvegarder. \
 Mise en place d'un message plus clair pour la sauvegarde. \
+
+Mise en place du téléchargement des résultats. \
+
+Utilisation d'une fonction. \
+
+Clarifications dans la partie sauvegarde et téléchargement des résultats. \
+La vérification du nom ne se fait plus qu'une seule fois, j'ai donc modifié ma fonction pour la sauvegarde des résultats en local. \
+
+J'ai rajouté quelques commentaires. \
+
+J'ai également ajouté une vérification que les results ne soient pas une erreur pour récupérer le nom du résultat. \
+
+J'ai modifié l'affichage de la sauvegarde et du téléchargement. \

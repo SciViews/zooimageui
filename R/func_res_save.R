@@ -10,20 +10,12 @@
 #' @export
 #'
 #' @examples
-#' To Do...
+#' # To Do...
 res_save <- function(data_folder_path, name, res) {
   
   # Enlèvement des caractères spéciaux
   name <- stringr::str_replace_all( name, "[^[:alnum:]]", "")
-  
-  # Test que le nom ne soit pas vide
-  if (name != "") {
-    name_txt <- paste0(name,".txt") # Nom pour le fichier .txt
-  } else {
-    res <- FALSE
-    attr(res, "error") <- "Name is empty."
-    return(res)
-  }
+  name_txt <- paste0(name,".txt") # Nom pour le fichier .txt
   
   # Test que le résultat ne soit pas NULL
   if (is.null(res)) {
