@@ -16,7 +16,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # TEST : Input NULL ? oui -> stop et renvoie FALSE + message
   if (is.null(upload_input)) {
     res <- FALSE
-    attr(res, "error") <- "File is NULL"
+    attr(res, "error") <- "No file uploaded, please retry."
     return(res)
   }
   
@@ -38,15 +38,14 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   on.exit(setwd(oldir))
   
   # TEST : Erreur ? Stop et renvoie FALSE + message
-  oldir_inh <- inherits(oldir, "try-error")
-  if (oldir_inh) {
+  if (inherits(oldir, "try-error")) {
     res <- FALSE
-    attr(res, "error") <- attr(oldir, "condition")
+    attr(res, "error") <- attr(oldir, "condition") # Pourrait être plus clair
     return(res)
   }
   
   # TEST : Input contient ".zip" ? Oui -> stop et renvoie FALSE + message
-  if (!grepl(".zip", upload_input$name)) {
+  if (!grepl("\\.zip$", upload_input$name)) {
     res <- FALSE
     attr(res, "error") <- "File doesn't have .zip ext"
     return(res)
@@ -62,8 +61,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # On essaie de récupérer l'Input sur le serveur
   fc_res <- try(file.copy(upload_input$datapath, upload_input$name), silent = TRUE)
   # TEST : Erreur ? Stop et renvoie FALSE + message
-  fc_inh <- inherits(fc_res, "try-error")
-  if (fc_inh) {
+  if (inherits(fc_res, "try-error")) {
     res <- FALSE
     attr(res, "error") <- attr(fc_res, "condition")
     return(res)

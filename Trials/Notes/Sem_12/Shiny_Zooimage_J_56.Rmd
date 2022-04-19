@@ -1,0 +1,12 @@
+---
+title: "Shiny_Zooimage_J_56"
+output: html_document
+---
+
+Fichier de notes du jour 56. Mardi 19 Avril 2022. Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Discussion avec M. Grosjean à propos de mon travail, de mon app "quasiment finie" \
