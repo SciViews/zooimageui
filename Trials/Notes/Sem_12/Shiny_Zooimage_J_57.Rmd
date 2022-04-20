@@ -46,3 +46,10 @@ J'ai changé les noms pour les models, et j'ai également changé tout l'afficha
 
 J'ai ajouté une visualisation au chargement d'un classifieur. \
 
+J'ai modifié et ajouté des commentaires. \
+
+Modification de l'interface pour les résultats. \
+
+J'ai mis en place un selectinput pour la création de training set et la sélection des échantillons. \
+selectinput(multiple = TRUE) \
+

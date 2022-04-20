@@ -18,21 +18,7 @@ mod_page_results_ui <- function(id){
         tags$br(),
         fluidRow(
           
-          sidebarPanel( width = 4,
-            # Montre le Sample choisi
-            tags$h4("Selected Sample :"),
-            textOutput(ns("calc_sel_smp")),
-            tags$hr(),
-            # Montre le Classifieur actif
-            tags$h4("Active Classifier :"),
-            textOutput(ns("calc_act_clas")),
-            tags$hr(),
-            # Indique si on peut passer à la suite
-            tags$h4("Data ready ?"),
-            textOutput(ns("calc_is_data_ready")),
-          ),
-          
-          sidebarPanel( width = 8,
+          sidebarPanel( width = 6,
             # Choix du script
             tags$h4("Chose Calculations :"),
             selectInput(ns("calc_selected_script"), NULL, choices = NULL, width = "50%"),
@@ -48,6 +34,20 @@ mod_page_results_ui <- function(id){
             tags$br(),
             # Affichage d'un message d'erreur si le script plante
             textOutput(ns("calc_error")),
+          ),
+          
+          sidebarPanel( width = 4,
+            # Montre le Sample choisi
+            tags$h4("Selected Sample :"),
+            textOutput(ns("calc_sel_smp")),
+            tags$hr(),
+            # Montre le Classifieur actif
+            tags$h4("Active Classifier :"),
+            textOutput(ns("calc_act_clas")),
+            tags$hr(),
+            # Indique si on peut passer à la suite
+            tags$h4("Data ready ?"),
+            textOutput(ns("calc_is_data_ready")),
           ),
           
         ),

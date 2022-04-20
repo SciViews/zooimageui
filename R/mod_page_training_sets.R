@@ -34,7 +34,7 @@ mod_page_training_sets_ui <- function(id){
             tags$h4("Training Set Preparation"),
             textInput(ns("ltsp_name"), "Name of the new Training Set"),
             # Choix des zidbs
-            checkboxGroupInput(ns("ltsp_zidbs"), label = "" , choices = NULL),
+            selectInput(ns("ltsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
             # Choix du template ziclass
             selectInput(ns("ltsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
             # Préparer le training set (désactivé de base)
@@ -74,7 +74,7 @@ mod_page_training_sets_ui <- function(id){
               tags$h4("Training Set preparation :"),
               textInput(ns("stsp_name"), "Name of the new Training Set"),
               # Choix des zidbs
-              checkboxGroupInput(ns("stsp_zidbs"), label = "" , choices = NULL),
+              selectInput(ns("stsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
               # Choix du template ziclass
               selectInput(ns("stsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
               # Préparer le training set (désactivé de base)
@@ -173,15 +173,15 @@ mod_page_training_sets_server <- function(id, all_vars){
       # Si zidb_files() change et qu'il est non vide, alors on affiche les zidb_files()
       if (length(zidb_files()) > 0) {
         # Local
-        updateCheckboxGroupInput(session, "ltsp_zidbs", label = "Select samples :", choices = zidb_files())
+        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = zidb_files())
         # Server
-        updateCheckboxGroupInput(session, "stsp_zidbs", label = "Select samples :", choices = zidb_files())
+        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = zidb_files())
       # Si pas, alors on affiche rien
       } else {
         # Local
-        updateCheckboxGroupInput(session, "ltsp_zidbs", label = "Select samples :", choices = NULL)
+        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = NULL)
         # Server
-        updateCheckboxGroupInput(session, "stsp_zidbs", label = "Select samples :", choices = NULL)
+        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = NULL)
       }
     })
     
