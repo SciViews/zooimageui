@@ -249,13 +249,13 @@ mod_page_models_server <- function(id, all_vars){
     
     # Test global
     modcre_everything_ok <- reactive({
-      data_folder_path_rea
+      data_folder_path_rea()
       result <- FALSE
       attr(result, "message") <- "Training Set or Model not ready"
       # Si le reste est bon
       if (modcre_is_mod_correct() && modcre_is_ts_loaded()) {
         # On essaie de d'utiliser la fonction car pourrait bugger
-        script_path <- fs::path(models_folder_path(), input$modcre_selected_script)
+        script_path <- fs::path(isolate(models_folder_path()), input$modcre_selected_script)
         source(script_path, local = TRUE)
         res <- try(get_classif(ts_training_set()), silent = TRUE)
         # Renvoie FALSE si la fonction bug et un message qui explique
@@ -265,7 +265,8 @@ mod_page_models_server <- function(id, all_vars){
           return(result)
         } else {
           result <- TRUE
-          attr(result, "message") <- "Everything is Okay"
+          attr(result, "message") <- "Classifier Built"
+          attr(result, "classif") <- res
           return(result)
         }
       }
@@ -293,13 +294,17 @@ mod_page_models_server <- function(id, all_vars){
     })
     
     # Variable : Classifieur si appui sur le bouton
-    modcre_classif_new <- eventReactive(input$modcre_use_selected_script, {
-      req(data_folder_path_rea())
-      shinyjs::disable("modcre_use_selected_script")
-      on.exit(modcre_create_up(modcre_create_up()+1))
+    modcre_classif_new <- eventReactive(modcre_everything_ok(), {
+      if (modcre_everything_ok()) {
+        return(attr(modcre_everything_ok(), "classif"))
+      }
+    })
+    
+    # Event pour la sauvegarde
+    is_saved <- eventReactive(input$modcre_use_selected_script, {
       
-      # Crée le classifieur
-      classifier <- modcre_model()(ts_training_set())
+      req(modcre_classif_new())
+      
       # Variable : Nom pour la sauvegarde
       name_without_special_char <- stringr::str_replace_all(input$modcre_save_name, "[^[:alnum:]]", "")
       cla_name <- paste(name_without_special_char, ".RData", sep = "")
@@ -313,16 +318,18 @@ mod_page_models_server <- function(id, all_vars){
       
       # Test si existe déjà
       if (input$modcre_save_name == "") {
-        attr(classifier, "is_saved") <- "Not saved, name empty."
+        res <- "Not saved, name empty."
+        return(res)
       } else if (!cla_name %in% list.files(saved_classif_dir)) {
+        classifier <- modcre_classif_new()
         save(classifier, file = fs::path(saved_classif_dir, cla_name))
         modcre_saved_update(modcre_saved_update()+1)
-        attr(classifier, "is_saved") <- "Saved !"
+        res <- "Saved !"
+        return(res)
       } else {
-        attr(classifier, "is_saved") <- "Not saved, model already used. If you want to save a new one, please delete the old one first."
+        res <- "Not saved, model already used. If you want to save a new one, please delete the old one first."
+        return(res)
       }
-      
-      return(classifier)
     })
     
     # ---------- Classifieurs sauvegardés ----------
@@ -354,10 +361,8 @@ mod_page_models_server <- function(id, all_vars){
     
     # Affichage // Est-ce que le classifieur a été sauvegardé ?
     output$modcre_is_saved <- renderText({
-      req(modcre_classif(), data_folder_path_rea())
-      if (!is.null(attr(modcre_classif(), "is_saved"))) {
-        attr(modcre_classif(), "is_saved")
-      }
+      req(modcre_classif_new())
+      is_saved()
     })
     
     # ---------- Récupère soit un nouveau classif, soit un sauvegardé ----------
@@ -374,7 +379,7 @@ mod_page_models_server <- function(id, all_vars){
     saved_cla <- reactiveVal() # Pour activer la réactivité du nom spécifiquement
     observeEvent(input$modcre_use_saved_class, {
       # Si classifier existe déjà (d'un autre .RData) on le supprime
-      if (exists("classifier")) { rm(classifier)}
+      if (exists("classifier")) { rm(classifier) }
       path <- fs::path(data_folder_path_rea(),"Saved_Classif",input$modcre_sel_sav_cla)
       load(path)
       # Récupération de la variable classifier depuis le .RData

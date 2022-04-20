@@ -22,3 +22,16 @@ J'ai changé différents affichages dans le panneau fixe. J'ai mis en place la v
 J'ai enlevé la selection du training set dans le panneau fixe. \
 
 J'ai modifié ma fonction pour upload un training set. \
+
+Je vais à présent essayer de régler le problème de double chargement du classifieur. \
+
+J'ai mis en place un système qui fait en sorte que si on choisit un modèle et un training set, cela fait différents tests par rapport à ces derniers, et puis cela crée le classifieur (essaie) et si cela fonctionne, alors on le récupère comme nouveau classifieur. \
+On peut ensuite sauvegarder ce classifieur afin de le charger plus tard pour le réutiliser. \
+
+=== Pour après === \
+Par rapport à cela, je dois à présent changer certains affichages pour que cela soit plus clair (sauvegarder et non création). \
+Je dois également créer une page pour charger le classifieur dans un onglet séparé. \
+
+Je pourrais faire en sorte qu'il y ait un scroller pour la panneau fixe. \
+
+Il faut aussi que j'envoie mon projet de poster. \
