@@ -31,9 +31,10 @@ mod_page_models_ui <- function(id){
                 textOutput(ns("modcre_mod_comment")),
                 # Affichage Training Set sélectionné
                 h4("Training Set :"),
+                selectInput(ns("modcre_sel_ts"), NULL, choices = NULL),
                 textOutput(ns("modcre_selected_ts")),
                 # Est-ce que tout fonctionne ?
-                h4("Everything ok :"),
+                h4("Building Classifier"),
                 textOutput(ns("modcre_is_everything_ok")),
                 # Choix du nom pour sauvegarde
                 h4("Save Name :"),
@@ -125,8 +126,7 @@ mod_page_models_server <- function(id, all_vars){
     data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
     # Training Sets Vars :
-    ts_name <- reactive({ all_vars$fixed_pannel_vars$ts_select })
-    ts_training_set <- reactive({ all_vars$training_sets_vars$ts_training_set })
+    ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
     
     
 # Variables Globales ------------------------------------------------------
@@ -136,7 +136,7 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable : Chemin vers le dossier des TS !! Peut être pas nécessaire
     ts_folder_path <- reactive({
-      fs::path(data_folder_path_rea(),"Traing_Sets")
+      fs::path(data_folder_path_rea(),"Training_Sets")
     })
     
     # Variable : Chemin vers le dossier des scripts models
@@ -165,6 +165,46 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
+    # Mise à jour du sélecteur de training set
+    observe({
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "modcre_sel_ts", NULL, choices = ts_list() )
+      } else {
+        updateSelectInput(session, "modcre_sel_ts", NULL, choices = "No Training Set yet")
+      }
+    })
+    
+    # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
+    modcre_ts_classed_vign <- reactive({
+      # Commentaire en page Training Sets
+      if (data_folder_path_rea() != "" && req(input$modcre_sel_ts) != "No Training Set yet") {
+        dir <- fs::path(ts_folder_path(), input$modcre_sel_ts)
+        ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
+        ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
+        if (inherits(ts_unsorted_vign, "try-error")) { return(0) }
+        ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
+        return(ts_sorted_vign)
+      }
+    })
+    
+    # Variable charger le training set si possible
+    ts_training_set <- reactive ({
+      if (req(input$modcre_sel_ts) != "No Training Set yet" && req(modcre_ts_classed_vign()) != 0) {
+        path <- fs::path(isolate(ts_folder_path()), input$modcre_sel_ts)
+        train <- try(getTrain(path), silent = TRUE)
+        # Il y a un problème avec cette version de zooimage, il faut changer
+        # manuellement la class du Training Set pour qu'il soit en facteur
+        train$Class <- factor(train$Class, levels = basename(attr(train, "path")))
+        if (!inherits(train, "try-error")) {
+          return(train)
+        } else {
+          return(NULL)
+        }
+      } else {
+        return(NULL)
+      }
+    })
+    
     # Test 1 ! Training Set Chargé ?
     modcre_is_ts_loaded <- reactive({
       !is.null(ts_training_set())
@@ -173,7 +213,7 @@ mod_page_models_server <- function(id, all_vars){
     # Affichage // Training Set Choisi
     output$modcre_selected_ts <- renderText({
       test <- if (modcre_is_ts_loaded()) { "(Correct)" } else { "(Not Correct)" }
-      paste(ts_name(), test)
+      paste0(input$modcre_sel_ts," ",test)
     })
     
     # Test 2 ! d'éxécution du script (modèle) choisi (renvoie vrai ou faux)
@@ -225,7 +265,7 @@ mod_page_models_server <- function(id, all_vars){
           return(result)
         } else {
           result <- TRUE
-          attr(result, "message") <- "Everything is okay"
+          attr(result, "message") <- "Everything is Okay"
           return(result)
         }
       }
@@ -452,7 +492,7 @@ mod_page_models_server <- function(id, all_vars){
     # Préparation des variables dans un paquet
     models_vars <- reactiveValues(
       modvis_clas_name = NULL,
-      modcre_classif = NULL
+      modcre_classif = NULL,
     )
     
     # Mise à jour des variables dans le paquet

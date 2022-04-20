@@ -20,16 +20,13 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Samples"),
-             tags$h5("Samples folder path :"),
-             textOutput(ns("Samples_folder_path")),
-             tags$br(),
              selectInput(ns("zidb_show"), NULL, choices = NULL),
              textOutput(ns("zidb_show_nrow")),
              
              tags$hr(),
              tags$h4("-> Training Sets"),
-             selectInput(ns("ts_select"), NULL, choices = "No Training Set yet"),
-             actionButton(ns("ts_refresh"), "Refresh"),
+             tags$h5("Visualising :"),
+             textOutput(ns("ts_sel_show")),
              tags$h5("Progression :"),
              textOutput(ns("ts_prog_show")),
              
@@ -57,7 +54,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # settings_vars
     data_folder_path <- reactive({ all_vars$settings_vars$data_folder_path_rea })
-    Samples_folder_path <- reactive({ all_vars$settings_vars$Samples_folder_path})
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
@@ -65,7 +61,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # training_sets_vars
     ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
-    ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
+    ts_sel <- reactive({ all_vars$training_sets_vars$ts_sel })
     
     # models_vars
     mod_clas_name <- reactive({ all_vars$models_vars$modvis_clas_name })
@@ -77,8 +73,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Affichage // data_folder_path
     output$data_folder_path <- renderText({ data_folder_path() })
-    # Affichage // Samples_folder_path
-    output$Samples_folder_path <- renderText({ Samples_folder_path() })
     
     # Samples -----------------------------------------------------------------
     
@@ -102,27 +96,23 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Training Sets -----------------------------------------------------------
     
-    # Mise à jour du sélecteur de Training Set
-    observe({
-      if (length(ts_list()) > 0) {
-        updateSelectInput(session, "ts_select", NULL, choices = ts_list())
-      } else {
-        updateSelectInput(session, "ts_select", NULL, "No Training Set yet")
-      }
+    # Affichage // Training set choisi pour visualisation
+    output$ts_sel_show <- renderText({
+      ts_sel()
     })
     
     # Affiche le nombre de vignettes classées par rapport au nombre total du training set.
     # Si tout est en ordre, soit si un training set est sélectionné
     output$ts_prog_show <- renderText({
-      if (data_folder_path() != "" && req(input$ts_select) != "No Training Set yet") {
+      if (data_folder_path() != "" && req(ts_sel()) != "No Training Set yet") {
         # Variable : dossier
-        dir <- fs::path(ts_folder_path(), input$ts_select)
+        dir <- fs::path(ts_folder_path(), ts_sel())
         # Calcul du nombre de vignettes au total dans le dossier
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         # Calcul du nombre de vignettes dans le sous-dossier des non triés
         ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
         # Dans le cas où il n'y a pas de dossier _ :
-        if (inherits(ts_unsorted_vign, "try-error")) { return("Folder Incorrect") }
+        if (inherits(ts_unsorted_vign, "try-error")) { return("Folder not Good") }
         # Calcul du nombre de vignettes triées
         ts_sorted_vign <- ts_total_vign - ts_unsorted_vign
         # classed_rate <- (ts_sorted_vign/ts_total_vign) * 100

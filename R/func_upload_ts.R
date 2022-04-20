@@ -37,6 +37,9 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # Si ça plante, on remet l'ancien dossier
   on.exit(setwd(oldir))
   
+  # Remet l'option de warning
+  on.exit(options(op), add = TRUE, after = TRUE)
+  
   # TEST : Erreur ? Stop et renvoie FALSE + message
   if (inherits(oldir, "try-error")) {
     res <- FALSE
@@ -47,7 +50,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # TEST : Input contient ".zip" ? Oui -> stop et renvoie FALSE + message
   if (!grepl("\\.zip$", upload_input$name)) {
     res <- FALSE
-    attr(res, "error") <- "File doesn't have .zip ext"
+    attr(res, "error") <- "File doesn't have .zip ext. You have to compress your Training Set before uploading it."
     return(res)
   }
   
@@ -70,8 +73,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # On essaie de unziper le nouveau fichier sur le serveur
   unzip_res <- try(unzip(upload_input$name), silent = TRUE)
   # TEST : Erreur ? Stop et renvoie FALSE + message
-  unzip_inh <- inherits(unzip_res, "try-error")
-  if (unzip_inh) {
+  if (inherits(unzip_res, "try-error")) {
     res <- FALSE
     attr(res, "error") <- attr(unzip_res, "condition")
     return(res)
@@ -80,16 +82,6 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # Enfin si tout s'est bien passé : On supprime le ZIP
   unlink(upload_input$name)
   
-  # Remet l'option de warning
-  options(op)
-  
   # Renvoie TRUE si tout a fonctionné
   return(TRUE)
 }
-
-# test <- unzip_and_unlink("get.zip")
-# if (!test) {
-#   attr(test, "error")
-# } else {
-#   "Fait !"
-# }

@@ -1,0 +1,24 @@
+---
+title: "Shiny_Zooimage_J_57"
+output: html_document
+---
+
+Fichier de notes du jour 57. Mercredi 20 Avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai tout d'abord réalisé un nouvel exemple de script pour la création d'un classifieur. \
+
+Ensuite, je me suis lancé dans l'amélioration de mon application par rapport aux différentes remarques de M. Grosjean. \
+
+J'ai tout d'abord commencé par changer la sélection du training set pour la visualisation dans la page training sets. \
+
+J'ai ensuite changé la sélection du training set pour la page Models. \
+
+J'ai changé différents affichages dans le panneau fixe. J'ai mis en place la visualisation de la progression du training set choisi dans la visualisation, et pas pour les models. \
+
+J'ai enlevé la selection du training set dans le panneau fixe. \
+
+J'ai modifié ma fonction pour upload un training set. \

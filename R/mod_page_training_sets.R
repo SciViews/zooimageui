@@ -109,12 +109,16 @@ mod_page_training_sets_ui <- function(id){
       tabPanel("Finalisation and Visualisation",
                tags$br(),
                tags$h4("Training Set's content :"),
+               selectInput(ns("tsv_ts_select"), NULL, choices = NULL),
+               actionButton(ns("tsv_ref)"), "Refresh"),
+               tags$br(),
+               tags$br(),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
                # Affichage des classes et du nombre d'éléments dans celles-ci
-               tags$h4("Visualisation of the Training Set's Classes :"),
-               selectInput(ns("tsv_depth"), "Depth :", choices = c(1:5), selected = 5),
+               tags$h4("Visualisation of the Training Set's Classes from Depth :"),
+               selectInput(ns("tsv_depth"), NULL, choices = c(1:5), selected = 5),
                verbatimTextOutput(ns("tsv_classes")),
       )
       
@@ -142,10 +146,6 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
-    
-    # fixed_pannel_vars
-    ts_select <- reactive({ all_vars$fixed_pannel_vars$ts_select })
-    ts_refresh <- reactive({ all_vars$fixed_pannel_vars$ts_refresh })
 
 # Variables Globales -------------------------------------------------------------
 
@@ -159,9 +159,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Variable : liste des training sets existant
     ts_list <- reactive({
-      ts_refresh()
       input$ltsp_refresh
       input$stsp_refresh
+      input$tsv_ref
       ts_list_update()
       list.files(ts_folder_path())
     })
@@ -346,11 +346,20 @@ mod_page_training_sets_server <- function(id, all_vars){
 
 # Visualisation Server ----------------------------------------------------
     
+    # Mise à jour de la sélection du training set
+    observe({
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "tsv_ts_select", NULL, choices = ts_list())
+      } else {
+        updateSelectInput(session, "tsv_ts_select", NULL, choices = "No Training Set yet")
+      }
+    })
+    
     # Affichage // Contenu du Training Set sélectionné
     output$tsv_ts_content <- renderPrint({
       # Si le training set est choisi : on affiche le contenu
-      if (req(ts_select() != "No Training Set yet")) {
-        path <- fs::path(ts_folder_path(), ts_select())
+      if (req(input$tsv_ts_select != "No Training Set yet")) {
+        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
         list.files(path)
       } else {
         "No Training Set yet"
@@ -360,9 +369,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     tsv_ts_classed_vign <- reactive({
       # Si data_folder_path_rea() est non vide, et que on a sélectionné un training set
-      if (data_folder_path_rea() != "" && req(ts_select()) != "No Training Set yet") {
+      if (data_folder_path_rea() != "" && req(input$tsv_ts_select) != "No Training Set yet") {
         # Préparation du chemin
-        dir <- fs::path(ts_folder_path(), ts_select())
+        dir <- fs::path(ts_folder_path(), input$tsv_ts_select)
         # Comptage des vignettes totale dans le Training Set
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         # Comptage des vignettes non classées dans le Training Set
@@ -376,8 +385,8 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Chargement du Training Set si correct
     tsv_training_set <- reactive({
-      if (req(ts_select()) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
-        path <- fs::path(ts_folder_path(), ts_select())
+      if (req(input$tsv_ts_select) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
+        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
         train <- getTrain(path)
         # Il y a un problème avec cette version de zooimage, il faut changer
         # manuellement la class du Training Set pour qu'il soit en facteur
@@ -400,14 +409,14 @@ mod_page_training_sets_server <- function(id, all_vars){
     training_sets_vars <- reactiveValues(
       ts_folder_path = NULL,
       ts_list = NULL,
-      ts_training_set = NULL,
+      ts_sel = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       training_sets_vars$ts_folder_path <- ts_folder_path()
       training_sets_vars$ts_list <- ts_list()
-      training_sets_vars$ts_training_set <- tsv_training_set()
+      training_sets_vars$ts_sel <- input$tsv_ts_select
     })
     
     # Envoi du packet qui contient toutes les variables
