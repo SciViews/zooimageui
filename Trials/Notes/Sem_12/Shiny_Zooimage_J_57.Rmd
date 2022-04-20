@@ -34,4 +34,15 @@ Je dois également créer une page pour charger le classifieur dans un onglet s�
 
 Je pourrais faire en sorte qu'il y ait un scroller pour la panneau fixe. \
 
+Fait attention également si une variable classif ne risque pas de rester au mauvais moment. \
+
 Il faut aussi que j'envoie mon projet de poster. \
+
+=== Après Midi === \
+
+Changements des noms pour models (sauvegarde au lieu de création) \
+
+J'ai changé les noms pour les models, et j'ai également changé tout l'affichage pour le chargement du classifieur. \
+
+J'ai ajouté une visualisation au chargement d'un classifieur. \
+

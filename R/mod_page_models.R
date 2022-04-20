@@ -16,69 +16,72 @@ mod_page_models_ui <- function(id){
 
       tabPanel("Create Classifier",
         tags$br(),
-        
-        fluidRow(
-          
-          column(width = 4,
-                 
-            fluidRow(
-              sidebarPanel(width = 12,
-                h4("Model :"),
-                # Choix du script
-                selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
-                # Messages d'aide
-                textOutput(ns("modcre_mod_message")),
-                textOutput(ns("modcre_mod_comment")),
-                # Affichage Training Set sélectionné
-                h4("Training Set :"),
-                selectInput(ns("modcre_sel_ts"), NULL, choices = NULL),
-                textOutput(ns("modcre_selected_ts")),
-                # Est-ce que tout fonctionne ?
-                h4("Building Classifier"),
-                textOutput(ns("modcre_is_everything_ok")),
-                # Choix du nom pour sauvegarde
-                h4("Save Name :"),
-                textInput(ns("modcre_save_name"), NULL),
-                # Création du classifieur
-                shinyjs::disabled(actionButton(ns("modcre_use_selected_script"), "Create Classifier")),
-                tags$br(),
-                tags$br(),
-                verbatimTextOutput(ns("modcre_is_saved")),
-              ),
-            ),
+        sidebarLayout(
             
-            fluidRow(
-              sidebarPanel(width = 12,
-                tags$h4("Load a Classifier :"),
-                selectInput(ns("modcre_sel_sav_cla"), NULL, choices = NULL),
-                actionButton(ns("sa_re"), "Refresh"),
-                shinyjs::disabled(actionButton(ns("modcre_use_saved_class"), "Use Saved Classif")),
-                
-                tags$h4("Delete a Classifier :"),
-                selectInput(ns("modcre_sel_todel"), NULL, choices = NULL),
-                shinyjs::disabled(actionButton(ns("modcre_delete"), "Delete")),
-              )
-            ),
-          ),
-          
-          column(width = 8,
-            # Scripts existants
-            h4("Existing Models :"),
+          sidebarPanel( width = 4,
+            h4("Model :"),
+            # Choix du script
+            selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
             actionButton(ns("modcre_refresh"), "Refresh Models List"),
             tags$br(),
             tags$br(),
-            verbatimTextOutput(ns("modcre_existing_script_show")),
+            # Messages d'aide
+            textOutput(ns("modcre_mod_message")),
+            textOutput(ns("modcre_mod_comment")),
+            # Affichage Training Set sélectionné
+            h4("Training Set :"),
+            selectInput(ns("modcre_sel_ts"), NULL, choices = NULL),
+            textOutput(ns("modcre_selected_ts")),
+            # Est-ce que tout fonctionne ?
+            h4("Building Classifier :"),
+            textOutput(ns("modcre_is_everything_ok")),
+            # Choix du nom pour sauvegarde
+            h4("Save Name :"),
+            textInput(ns("modcre_save_name"), NULL),
+            # Création du classifieur
+            shinyjs::disabled(actionButton(ns("modcre_save_classif"), "Save Classifier")),
+            tags$br(),
+            tags$br(),
+            verbatimTextOutput(ns("modcre_is_saved")),
+          ),
+        
+          mainPanel( width = 8,
+            # Scripts existants
+            h4("Classifier's Info :"),
             verbatimTextOutput(ns("modcre_show_classif")),
           ),
-          
         ),
       ),
       
-# Test Classifier UI ------------------------------------------------------
+# Load Classifier UI ------------------------------------------------------
       
-      # tabPanel("Test Classifier",
-      #   
-      # ),
+      tabPanel("Load Classifier",
+        tags$br(),
+        sidebarLayout(
+          
+          # Chargement du classifieur
+          sidebarPanel(width = 4,
+            tags$h4("Load a Classifier :"),
+            selectInput(ns("modcre_sel_sav_cla"), NULL, choices = NULL),
+            actionButton(ns("sa_re"), "Refresh"),
+            shinyjs::disabled(actionButton(ns("modcre_use_saved_class"), "Use Saved Classif")),
+            
+            # Suppression d'un classifieur sauvegardé
+            tags$hr(),
+            tags$h4("Delete a Classifier :"),
+            selectInput(ns("modcre_sel_todel"), NULL, choices = NULL),
+            shinyjs::disabled(actionButton(ns("modcre_delete"), "Delete")),
+          ),
+          
+          # Affichage du contenu du classifieur actif
+          mainPanel(
+            tags$h4("Active Classifier's Info :"),
+            textOutput(ns("load_cla_name")),
+            tags$br(),
+            verbatimTextOutput(ns("load_cla_vis")),
+          ),
+        ),
+      ),
       
 # Visualise Classifier UI -------------------------------------------------
       
@@ -247,7 +250,7 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
-    # Test global
+    # Test global et récupération d'un classifieur si tests ok
     modcre_everything_ok <- reactive({
       data_folder_path_rea()
       result <- FALSE
@@ -278,30 +281,28 @@ mod_page_models_server <- function(id, all_vars){
       attr(modcre_everything_ok(), "message")
     })
     
-    # Variable pour mettre à jour le bouton pour créer le classifieur
-    modcre_create_up <- reactiveVal(0)
-    
-    # Mise à jour du bouton pour utiliser un script models
-    observe({
-      modcre_create_up()
-      # Si le modèle est correcte et que le TS est chargé alors on peut créer le classifieur
-      if (modcre_everything_ok()) {
-        shinyjs::enable("modcre_use_selected_script")
-      # Si pas, on ne peut pas
-      } else {
-        shinyjs::disable("modcre_use_selected_script")
-      }
-    })
-    
-    # Variable : Classifieur si appui sur le bouton
+    # Variable : Classifieur si nouveau
     modcre_classif_new <- eventReactive(modcre_everything_ok(), {
       if (modcre_everything_ok()) {
         return(attr(modcre_everything_ok(), "classif"))
       }
     })
     
+    # Mise à jour du bouton pour sauvegarder un script
+    observe({
+      input$modcre_sel_ts
+      input$modcre_selected_script
+      # Si le modèle est correcte et que le TS est chargé alors on peut créer le classifieur
+      if (modcre_everything_ok() && !is.null(modcre_classif_new())) {
+        shinyjs::enable("modcre_save_classif")
+        # Si pas, on ne peut pas
+      } else {
+        shinyjs::disable("modcre_save_classif")
+      }
+    })
+    
     # Event pour la sauvegarde
-    is_saved <- eventReactive(input$modcre_use_selected_script, {
+    is_saved <- eventReactive(input$modcre_save_classif, {
       
       req(modcre_classif_new())
       
@@ -387,18 +388,7 @@ mod_page_models_server <- function(id, all_vars){
       saved_cla(saved_cla()+1) # Fait réagir spécifiquement
     })
     
-    # Affichage // Liste des scipts dans le dossier Models
-    output$modcre_existing_script_show <- renderPrint({
-      # Si il y en a :
-      if (length(scripts_list()) > 0) {
-        scripts_list()
-      # Si pas :
-      } else {
-        "No Model yet"
-      }
-    })
-    
-    # Affichage // Test de récupérer le résultat d'un script
+    # Affichage // Classifieur
     output$modcre_show_classif <- renderPrint({
       req(modcre_classif())
     })
@@ -453,9 +443,17 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
-# Test Classifier Server --------------------------------------------------
+# Load Classifier Server --------------------------------------------------
     
-    # Peut-être plus tard.
+    # Affichage // Nom du classifieur actif
+    output$load_cla_name <- renderText({
+      req(modvis_clas_name())
+    })
+    
+    # Affichage // Classifieur
+    output$load_cla_vis <- renderPrint({
+      req(modcre_classif())
+    })
     
 # Visualise Classifier Server ---------------------------------------------
     
@@ -464,19 +462,23 @@ mod_page_models_server <- function(id, all_vars){
     # Soit le nom d'un nouveau
     observeEvent(new_cla(), {
       req(modcre_classif(), data_folder_path_rea())
+      # Enlève le .R par expression régulière
       modvis_clas_name(sub("\\.R$", "", input$modcre_selected_script))
     })
     # Soit le nom d'un sauvegardé
     observeEvent(saved_cla(), {
       req(modcre_classif(), data_folder_path_rea())
+      # Enlève le .R par expression régulière
       modvis_clas_name(sub("\\.RData$", "", input$modcre_sel_sav_cla))
     })
     
     # Affichage // Summary du classifieur
     output$modvis_clas_sum <- renderPrint({
       if (!input$modvis_clas_showall) {
+        # Que certaines variables
         summary(req(modcre_classif()), type = c("Fscore", "Recall", "Precision"))
       } else {
+        # Tout
         summary(req(modcre_classif()))
       }
     })
