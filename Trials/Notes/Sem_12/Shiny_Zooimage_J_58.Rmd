@@ -47,6 +47,15 @@ Donc on peut le choisir, et ensuite, le script exécuté utilisera cet échantil
 
 => Dans le script : choix du processSampleAll ou processSample. \
 
+J'ai donc fait quelques modifs pour le fixed pannel et la page results et j'ai fait beaucoup d'essais pour voir quoi et comment le faire. Ce qui explique qu'il y ait peu de changements, mais tout de même pas mal d'essais réalisés. \
 
+Ajout du nb de samples dans le fixe pannel. \
+
+!!!!!!!!!!!!!!!!!!!!
 ===> Je vais donc me concentrer sur la vérification lors de l'upload. \
 Utilisation d'un dossier temporaire. \
+!!!!!!!!!!!!!!!!!!!!
+
+===> Aussi peut être essayer de simplifier les noms (enlever les .R ou autre) \
+
+===> Infos du classifieur \

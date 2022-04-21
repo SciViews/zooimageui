@@ -2,7 +2,7 @@
 #
 # function's name and get_results' arguments cannot change
 #
-require(zooimage)
+library(zooimage)
 get_results <- function(data, data_folder_path = NULL, Classif = NULL) {
   zoo <- levels(data$Predicted)
   zoo <- zoo[grepl("^[A-Z]", zoo)]

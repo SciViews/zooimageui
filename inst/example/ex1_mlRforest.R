@@ -2,7 +2,7 @@
 #
 # function's name and get_classif's arguments cannot change
 #
-require(mlearning)
+library(mlearning)
 get_classif <- function(training_set) {
   ZIClass(Class ~ ., training_set, method = "mlRforest", calc.vars = calcVars,
           ntree = 200, cv.k = 10)

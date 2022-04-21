@@ -20,6 +20,7 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Samples"),
+             textOutput(ns("zidb_nb")),
              tags$h5("Visualising :"),
              selectInput(ns("zidb_show"), NULL, choices = NULL),
              textOutput(ns("zidb_show_nrow")),
@@ -55,6 +56,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # settings_vars
     data_folder_path <- reactive({ all_vars$settings_vars$data_folder_path_rea })
+    smpfiles <- reactive({ all_vars$settings_vars$smps })
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
@@ -76,6 +78,11 @@ mod_fixed_pannel_server <- function(id, all_vars){
     output$data_folder_path <- renderText({ data_folder_path() })
     
     # Samples -----------------------------------------------------------------
+    
+    # Affichage // Nb de Samples disponibles
+    output$zidb_nb <- renderText({
+      paste0(length(zidb_files()), " / ", length(smpfiles()), " Samples ready.")
+    })
     
     # Mise à jour du choix du ZIDB à montrer dans samples
     observe({
