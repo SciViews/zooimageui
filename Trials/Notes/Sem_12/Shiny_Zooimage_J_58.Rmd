@@ -59,3 +59,5 @@ Utilisation d'un dossier temporaire. \
 ===> Aussi peut être essayer de simplifier les noms (enlever les .R ou autre) \
 
 ===> Infos du classifieur \
+
+Je viensde passer un bon moment à modifier tous les noms pour les sélections, afin de ne pas laisser trainier les extensions (sauf pour la page samples) \

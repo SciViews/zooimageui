@@ -161,7 +161,7 @@ mod_page_models_server <- function(id, all_vars){
     observe({
       # Si il y a des scripts :
       if (length(scripts_list()) > 0) {
-        updateSelectInput(session, "modcre_selected_script", NULL, choices = scripts_list())
+        updateSelectInput(session, "modcre_selected_script", NULL, choices = sub("\\.R$", "", scripts_list()[grepl("\\.R$", scripts_list())]))
       # Si pas :
       } else {
         updateSelectInput(session, "modcre_selected_script", NULL, choices = "No Model yet")
@@ -219,12 +219,21 @@ mod_page_models_server <- function(id, all_vars){
       paste0(input$modcre_sel_ts," ",test)
     })
     
+    # Variable : nom du script sélectionné
+    modcre_selected_script <- reactive ({
+      if (req(input$modcre_selected_script) != "No Model yet") {
+        paste0(input$modcre_selected_script, ".R")
+      } else {
+        NULL
+      }
+    })
+    
     # Test 2 ! d'éxécution du script (modèle) choisi (renvoie vrai ou faux)
     modcre_is_mod_correct <- reactive({
-      req(input$modcre_selected_script, data_folder_path_rea())
+      req(modcre_selected_script(), data_folder_path_rea())
       
       # Vérification de mon modèle
-      is_script_good_model(models_folder_path(), input$modcre_selected_script)
+      is_script_good_model(models_folder_path(), modcre_selected_script())
     })
     
     # Affichage // Message lié au modèle choisi
@@ -243,7 +252,7 @@ mod_page_models_server <- function(id, all_vars){
     modcre_model <- reactive({
       if (req(modcre_is_mod_correct())) {
         # Chemin du script
-        script_path <- fs::path(models_folder_path(), input$modcre_selected_script)
+        script_path <- fs::path(models_folder_path(), modcre_selected_script())
         # Source du script pour récupérer la fonction
         source(script_path , local = TRUE)
         return(get_classif)
@@ -258,7 +267,7 @@ mod_page_models_server <- function(id, all_vars){
       # Si le reste est bon
       if (modcre_is_mod_correct() && modcre_is_ts_loaded()) {
         # On essaie de d'utiliser la fonction car pourrait bugger
-        script_path <- fs::path(isolate(models_folder_path()), input$modcre_selected_script)
+        script_path <- fs::path(isolate(models_folder_path()), modcre_selected_script())
         source(script_path, local = TRUE)
         res <- try(get_classif(ts_training_set()), silent = TRUE)
         # Renvoie FALSE si la fonction bug et un message qui explique
@@ -268,7 +277,7 @@ mod_page_models_server <- function(id, all_vars){
           return(result)
         } else {
           result <- TRUE
-          attr(result, "message") <- "Classifier Built"
+          attr(result, "message") <- "Classifier Ready"
           attr(result, "classif") <- res
           return(result)
         }
@@ -291,7 +300,7 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour du bouton pour sauvegarder un script
     observe({
       input$modcre_sel_ts
-      input$modcre_selected_script
+      modcre_selected_script()
       # Si le modèle est correcte et que le TS est chargé alors on peut créer le classifieur
       if (modcre_everything_ok() && !is.null(modcre_classif_new())) {
         shinyjs::enable("modcre_save_classif")
@@ -346,7 +355,7 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour de la sélection d'un classifieur sauvegardé
     observe({
       if (length(modcre_saved_classif_list()) > 0) {
-        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = modcre_saved_classif_list())
+        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = sub("\\.RData$", "", modcre_saved_classif_list()))
       } else {
         updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = "No Saved Classif yet")
       }
@@ -371,17 +380,17 @@ mod_page_models_server <- function(id, all_vars){
     # Variable : classifieur
     modcre_classif <- reactiveVal()
     # Si on Crée un classifieur, alors le classifieur utilisé sera celui là
-    new_cla <- reactiveVal() # Pour activer la réactivité du nom spécifiquement
-    observe({
-      modcre_classif(req(modcre_classif_new()))
+    new_cla <- reactiveVal(0) # Pour activer la réactivité du nom spécifiquement
+    observeEvent(req(modcre_classif_new()), {
+      modcre_classif(modcre_classif_new())
       new_cla(new_cla()+1) # Fait réagir spécifiquement
     })
     # Si on charge un classifieur sauvegardé, alors le classifieur utilisé sera celui là
-    saved_cla <- reactiveVal() # Pour activer la réactivité du nom spécifiquement
+    saved_cla <- reactiveVal(0) # Pour activer la réactivité du nom spécifiquement
     observeEvent(input$modcre_use_saved_class, {
       # Si classifier existe déjà (d'un autre .RData) on le supprime
       if (exists("classifier")) { rm(classifier) }
-      path <- fs::path(data_folder_path_rea(),"Saved_Classif",input$modcre_sel_sav_cla)
+      path <- fs::path(data_folder_path_rea(),"Saved_Classif", paste0(input$modcre_sel_sav_cla, ".RData"))
       load(path)
       # Récupération de la variable classifier depuis le .RData
       modcre_classif(classifier)
@@ -409,7 +418,7 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour de la sélection du classifieur à supprimer
     observe({
       if (length(modcre_saved_classif_list()) > 0) {
-        updateSelectInput(session, "modcre_sel_todel", NULL, choices = modcre_saved_classif_list())
+        updateSelectInput(session, "modcre_sel_todel", NULL, choices = sub("\\.RData$", "", modcre_saved_classif_list()))
       } else {
         updateSelectInput(session, "modcre_sel_todel", NULL, choices = "No Saved Classif yet")
       }
@@ -432,12 +441,13 @@ mod_page_models_server <- function(id, all_vars){
       path <- fs::path(data_folder_path_rea(), "Saved_Classif")
       oldir <- setwd(path)
       on.exit(setwd(oldir))
+      saved_model_name <- paste0(input$modcre_sel_todel, ".RData")
       # Suppression du fichier
-      unlink(input$modcre_sel_todel)
+      unlink(saved_model_name)
       # Mise à jour de la liste
       modcre_saved_update(modcre_saved_update()+1)
       # Si il était actif, on désactive le classifieur
-      if (input$modcre_sel_todel == paste0(modvis_clas_name(), ".RData")) {
+      if (saved_model_name == paste0(modvis_clas_name(), ".RData")) {
         modcre_classif(NULL)
         modvis_clas_name(NULL)
       }
@@ -463,13 +473,14 @@ mod_page_models_server <- function(id, all_vars){
     observeEvent(new_cla(), {
       req(modcre_classif(), data_folder_path_rea())
       # Enlève le .R par expression régulière
-      modvis_clas_name(sub("\\.R$", "", input$modcre_selected_script))
+      print("test")
+      modvis_clas_name(input$modcre_selected_script)
     })
     # Soit le nom d'un sauvegardé
     observeEvent(saved_cla(), {
       req(modcre_classif(), data_folder_path_rea())
       # Enlève le .R par expression régulière
-      modvis_clas_name(sub("\\.RData$", "", input$modcre_sel_sav_cla))
+      modvis_clas_name(input$modcre_sel_sav_cla)
     })
     
     # Affichage // Summary du classifieur

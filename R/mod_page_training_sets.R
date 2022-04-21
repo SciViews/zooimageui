@@ -170,18 +170,19 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Mise à jour de la sélection des ZIDB pour la création d'un training set
     observe({
+      data_folder_path_rea()
       # Si zidb_files() change et qu'il est non vide, alors on affiche les zidb_files()
       if (length(zidb_files()) > 0) {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = zidb_files())
+        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = sub("\\.zidb$", "",zidb_files()))
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = zidb_files())
+        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = sub("\\.zidb$", "",zidb_files()))
       # Si pas, alors on affiche rien
       } else {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = NULL)
+        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = "No ZIDB file yet")
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = NULL)
+        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = "No ZIDB file yet")
       }
     })
     
@@ -199,15 +200,24 @@ mod_page_training_sets_server <- function(id, all_vars){
       cor_ts_name(input$ltsp_name, ts_list())
     })
     
+    # Variable : input zidb sélectionnés pour le training set mode local
+    ltsp_zidbs <- reactive({
+      if (req(input$ltsp_zidbs) != "No ZIDB file yet") {
+        return(paste0(req(input$ltsp_zidbs), ".zidb"))
+      } else {
+        return(NULL)
+      }
+    })
+    
     # Création du training set si on clique sur le bouton (et si le nom est correcte, et que des zidb sont sélectionnés)
     observeEvent( input$ltsp_prepare, {
       
       # Test si nom existant et si il y a des zidbs sélectionnés
-      req( ltsp_name() , length( input$ltsp_zidbs ) > 0)
+      req( ltsp_name() , length( ltsp_zidbs() ) > 0)
       
       # Variables : Arguments du prepareTrain
       train_dir <- fs::path(ts_folder_path(),ltsp_name())
-      train_files <- fs::path(Samples_folder_path(), input$ltsp_zidbs)
+      train_files <- fs::path(Samples_folder_path(), ltsp_zidbs())
       train_template <- input$ltsp_template
       
       # Création du training set
@@ -220,7 +230,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     # shinyjs : Si nom + zidbs correctes : on peut le créer, sinon bouton désactivé
     observe({
       shinyjs::disable("ltsp_prepare")
-      req(data_folder_path_rea(), ltsp_name(), input$ltsp_zidbs) 
+      req(data_folder_path_rea(), ltsp_name(), ltsp_zidbs()) 
       shinyjs::enable("ltsp_prepare")
     })
     
@@ -229,6 +239,15 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Variable : Nom du Training Set doit être correcte
     stsp_name <- reactive({
       cor_ts_name(input$stsp_name, ts_list())
+    })
+    
+    # Variable : input zidb sélectionnés pour le training set mode server
+    stsp_zidbs <- reactive({
+      if (req(input$stsp_zidbs) != "No ZIDB file yet") {
+        paste0(req(input$stsp_zidbs), ".zidb")
+      } else {
+        return(NULL)
+      }
     })
     
     # Download : Training Set
@@ -247,11 +266,11 @@ mod_page_training_sets_server <- function(id, all_vars){
         on.exit(setwd(oldir), add = TRUE, after = TRUE)
         
         # Test si nom existant et si des zidbs sont sélectionnés
-        req( stsp_name() , length( input$stsp_zidbs ) > 0)
+        req( stsp_name() , length( stsp_zidbs() ) > 0)
         
         # Variables : Arguments du prepareTrain
         train_dir <- fs::path(ts_folder_path(),stsp_name())
-        train_files <- fs::path(Samples_folder_path(), input$stsp_zidbs)
+        train_files <- fs::path(Samples_folder_path(), stsp_zidbs())
         train_template <- input$stsp_template
         
         # Création du training set
@@ -265,7 +284,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     # shinyjs : Si nom + zidbs correctes : on peut le créer et télécharger sinon le bouton est désactivé
     observe({
       shinyjs::disable("stsp_ts_dl")
-      req(data_folder_path_rea(), stsp_name(), input$stsp_zidbs) 
+      req(data_folder_path_rea(), stsp_name(), stsp_zidbs()) 
       shinyjs::enable("stsp_ts_dl")
     })
     

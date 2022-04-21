@@ -127,16 +127,16 @@ mod_page_results_server <- function(id, all_vars){
     # Mise à jour de la sélection de l'échantillon
     observe({
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "calc_sel_smp", NULL, choices = zidb_files())
+        updateSelectInput(session, "calc_sel_smp", NULL, choices = sub("\\.zidb$", "", zidb_files()))
       } else {
-        updateSelectInput(session, "calc_sel_smp", NULL, choices = zidb_files())
+        updateSelectInput(session, "calc_sel_smp", NULL, choices = "No ZIDB file yet")
       }
     })
     
     # Variable : Base sample choisi
     selected_zidb <- reactive({
       if (req(input$calc_sel_smp) != "No ZIDB file yet") {
-        input$calc_sel_smp
+        paste0(input$calc_sel_smp, ".zidb")
       }
     })
     
@@ -192,7 +192,7 @@ mod_page_results_server <- function(id, all_vars){
     # Mise à jour du sélecteur de script
     observe({
       if (length(calc_scripts_list()) > 0) {
-        updateSelectInput(session, "calc_selected_script", NULL, choices = calc_scripts_list())
+        updateSelectInput(session, "calc_selected_script", NULL, choices = sub("\\.R$", "", calc_scripts_list()))
       } else {
         updateSelectInput(session, "calc_selected_script", NULL, choices = "No Calculations yet")
       }
@@ -201,7 +201,7 @@ mod_page_results_server <- function(id, all_vars){
     # Test si le script est correct
     calc_is_script_good <- reactive({
       req(input$calc_selected_script, data_folder_path_rea())
-      is_script_good_results(results_folder_path(), input$calc_selected_script)
+      is_script_good_results(results_folder_path(), paste0(input$calc_selected_script, ".R"))
     })
     
     # Affichage // Script message
@@ -225,7 +225,7 @@ mod_page_results_server <- function(id, all_vars){
     calc_results <- reactive({
       if (req(calc_is_script_good())) {
         # Chemin du script
-        script_path <- fs::path(results_folder_path(), input$calc_selected_script)
+        script_path <- fs::path(results_folder_path(), paste0(input$calc_selected_script, ".R"))
         # Source du script pour récupérer la fonction
         source(script_path , local = TRUE)
         return(get_results)
@@ -278,7 +278,7 @@ mod_page_results_server <- function(id, all_vars){
     calc_name <- reactive({
       req(data_folder_path_rea())
       if (!is.null(results()) && !is_results_error()) {
-        sub("\\.R$", "", input$calc_selected_script)
+        input$calc_selected_script
       } else {
         "No Calculations yet"
       }
