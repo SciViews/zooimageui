@@ -23,10 +23,11 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # Variable : Training Sets existants
   # Si pas NULL : ajoute l'extension .zip pour vérifier par rapport à l'input
   if (!is.null(existing_ts)) {
-    existing_ts <- paste0(existing_ts, ".zip")
+    existing_ts_zip <- paste0(existing_ts, ".zip")
   # Si NULL : met un élément vide qui permettra d'entrer n'importe quel fichier
   } else {
     existing_ts <- ""
+    existing_ts_zip <- ""
   }
   
   # Option : utiliser les warnings comme erreur
@@ -47,7 +48,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
     return(res)
   }
   
-  # TEST : Input contient ".zip" ? Oui -> stop et renvoie FALSE + message
+  # TEST : Input ne contient pas ".zip" ? Oui -> stop et renvoie FALSE + message
   if (!grepl("\\.zip$", upload_input$name)) {
     res <- FALSE
     attr(res, "error") <- "File doesn't have .zip ext. You have to compress your Training Set before uploading it."
@@ -55,32 +56,87 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   }
   
   # TEST : Nom Input déjà utilisé ? Oui -> stop et renvoie FALSE + message
-  if (upload_input$name %in% existing_ts) {
+  if (upload_input$name %in% existing_ts_zip) {
     res <- FALSE
     attr(res, "error") <- "Training Set's name already used. If you want to update it, you should first delete it (button beneath), and then upload it again. Otherwise, name your training set differently."
     return(res)
   }
   
-  # On essaie de récupérer l'Input sur le serveur
+  # On crée un dossier temporaire
+  tmp_folder <- try(fs::dir_create("tmp"), silent = TRUE)
+  if (inherits(tmp_folder, "try-error")) {
+    res <- FALSE
+    attr(res, "error") <- "Error by creating tmp folder. Data folder path may be wrong."
+    return(res)
+  }
+  
+  # On se met dans le dossier tmp
+  goin_tmp <- try(setwd("tmp"), silent = TRUE)
+  if (inherits(goin_tmp, "try-error")) {
+    res <- FALSE
+    attr(res, "error") <- "Error when trying to enter in tmp folder. Data folder path may be wrong."
+    unlink("tmp", recursive = TRUE)
+    return(res)
+  }
+  
+  # On essaie de récupérer l'Input sur le serveur dans le dossier tmp
   fc_res <- try(file.copy(upload_input$datapath, upload_input$name), silent = TRUE)
   # TEST : Erreur ? Stop et renvoie FALSE + message
   if (inherits(fc_res, "try-error")) {
     res <- FALSE
     attr(res, "error") <- attr(fc_res, "condition")
+    setwd(goin_tmp)
+    unlink("tmp", recursive = TRUE)
     return(res)
   }
   
-  # On essaie de unziper le nouveau fichier sur le serveur
+  # On essaie de unziper le nouveau fichier sur le serveur dans le dossier tmp
   unzip_res <- try(unzip(upload_input$name), silent = TRUE)
   # TEST : Erreur ? Stop et renvoie FALSE + message
   if (inherits(unzip_res, "try-error")) {
     res <- FALSE
     attr(res, "error") <- attr(unzip_res, "condition")
+    setwd(goin_tmp)
+    unlink("tmp", recursive = TRUE)
     return(res)
   }
   
-  # Enfin si tout s'est bien passé : On supprime le ZIP
-  unlink(upload_input$name)
+  # Variable liste des éléments dans le dossier
+  all_files <- if (length(list.files()) > 0) {list.files()} else {""}
+  
+  # Vérification si ce qui est unzippé est correct
+  # Premier test
+  test1 <- length(all_files[!grepl("\\.zip$", all_files)]) == 1
+  if (test1) {
+    ts <- all_files[!grepl("\\.zip$", all_files)]
+  } else {
+    res <- FALSE
+    attr(res, "error") <- "Zip file's content is wrong. Please zip only the training set's folder."
+    setwd(goin_tmp)
+    unlink("tmp", recursive = TRUE)
+    return(res)
+  }
+  
+  # Deuxième test
+  test2 <- !any(!c("_", "alter", "Zooplankton other") %in% list.files(ts))
+  if (test2) {
+    # Retour dans le bon dossier
+    setwd(goin_tmp)
+    # Supprime le dossier tmp
+    unlink("tmp", recursive = TRUE)
+    # Copie du zip dans le bon dossier
+    file.copy(upload_input$datapath, upload_input$name)
+    # Dézippage du zip
+    unzip(upload_input$name)
+    # Supprime le ZIP
+    unlink(upload_input$name)
+  } else {
+    res <- FALSE
+    attr(res, "error") <- "Zip file's content is wrong. Please zip only the training set's folder."
+    setwd(goin_tmp)
+    unlink("tmp", recursive = TRUE)
+    return(res)
+  }
   
   # Renvoie TRUE si tout a fonctionné
   return(TRUE)

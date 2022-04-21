@@ -61,3 +61,8 @@ Utilisation d'un dossier temporaire. \
 ===> Infos du classifieur \
 
 Je viensde passer un bon moment à modifier tous les noms pour les sélections, afin de ne pas laisser trainier les extensions (sauf pour la page samples) \
+
+Je vais à présent essayer de mettre en place la vérificatio dans un dossier temporaire ts upload \
+
+J'ai réussis à mettre en place l'upload d'un training set dans un dossier temporaire. \
+Cela supprime également le dossier temporaire et son contenu en cas d'erreur et envoie un message explicatif. \
