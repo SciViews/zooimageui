@@ -20,6 +20,7 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Samples"),
+             tags$h5("Visualising :"),
              selectInput(ns("zidb_show"), NULL, choices = NULL),
              textOutput(ns("zidb_show_nrow")),
              
@@ -148,8 +149,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     fixed_pannel_vars <- reactiveValues(
       zidb_show = NULL,
-      ts_select = NULL,
-      ts_refresh = NULL,
     )
     
     observe({
@@ -157,12 +156,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
         input$zidb_show
       }
     })
-    
-    # Envoi du TS choisi
-    observe({ fixed_pannel_vars$ts_select <- input$ts_select })
-    
-    # Envoi du Rafraichissement de la liste
-    observe({ fixed_pannel_vars$ts_refresh <- input$ts_refresh })
     
     return(fixed_pannel_vars)
     

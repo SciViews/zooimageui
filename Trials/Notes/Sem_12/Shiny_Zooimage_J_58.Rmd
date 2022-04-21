@@ -1,0 +1,52 @@
+---
+title: "Shiny_Zooimage_J_58"
+output: html_document
+---
+
+Fichier de notes du jour 58. Jeudi 21 avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Vérifications des modifications d'hier. \
+=> Modifs de sélection de TS (TS et Models), modifs création classifieur (Models), modifs d'affichage (Models, Results), modifs de sélection d'échantillons pour TS, modifs de commentaires et certains messages d'erreurs. \
+
+Continuation des améliorations. \
+
+--- Je devrais : \
+
+ - Ajouter un choix d'échantillons pour le calcul des results
+ 
+ - Ajouter un dossier tmp pour l'upload
+
+---------------- \
+
+J'ai essayé d'ajouter un choix de plot pour les échantillons mais j'ai vite arrêté pour faire d'autres choses. \
+
+Je vais à présent essayer de mettre en place le choix des échantillons pour le calcul des résultats. \
+
+Modifications de l'interface des results. \
+La sauvegarde se réalise dans un autre onglet à présent. \
+Tentatives de modifications du plot affichant les résultats. (échec) \
+Modifications de certains titres. \
+
+J'ai regardé s'il était possible de récupérer plus d'un échantillon via zidbDatRead, afin d'avoir une sélection multiple de ceux-ci pour le calcul des résultats, mais je n'ai pas trouvé comment faire. zidbDatRead ne peut lire qu'un seul fichier. \
+Peut-être que je devrai faire un processsampleall. \
+
+En attendant d'avoir une réponse de M. Grosjean pour savoir comment je devrais faire pour réaliser mes calculs à partir de plusieurs échantillons, je vais tenter d'ajouter à l'upload le dossier temporaire pour tester le contenu du zip uploadé. \
+
+M. Grosjean m'a répondu, il faut que je fasse un processSampleAll \
+
+J'ai réalisé quelques modifications dans le fixe pannel par rapport à la sélection d'un échantillon, et dans le page samples, que j'ai finalement annulé car cela rendait les choses moins claires pour l'utilisateur. \
+
+Je vais me contenter de rajouter un choix d'échantillons dans la page results. \
+
+J'ai tenté de mettre en place une sélection d'échantillon pour la page results. \
+Donc on peut le choisir, et ensuite, le script exécuté utilisera cet échantillon, et s'en basera pour réaliser les calculs sur tous les échantillons, où bien que sur cet échantillon. \
+
+=> Dans le script : choix du processSampleAll ou processSample. \
+
+
+===> Je vais donc me concentrer sur la vérification lors de l'upload. \
+Utilisation d'un dossier temporaire. \

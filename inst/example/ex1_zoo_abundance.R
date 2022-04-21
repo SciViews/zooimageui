@@ -3,7 +3,7 @@
 # function's name and get_results' arguments cannot change
 #
 require(zooimage)
-get_results <- function(data) {
+get_results <- function(data, data_folder_path = NULL, Classif = NULL) {
   zoo <- levels(data$Predicted)
   zoo <- zoo[grepl("^[A-Z]", zoo)]
   detail <- zoo[zoo %in% levels(data$Predicted)[table(data$Predicted) >= 50]]

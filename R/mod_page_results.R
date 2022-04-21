@@ -14,7 +14,7 @@ mod_page_results_ui <- function(id){
 
 # Calculations UI ---------------------------------------------------------
 
-      tabPanel("Calculation of Statistics",
+      tabPanel("Calculations",
         tags$br(),
         fluidRow(
           
@@ -38,8 +38,8 @@ mod_page_results_ui <- function(id){
           
           sidebarPanel( width = 4,
             # Montre le Sample choisi
-            tags$h4("Selected Sample :"),
-            textOutput(ns("calc_sel_smp")),
+            tags$h4("Base Sample :"),
+            selectInput(ns("calc_sel_smp"), NULL, choices = NULL),
             tags$hr(),
             # Montre le Classifieur actif
             tags$h4("Active Classifier :"),
@@ -55,27 +55,32 @@ mod_page_results_ui <- function(id){
 
 # Visualisation UI --------------------------------------------------------
 
-      tabPanel("Visualisation of Statistics",
+      tabPanel("Visualisation",
                
-      # Visualisation des résultats
-      tags$br(),
-      tags$h4("Visualisation of the Result :"),
-      verbatimTextOutput(ns("vis_res_show")),
-      plotOutput(ns("vis_test_plot")),
-      tags$hr(),
-      
-      # Sauvegarde des résultats
-      tags$h4("Save Results :"),
-      textInput(ns("vis_res_name"), "Name :"),
-      shinyjs::disabled(actionButton(ns("vis_res_save"), "Save in Local")),
-      # Téléchargement des résultats
-      shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
-      tags$br(),
-      tags$br(),
-      # Messages lié à la sauvegarde et au téléchargement
-      verbatimTextOutput(ns("vis_dl_name_good")),
-      uiOutput(ns("vis_title")),
-      textOutput(ns("vis_res_save_worked")),
+        # Visualisation des résultats
+        tags$br(),
+        tags$h4("Visualisation of the Results :"),
+        verbatimTextOutput(ns("vis_res_show")),
+        plotOutput(ns("vis_test_plot")),
+      ),
+
+# Save UI ---------------------------------------------------------------
+
+      tabPanel("Save",
+               
+        # Sauvegarde des résultats
+        tags$br(),
+        tags$h4("Save Results :"),
+        textInput(ns("vis_res_name"), "Name :"),
+        shinyjs::disabled(actionButton(ns("vis_res_save"), "Save in Local")),
+        # Téléchargement des résultats
+        shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
+        tags$br(),
+        tags$br(),
+        # Messages lié à la sauvegarde et au téléchargement
+        verbatimTextOutput(ns("vis_dl_name_good")),
+        uiOutput(ns("vis_title")),
+        textOutput(ns("vis_res_save_worked")),
       ),
       
     )
@@ -94,8 +99,9 @@ mod_page_results_server <- function(id, all_vars){
     # Settings Vars
     data_folder_path_rea <- reactive({ all_vars$settings_vars$data_folder_path_rea })
     
-    # Fixed Pannel Vars
-    selected_zidb <- reactive({ all_vars$fixed_pannel_vars$zidb_show })
+    # Samples Vars
+    zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
+    smp_folder_path <- reactive({ all_vars$settings_vars$Samples_folder_path })
     
     # Models Vars
     mod_classif <- reactive({ all_vars$models_vars$modcre_classif })
@@ -118,12 +124,19 @@ mod_page_results_server <- function(id, all_vars){
     
     # --- SidebarPanel ---
     
-    # Affichage // l'échantillon sélectionné
-    output$calc_sel_smp <- renderText({
-      if (!is.null(selected_zidb())) {
-        selected_zidb()
+    # Mise à jour de la sélection de l'échantillon
+    observe({
+      if (length(zidb_files()) > 0) {
+        updateSelectInput(session, "calc_sel_smp", NULL, choices = zidb_files())
       } else {
-        "No Selected Sample yet"
+        updateSelectInput(session, "calc_sel_smp", NULL, choices = zidb_files())
+      }
+    })
+    
+    # Variable : Base sample choisi
+    selected_zidb <- reactive({
+      if (req(input$calc_sel_smp) != "No ZIDB file yet") {
+        input$calc_sel_smp
       }
     })
     
@@ -232,12 +245,11 @@ mod_page_results_server <- function(id, all_vars){
     
     # Variable : Résultat des calculs
     results <- eventReactive(input$calc_use_script, {
-      req(data_folder_path_rea())
+      req(data_folder_path_rea(), calc_dat())
       
       # Désactivation du bouton
       shinyjs::disable("calc_use_script")
-      
-      res <- try(calc_results()(calc_dat()), silent = TRUE)
+      res <- try(calc_results()(calc_dat(), smp_folder_path(), mod_classif()), silent = TRUE)
       if (inherits(res, "try-error")) {
         res <- paste0("Error in Calculation script : ", attr(res, "condition"))
         class(res) <- "try-error"
@@ -287,6 +299,7 @@ mod_page_results_server <- function(id, all_vars){
         transformed_res <- t(results())
         abd <- TRUE %in% grepl("Abd", names(results()))
         bio <- TRUE %in% grepl("Bio", names(results()))
+        xlab <- "Classes"
         ylab <- if (abd && !bio) {
           "Abundance"
         } else if (bio && !abd) {
@@ -294,7 +307,7 @@ mod_page_results_server <- function(id, all_vars){
         } else {
           "Mix of Abundance and Biomass"
         }
-        plot(transformed_res[2:length(transformed_res),], ylab = ylab)
+        try(plot(transformed_res[2:nrow(transformed_res),], ylab = ylab, xlab = xlab))
       }
     })
     

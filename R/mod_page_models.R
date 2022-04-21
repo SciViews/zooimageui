@@ -47,7 +47,7 @@ mod_page_models_ui <- function(id){
         
           mainPanel( width = 8,
             # Scripts existants
-            h4("Classifier's Info :"),
+            h4("Active Classifier's Info :"),
             verbatimTextOutput(ns("modcre_show_classif")),
           ),
         ),

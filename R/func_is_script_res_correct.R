@@ -34,9 +34,9 @@ is_script_good_results <- function(results_folder_path, selected_script) {
       # Test si la fonction a un argument data
       # formals récupère les arguments de la fonction, names pour avoir les noms
       # et on vérifie si "data" n'est pas dedans. (le any n'a pas d'utilité ici)
-    } else if (any(!"data" %in% names(formals(get_results)))) {
+    } else if (any(!c("data","data_folder_path", "Classif") %in% names(formals(get_results)))) {
       res <- FALSE
-      attr(res, "message") <- "Selected Calculation doesn't have a data argument"
+      attr(res, "message") <- "Selected Calculation doesn't have a data or data_folder_path or Classif argument"
       return(res)
       # Enfin, si ça passe, alors le modèle est bon
     } else {
