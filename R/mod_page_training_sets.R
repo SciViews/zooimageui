@@ -202,7 +202,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Variable : input zidb sélectionnés pour le training set mode local
     ltsp_zidbs <- reactive({
-      if (req(input$ltsp_zidbs) != "No ZIDB file yet") {
+      if (req(input$ltsp_zidbs)[1] != "No ZIDB file yet") {
         return(paste0(req(input$ltsp_zidbs), ".zidb"))
       } else {
         return(NULL)

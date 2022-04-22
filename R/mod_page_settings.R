@@ -124,11 +124,11 @@ mod_page_settings_server <- function(id){
     })
     
     # Montrer le contenu du data_folder
-    output$data_folder_content <- renderPrint({
+    output$data_folder_content <- renderText({
       
       # si le chemin est différent de "" alors le montre
       if ( length(list.files(data_folder_path_rea())) > 0) {
-        list.files(data_folder_path_rea())
+        noquote(list.files(data_folder_path_rea()))
         # si non, message d'erreur
       } else {
         "Error, wrong path or the folder is empty !"
