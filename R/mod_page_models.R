@@ -215,8 +215,7 @@ mod_page_models_server <- function(id, all_vars){
     
     # Affichage // Training Set Choisi
     output$modcre_selected_ts <- renderText({
-      test <- if (modcre_is_ts_loaded()) { "(Correct)" } else { "(Not Correct)" }
-      paste0(input$modcre_sel_ts," ",test)
+      if (modcre_is_ts_loaded()) { "(Correct)" } else { "(Not Correct)" }
     })
     
     # Variable : nom du script sélectionné
@@ -473,7 +472,6 @@ mod_page_models_server <- function(id, all_vars){
     observeEvent(new_cla(), {
       req(modcre_classif(), data_folder_path_rea())
       # Enlève le .R par expression régulière
-      print("test")
       modvis_clas_name(input$modcre_selected_script)
     })
     # Soit le nom d'un sauvegardé

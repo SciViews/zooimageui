@@ -37,7 +37,7 @@ mod_page_samples_ui <- function(id){
             tags$br(),
             
             # Montrer les ZIDB
-            tags$h5("Already formated :"),
+            tags$h5("Already processed :"),
             textOutput(ns("zidb_existing")),
           ),
           
@@ -52,7 +52,9 @@ mod_page_samples_ui <- function(id){
 
       tabPanel("Sample Visualisation",
         
-        tags$br(),
+        tags$h4("Active Sample"),
+        selectInput(ns("zidb_show_1"), NULL, choices = "[NONE]"),
+        
         navlistPanel(widths = c(2,10),
         
         tabPanel("Dataframe",
@@ -64,13 +66,13 @@ mod_page_samples_ui <- function(id){
         tabPanel("Metadata",
           # Affichage metadata de l'échantillon
           tags$h3("Metadata of the Sample"),
-          tags$h4("Fraction :"),
+          tags$h4("Fraction"),
           verbatimTextOutput(ns("zidb_metadata_1")),
-          tags$h4("Image :"),
+          tags$h4("Image"),
           verbatimTextOutput(ns("zidb_metadata_2")),
-          tags$h4("Process :"),
+          tags$h4("Process"),
           verbatimTextOutput(ns("zidb_metadata_3")),
-          tags$h4("Subsample :"),
+          tags$h4("Subsample"),
           verbatimTextOutput(ns("zidb_metadata_4")),
         ),
         
@@ -96,8 +98,10 @@ mod_page_samples_ui <- function(id){
 
       tabPanel("Vignettes Visualisation",
         
+        tags$h4("Active Sample"),
+        selectInput(ns("zidb_show_2"), NULL, choices = "[NONE]"),
+               
         # Affichage du ZIDB choisi
-        tags$br(),
         tags$h3("Sample (zidb)file selected :"),
         textOutput(ns("zidb_selected")),
         
@@ -123,8 +127,8 @@ mod_page_samples_server <- function(id, all_vars){
     Samples_folder_path <- reactive({ all_vars$settings_vars$Samples_folder_path })
     smps <- reactive({ all_vars$settings_vars$smps })
     
-    # Préparation des variables qui viennent de fixed_pannel
-    zidb_show <- reactive({ all_vars$fixed_pannel_vars$zidb_show })
+    # Mise au point de la variable du zidb à visualiser
+    zidb_show <- reactiveVal()
 
 # ZIDB Preparation Server --------------------------------------------------------
 
@@ -192,7 +196,40 @@ mod_page_samples_server <- function(id, all_vars){
         "No ZIDB file yet"
       }
     })
-
+    
+    # Mise à jour de la sélection d'un échantillon pour la visualisation
+    observe({
+      if (length(zidb_files()) > 0) {
+        updateSelectInput(session, "zidb_show_1", NULL, choices = sub("\\.zidb$", "", zidb_files()))
+        updateSelectInput(session, "zidb_show_2", NULL, choices = sub("\\.zidb$", "", zidb_files()))
+      } else {
+        updateSelectInput(session, "zidb_show_1", NULL, choices = "[NONE]")
+        updateSelectInput(session, "zidb_show_2", NULL, choices = "[NONE]")
+      }
+    })
+    # Mise à jour du sélecteur 2, si le 1 change
+    observeEvent(input$zidb_show_1, {
+      updateSelectInput(session, "zidb_show_2", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_1)
+    })
+    # Mise à jour du sélecteur 1, si le 2 change
+    observeEvent(input$zidb_show_2, {
+      updateSelectInput(session, "zidb_show_1", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_2)
+    })
+    
+    # Si changement de la sélection dans visualisation
+    observe({
+      if (req(input$zidb_show_1) != "[NONE]") {
+        zidb_show(paste0(input$zidb_show_1, ".zidb"))
+      }
+    })
+    
+    # Si changement de la sélection dans vignette vis
+    observe({
+      if (req(input$zidb_show_2) != "[NONE]") {
+        zidb_show(paste0(input$zidb_show_2, ".zidb"))
+      }
+    })
+    
 # ZIDB Visualisation Server -----------------------------------------------
     
     # Variable : du chemin vers le ZIDB choisi
@@ -347,12 +384,14 @@ mod_page_samples_server <- function(id, all_vars){
     zidb_vars <- reactiveValues(
       zidb_files = NULL,
       zidb_df_nrow = NULL,
+      zidb_show = NULL,
     )
     
     # Mise à jour des variables du paquet
     observe({
       zidb_vars$zidb_files <- zidb_files()
       zidb_vars$zidb_df_nrow <- zidb_df_nrow()
+      zidb_vars$zidb_show <- zidb_show()
     })
     
     # Envoi du paquet qui contient toutes les variables

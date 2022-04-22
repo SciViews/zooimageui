@@ -51,6 +51,12 @@ app_ui <- function(request) {
                 tags$hr(),
                 mod_page_results_ui("page_results_ui_1")
               ),
+              
+              tabPanel("Tests",
+                h3("Tests"),
+                tags$hr(),
+                mod_test_ui("test_ui_1")
+              ),
             )
           )
         )

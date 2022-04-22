@@ -124,7 +124,7 @@ mod_page_settings_server <- function(id){
     })
     
     # Montrer le contenu du data_folder
-    output$data_folder_content <- renderText({
+    output$data_folder_content <- renderPrint({
       
       # si le chemin est différent de "" alors le montre
       if ( length(list.files(data_folder_path_rea())) > 0) {

@@ -14,32 +14,30 @@ mod_fixed_pannel_ui <- function(id){
              tags$h4("Global Informations", id = "fixed_pannel_title"),
              
              tags$hr(),
-             tags$h4("-> Global Settings"),
-             tags$h5("Data folder path :"),
+             tags$h4("-> Working Directory"),
              textOutput(ns("data_folder_path")),
              
              tags$hr(),
              tags$h4("-> Samples"),
              textOutput(ns("zidb_nb")),
-             tags$h5("Visualising :"),
-             selectInput(ns("zidb_show"), NULL, choices = NULL),
+             tags$h5("Active Sample"),
+             textOutput(ns("zidb_act_show")),
              textOutput(ns("zidb_show_nrow")),
              
              tags$hr(),
              tags$h4("-> Training Sets"),
-             tags$h5("Visualising :"),
+             tags$h5("Active Training Set"),
              textOutput(ns("ts_sel_show")),
-             tags$h5("Progression :"),
              textOutput(ns("ts_prog_show")),
              
              tags$hr(),
              tags$h4("-> Models"),
-             tags$h5("Active Classifier :"),
+             tags$h5("Active Classifier"),
              textOutput(ns("mod_act_clas")),
              
              tags$hr(),
              tags$h4("-> Results"),
-             tags$h5("Made Calculation :"),
+             tags$h5("Active configuration"),
              textOutput(ns("res_calc_name")),
     )
   )
@@ -61,6 +59,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
     zidb_df_nrow <- reactive({ all_vars$samples_vars$zidb_df_nrow })
+    zidb_show <- reactive({ all_vars$samples_vars$zidb_show })
     
     # training_sets_vars
     ts_folder_path <- reactive({ all_vars$training_sets_vars$ts_folder_path })
@@ -81,22 +80,26 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Affichage // Nb de Samples disponibles
     output$zidb_nb <- renderText({
-      paste0(length(zidb_files()), " / ", length(smpfiles()), " Samples ready.")
+      if (length(smpfiles()) > 0) {
+        paste0(length(zidb_files()), " / ", length(smpfiles()), " Samples ready.")
+      } else {
+        "[NONE]"
+      }
     })
     
-    # Mise à jour du choix du ZIDB à montrer dans samples
-    observe({
-      if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "zidb_show", NULL, choices = zidb_files())
+    # Affichage // ZIDB actif pour la visualisation
+    output$zidb_act_show <- renderText({
+      if (!is.null(zidb_show())) {
+        sub("\\.zidb$", "", zidb_show())
       } else {
-        updateSelectInput(session, "zidb_show", NULL, choices = "No ZIDB file yet")
+        "[NONE]"
       }
     })
     
     # Affichage // Nombre de lignes dans le ZIDB choisi
     output$zidb_show_nrow <- renderText({
       if (length(zidb_files()) > 0) {
-        paste0(zidb_df_nrow(), " rows in the sample")
+        paste0(zidb_df_nrow(), " items in the sample")
       } else {
         "No ZIDB file yet"
       }
@@ -154,17 +157,6 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Communication -----------------------------------------------------------
     
-    fixed_pannel_vars <- reactiveValues(
-      zidb_show = NULL,
-    )
-    
-    observe({
-      fixed_pannel_vars$zidb_show <- if (req(input$zidb_show) != "No ZIDB file yet") {
-        input$zidb_show
-      }
-    })
-    
-    return(fixed_pannel_vars)
     
   })
 }

@@ -55,4 +55,7 @@ app_server <- function( input, output, session ) {
   # === Results === (Page)
   results_vars <- mod_page_results_server("page_results_ui_1", all_vars = all_vars)
   
+  # === Tests === (Page)
+  mod_test_server("test_ui_1", all_vars = all_vars)
+  
 }

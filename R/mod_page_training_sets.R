@@ -106,7 +106,7 @@ mod_page_training_sets_ui <- function(id){
 
 # Training Set Visualisation UI ----------------------------------------------
 
-      tabPanel("Finalisation and Visualisation",
+      tabPanel("Explore Training Set",
                tags$br(),
                tags$h4("Training Set's content :"),
                selectInput(ns("tsv_ts_select"), NULL, choices = NULL),
