@@ -3,6 +3,10 @@
 /* ==== General ==== */
 /* ================= */
 
+div > hr {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
 
 /* ================= */
 /* Colonne de gauche */
@@ -23,13 +27,15 @@ div#fixed_pannel_div {
   
   border: solid;
   border-width: 4px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   border-color: #1e9de5;
   
-  padding: 12px;
-  margin-left: 5px;
-  margin-top: 5px;
+  padding: 6px;
+  margin-left: 4px;
+  margin-top: 0px;
   
-  width : 95%;
+  width : 100%;
 }
 
 h4#fixed_pannel_title {
@@ -53,8 +59,9 @@ div#right_col > div#right_col_div {
   
   margin: 0px;
   padding: 0px;
-  margin-top: 5px;
-  margin-right: 5px;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-left: 4px;
 }
 
 /* Mise en forme des sidebar panels */

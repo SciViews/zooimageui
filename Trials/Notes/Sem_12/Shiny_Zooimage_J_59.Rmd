@@ -16,3 +16,8 @@ En attendant, je continue d'améliorer mon application. \
 J'ai dans Samples, séparé les différents blocs de metadata. \
 
 J'ai rajouté au Summary du zidb sélectionné un choix des attributs à afficher. \
+
+Je modifie certains éléments de css. \
+
+
+!! Je n'utilise tjrs pas les données d'exemples !!

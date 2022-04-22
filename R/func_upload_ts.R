@@ -109,6 +109,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   test1 <- length(all_files[!grepl("\\.zip$", all_files)]) == 1
   if (test1) {
     ts <- all_files[!grepl("\\.zip$", all_files)]
+    ts_name <- all_files[!grepl("\\.zip$", all_files)]
   } else {
     res <- FALSE
     attr(res, "error") <- "Zip file's content is wrong. Please zip only the training set's folder."
@@ -147,5 +148,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   }
   
   # Renvoie TRUE si tout a fonctionné
-  return(TRUE)
+  res <- TRUE
+  attr(res, "name") <- ts_name
+  return(res)
 }

@@ -74,7 +74,7 @@ golem_add_external_resources <- function(){
   )
  
   tags$head(
-    favicon(),
+    favicon(ext = "png"),
     bundle_resources(
       path = app_sys('app/www'),
       app_title = 'TemplateGolem'
