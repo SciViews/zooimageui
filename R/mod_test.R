@@ -10,12 +10,12 @@
 mod_test_ui <- function(id){
   ns <- NS(id)
   tagList(
-    
-    selectInput(ns("test_select1"), "Select 1 :", choices = NULL),
-    selectInput(ns("test_select2"), "Select 2 :", choices = NULL),
-    
-    h3("Resultat"),
-    verbatimTextOutput(ns("resultat")),
+    # 
+    # selectInput(ns("test_select1"), "Select 1 :", choices = NULL),
+    # selectInput(ns("test_select2"), "Select 2 :", choices = NULL),
+    # 
+    # h3("Resultat"),
+    # verbatimTextOutput(ns("resultat")),
   )
 }
     
@@ -25,32 +25,36 @@ mod_test_ui <- function(id){
 mod_test_server <- function(id, all_vars){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
+    # 
+    # zidbs <- reactive({ all_vars$samples_vars$zidb_files })
+    # 
+    # observe({
+    #   if (length(zidbs()) > 0) {
+    #     updateSelectInput(session, "test_select1", "Select 1 :", choices = zidbs())
+    #     updateSelectInput(session, "test_select2", "Select 2 :", choices = zidbs())
+    #   } else {
+    #     updateSelectInput(session, "test_select1", "Select 1 :", choices = "[NONE]")
+    #     updateSelectInput(session, "test_select2", "Select 2 :", choices = "[NONE]")
+    #   }
+    # })
+    # 
+    # result <- reactiveVal()
+    # 
+    # observeEvent(input$test_select1, {
+    #   result(input$test_select1)
+    # })
+    # 
+    # observeEvent(input$test_select2, {
+    #   result(input$test_select2)
+    # })
+    # 
+    # 
+    # output$resultat <- renderPrint({
+    #   result()
+    # })
     
-    zidbs <- reactive({ all_vars$samples_vars$zidb_files })
-    
-    observe({
-      if (length(zidbs()) > 0) {
-        updateSelectInput(session, "test_select1", "Select 1 :", choices = zidbs())
-        updateSelectInput(session, "test_select2", "Select 2 :", choices = zidbs())
-      } else {
-        updateSelectInput(session, "test_select1", "Select 1 :", choices = "[NONE]")
-        updateSelectInput(session, "test_select2", "Select 2 :", choices = "[NONE]")
-      }
-    })
-    
-    result <- reactiveVal()
-    
-    observeEvent(input$test_select1, {
-      result(input$test_select1)
-    })
-    
-    observeEvent(input$test_select2, {
-      result(input$test_select2)
-    })
-    
-    
-    output$resultat <- renderPrint({
-      result()
+    test <- reactive({
+      "Bonjour"
     })
   })
 }

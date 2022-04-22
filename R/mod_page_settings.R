@@ -24,7 +24,7 @@ mod_page_settings_ui <- function(id){
         
         # Dossier de data défini, on le montre :
         sidebarPanel(id = "dsf_sidebar",
-          tags$h4("Data storage folder :"),
+          tags$h4("Data storage folder"),
           textOutput(ns("data_folder_path_show")),
           tags$br(),
           

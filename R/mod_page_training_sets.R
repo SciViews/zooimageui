@@ -22,9 +22,9 @@ mod_page_training_sets_ui <- function(id){
         tags$p("If you are using local mode, you can
                 do it directly in your folders, without zipping
                 and unzipping."),
-        tags$p("The resulting sorted training set must be putted
-                in the Training_Sets folder. You can then refresh
-                the page to see it."),
+        tags$p("The resulting sorted training set must be put
+                in the Training_Sets folder. You can then click on the
+                refresh button to see it."),
         tags$br(),
         
         sidebarLayout(
@@ -36,7 +36,7 @@ mod_page_training_sets_ui <- function(id){
             # Choix des zidbs
             selectInput(ns("ltsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
             # Choix du template ziclass
-            selectInput(ns("ltsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
+            selectInput(ns("ltsp_template"), "Template", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
             # Préparer le training set (désactivé de base)
             shinyjs::disabled(actionButton(ns("ltsp_prepare"), "Prepare Training Set")),
           ),
@@ -62,21 +62,21 @@ mod_page_training_sets_ui <- function(id){
         tags$p("In this window, you can download the unsorted 
                training set that you want to use, unzip it, 
                and then manually sort the vignettes inside the 
-               good folders. You can then zip the training set 
+               good folders. You can then zip the sorted training set 
                folder (and only this folder), and upload it to 
-               continue in the process."),
+               continue."),
         tags$br(),
         
         fluidRow(
           
           column(width = 5, offset = 1,
             sidebarPanel(width = 12,
-              tags$h4("Training Set preparation :"),
+              tags$h4("Training Set preparation"),
               textInput(ns("stsp_name"), "Name of the new Training Set"),
               # Choix des zidbs
               selectInput(ns("stsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
               # Choix du template ziclass
-              selectInput(ns("stsp_template"), "Template :", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
+              selectInput(ns("stsp_template"), "Template", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
               # Préparer le training set (désactivé de base)
               shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download .zip")),
             ),
@@ -84,18 +84,18 @@ mod_page_training_sets_ui <- function(id){
           
           column(width = 5,
             sidebarPanel(width = 12,
-              tags$h4("Sorted Training Set Upload :"),
+              tags$h4("Sorted Training Set Upload"),
               # Upload du training set trié
               fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
               # Message d'erreur ou de succès
               textOutput(ns("stsp_up_error")),
-              tags$h5("Existing Training Sets :"),
+              tags$h5("Existing Training Sets"),
               # Montrer les ts qui existent
               verbatimTextOutput(ns("stsp_existing_show")),
               # Rafraichir la liste
               actionButton(ns("stsp_refresh"), "Refresh"),
               tags$br(),
-              tags$h4("Training Set Delete :"),
+              tags$h4("Training Set Delete"),
               # Suppression d'un training set
               selectInput(ns("stsp_ts_to_delete"), NULL, choices = NULL),
               shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
@@ -104,15 +104,14 @@ mod_page_training_sets_ui <- function(id){
         ),
       ),
 
-# Training Set Visualisation UI ----------------------------------------------
+# Training Set Explore UI ----------------------------------------------
 
       tabPanel("Explore Training Set",
                tags$br(),
-               tags$h4("Training Set's content :"),
-               selectInput(ns("tsv_ts_select"), NULL, choices = NULL),
+               tags$h4("Active Training Set"),
+               selectInput(ns("train_set_selection1"), NULL, choices = NULL),
                actionButton(ns("tsv_ref)"), "Refresh"),
-               tags$br(),
-               tags$br(),
+               tags$h4("Training Set's Content"),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
@@ -146,6 +145,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # samples_vars
     zidb_files <- reactive({ all_vars$samples_vars$zidb_files })
+    
+    # models_vars
+    train_set_selection2 <- reactive({ all_vars$models_vars$train_set_selection2 })
 
 # Variables Globales -------------------------------------------------------------
 
@@ -174,15 +176,15 @@ mod_page_training_sets_server <- function(id, all_vars){
       # Si zidb_files() change et qu'il est non vide, alors on affiche les zidb_files()
       if (length(zidb_files()) > 0) {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = sub("\\.zidb$", "",zidb_files()))
+        updateSelectInput(session, "ltsp_zidbs", label = "Select samples", choices = sub("\\.zidb$", "",zidb_files()))
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = sub("\\.zidb$", "",zidb_files()))
+        updateSelectInput(session, "stsp_zidbs", label = "Select samples", choices = sub("\\.zidb$", "",zidb_files()))
       # Si pas, alors on affiche rien
       } else {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Select samples :", choices = "No ZIDB file yet")
+        updateSelectInput(session, "ltsp_zidbs", label = "Select samples", choices = "No ZIDB file yet")
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Select samples :", choices = "No ZIDB file yet")
+        updateSelectInput(session, "stsp_zidbs", label = "Select samples", choices = "No ZIDB file yet")
       }
     })
     
@@ -363,22 +365,30 @@ mod_page_training_sets_server <- function(id, all_vars){
       ts_list_update(ts_list_update()+1)
     })
 
-# Visualisation Server ----------------------------------------------------
+# Explore Server ----------------------------------------------------
     
-    # Mise à jour de la sélection du training set
+    # Mise à jour du sélecteur de Training Set
     observe({
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "tsv_ts_select", NULL, choices = ts_list())
+        updateSelectInput(session, "train_set_selection1", NULL, choices = ts_list())
       } else {
-        updateSelectInput(session, "tsv_ts_select", NULL, choices = "No Training Set yet")
+        updateSelectInput(session, "train_set_selection1", NULL, choices = "No Training Set yet")
+      }
+    })
+    # Mise à jour du sélecteur de Training Set s'il a changé dans l'onglet models
+    observeEvent(train_set_selection2(), {
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "train_set_selection1", NULL, choices = ts_list(), selected = train_set_selection2())
+      } else {
+        updateSelectInput(session, "train_set_selection1", NULL, choices = "No Training Set yet")
       }
     })
     
     # Affichage // Contenu du Training Set sélectionné
     output$tsv_ts_content <- renderPrint({
       # Si le training set est choisi : on affiche le contenu
-      if (req(input$tsv_ts_select != "No Training Set yet")) {
-        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+      if (req(input$input$train_set_selection1 != "No Training Set yet")) {
+        path <- fs::path(ts_folder_path(), input$input$train_set_selection1)
         list.files(path)
       } else {
         "No Training Set yet"
@@ -388,9 +398,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     tsv_ts_classed_vign <- reactive({
       # Si data_folder_path_rea() est non vide, et que on a sélectionné un training set
-      if (data_folder_path_rea() != "" && req(input$tsv_ts_select) != "No Training Set yet") {
+      if (data_folder_path_rea() != "" && req(input$input$train_set_selection1) != "No Training Set yet") {
         # Préparation du chemin
-        dir <- fs::path(ts_folder_path(), input$tsv_ts_select)
+        dir <- fs::path(ts_folder_path(), input$input$train_set_selection1)
         # Comptage des vignettes totale dans le Training Set
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         # Comptage des vignettes non classées dans le Training Set
@@ -404,8 +414,8 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Chargement du Training Set si correct
     tsv_training_set <- reactive({
-      if (req(input$tsv_ts_select) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
-        path <- fs::path(ts_folder_path(), input$tsv_ts_select)
+      if (req(input$input$train_set_selection1) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
+        path <- fs::path(ts_folder_path(), input$input$train_set_selection1)
         train <- getTrain(path)
         # Il y a un problème avec cette version de zooimage, il faut changer
         # manuellement la class du Training Set pour qu'il soit en facteur
@@ -429,13 +439,19 @@ mod_page_training_sets_server <- function(id, all_vars){
       ts_folder_path = NULL,
       ts_list = NULL,
       ts_sel = NULL,
+      
+      # Test
+      train_set_selection1 = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       training_sets_vars$ts_folder_path <- ts_folder_path()
       training_sets_vars$ts_list <- ts_list()
-      training_sets_vars$ts_sel <- input$tsv_ts_select
+      training_sets_vars$ts_sel <- input$train_set_selection1
+      
+      # Test
+      training_sets_vars$train_set_selection1 <- input$train_set_selection1
     })
     
     # Envoi du packet qui contient toutes les variables

@@ -30,7 +30,7 @@ mod_page_models_ui <- function(id){
             textOutput(ns("modcre_mod_comment")),
             # Affichage Training Set sélectionné
             h4("Training Set :"),
-            selectInput(ns("modcre_sel_ts"), NULL, choices = NULL),
+            selectInput(ns("train_set_selection2"), NULL, choices = NULL),
             textOutput(ns("modcre_selected_ts")),
             # Est-ce que tout fonctionne ?
             h4("Building Classifier :"),
@@ -131,6 +131,7 @@ mod_page_models_server <- function(id, all_vars){
     # Training Sets Vars :
     ts_list <- reactive({ all_vars$training_sets_vars$ts_list })
     
+    train_set_selection1 <- reactive({ all_vars$training_sets_vars$train_set_selection1 })
     
 # Variables Globales ------------------------------------------------------
     
@@ -168,20 +169,28 @@ mod_page_models_server <- function(id, all_vars){
       }
     })
     
-    # Mise à jour du sélecteur de training set
+    # Mise à jour du sélecteur de Training Set
     observe({
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "modcre_sel_ts", NULL, choices = ts_list() )
+        updateSelectInput(session, "train_set_selection2", NULL, choices = ts_list() )
       } else {
-        updateSelectInput(session, "modcre_sel_ts", NULL, choices = "No Training Set yet")
+        updateSelectInput(session, "train_set_selection2", NULL, choices = "No Model yet" )
+      }
+    })
+    # Mise à jour du sélecteur de Training Set s'il a changé dans l'onglet TS
+    observeEvent(train_set_selection1(), {
+      if (length(ts_list()) > 0) {
+        updateSelectInput(session, "train_set_selection2", NULL, choices = ts_list(), selected = train_set_selection1())
+      } else {
+        updateSelectInput(session, "train_set_selection2", NULL, choices = "No Model yet" )
       }
     })
     
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     modcre_ts_classed_vign <- reactive({
       # Commentaire en page Training Sets
-      if (data_folder_path_rea() != "" && req(input$modcre_sel_ts) != "No Training Set yet") {
-        dir <- fs::path(ts_folder_path(), input$modcre_sel_ts)
+      if (data_folder_path_rea() != "" && req(input$train_set_selection2) != "No Training Set yet") {
+        dir <- fs::path(ts_folder_path(), input$train_set_selection2)
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
         if (inherits(ts_unsorted_vign, "try-error")) { return(0) }
@@ -192,8 +201,8 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable charger le training set si possible
     ts_training_set <- reactive ({
-      if (req(input$modcre_sel_ts) != "No Training Set yet" && req(modcre_ts_classed_vign()) != 0) {
-        path <- fs::path(isolate(ts_folder_path()), input$modcre_sel_ts)
+      if (req(input$train_set_selection2) != "No Training Set yet" && req(modcre_ts_classed_vign()) != 0) {
+        path <- fs::path(isolate(ts_folder_path()), input$train_set_selection2)
         train <- try(getTrain(path), silent = TRUE)
         # Il y a un problème avec cette version de zooimage, il faut changer
         # manuellement la class du Training Set pour qu'il soit en facteur
@@ -298,7 +307,7 @@ mod_page_models_server <- function(id, all_vars){
     
     # Mise à jour du bouton pour sauvegarder un script
     observe({
-      input$modcre_sel_ts
+      input$train_set_selection2
       modcre_selected_script()
       # Si le modèle est correcte et que le TS est chargé alors on peut créer le classifieur
       if (modcre_everything_ok() && !is.null(modcre_classif_new())) {
@@ -509,12 +518,18 @@ mod_page_models_server <- function(id, all_vars){
     models_vars <- reactiveValues(
       modvis_clas_name = NULL,
       modcre_classif = NULL,
+      
+      # Test
+      train_set_selection2 = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       models_vars$modvis_clas_name <- modvis_clas_name()
       models_vars$modcre_classif <- modcre_classif()
+      
+      # Test
+      models_vars$train_set_selection2 <- input$train_set_selection2
     })
     
     # Envoi du packet qui contient toutes les variables

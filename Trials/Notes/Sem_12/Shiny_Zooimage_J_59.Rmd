@@ -28,3 +28,7 @@ Continuation de changements par rapport aux dernières remarques de M. Grosjean.
 Changements globaux de titres ou mise en forme de l'affichage. \
 
 J'ai réussis à mettre au point un système où quand l'on change un sélecteur input sur un onglet, cela change la sélection du même sélecteur dans un autre onglet, afin qu'il prenne la même valeur, et de plus, le résultat de ces deux inputs est une même variable, qui prendra la valeur soit de l'un, soit de l'autre, en fonction de qui change ! \
+
+J'ai réussis à mettre au point le même système pour la sélection de TS pour visualisation et pour models. \
+
+J'ai également du corriger un problème de manque de vérifications pour le sample. \

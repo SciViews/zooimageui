@@ -20,10 +20,11 @@ mod_page_samples_ui <- function(id){
         sidebarLayout(
 
           # Choix de l'échantillon pour la préparation des ZIDB
-          sidebarPanel(
+          sidebarPanel(width = 3,
             
             # Choix du Sample
-            selectInput(ns("sel_sample_folder"), "Sample folder :",
+            tags$h5("Sample Folder"),
+            selectInput(ns("sel_sample_folder"), NULL,
                 choices = "No Samples"),
             
             # Création ZIDB unique
@@ -41,8 +42,8 @@ mod_page_samples_ui <- function(id){
             textOutput(ns("zidb_existing")),
           ),
           
-          mainPanel(
-            h3("Selected Sample's content :"),
+          mainPanel(width = 9,
+            h4("Selected Sample's content :"),
             verbatimTextOutput(ns("sel_samp_cont")),
           ),
         ),
@@ -59,33 +60,33 @@ mod_page_samples_ui <- function(id){
         
         tabPanel("Dataframe",
           # Affichage dataframe de l'échantillon
-          tags$h3("Dataframe of the Sample"),
+          tags$h4("Dataframe of the Sample"),
           dataTableOutput(ns("zidb_datatable")),
         ),
         
         tabPanel("Metadata",
           # Affichage metadata de l'échantillon
-          tags$h3("Metadata of the Sample"),
-          tags$h4("Fraction"),
+          tags$h4("Metadata of the Sample"),
+          tags$h5("Fraction"),
           verbatimTextOutput(ns("zidb_metadata_1")),
-          tags$h4("Image"),
+          tags$h5("Image"),
           verbatimTextOutput(ns("zidb_metadata_2")),
-          tags$h4("Process"),
+          tags$h5("Process"),
           verbatimTextOutput(ns("zidb_metadata_3")),
-          tags$h4("Subsample"),
+          tags$h5("Subsample"),
           verbatimTextOutput(ns("zidb_metadata_4")),
         ),
         
         tabPanel("Summary",
           # Affichage du summary de l'échantillon
-          tags$h3("Summary of the Sample"),
+          tags$h4("Summary of the Sample"),
           selectInput(ns("zidb_sum_vars"), NULL, choices = NULL, multiple = TRUE),
           verbatimTextOutput(ns("zidb_summary")),
         ),
         
         tabPanel("Plot",
           # Affichage d'un graphique de l'échantillon
-          tags$h3("Plot of the Sample"),
+          tags$h4("Plot of the Sample"),
           selectInput(ns("zidb_plot_x"), NULL, choices = NULL),
           selectInput(ns("zidb_plot_y"), NULL, choices = NULL),
           plotOutput(ns("zidb_plot"))
@@ -100,15 +101,11 @@ mod_page_samples_ui <- function(id){
         
         tags$h4("Active Sample"),
         selectInput(ns("zidb_show_2"), NULL, choices = "[NONE]"),
-               
-        # Affichage du ZIDB choisi
-        tags$h3("Sample (zidb)file selected :"),
-        textOutput(ns("zidb_selected")),
         
         # Affichage des vignettes
-        tags$br(),
-        selectInput(ns("zidb_vign_vis"), "Vignettes to watch", choices = "None"),
-        tags$h3("Visualisation of vignettes"),
+        tags$h4("Vignettes to watch"),
+        selectInput(ns("zidb_vign_vis"), NULL, choices = "None"),
+        tags$h4("Visualisation of vignettes"),
         plotOutput(ns("zidb_vignettes_plot")),
       )
     )
@@ -144,7 +141,7 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Mise à jour du sélecteur d'échantillons
     observeEvent(smps(), {
-      updateSelectInput(session, "sel_sample_folder", "Sample folder :",choices = smps())
+      updateSelectInput(session, "sel_sample_folder", NULL,choices = smps())
     })
     
     # Variable : pour le chemin du Sample choisi
@@ -160,7 +157,7 @@ mod_page_samples_server <- function(id, all_vars){
     output$sel_samp_cont <- renderPrint({
       # Que si l'échantillon existe et n'est pas vide
       if (length(sample_selected_content()) > 0) {
-        sample_selected_content()
+        noquote(sample_selected_content())
       } else {
         "Folder Empty"
       }
@@ -209,11 +206,19 @@ mod_page_samples_server <- function(id, all_vars){
     })
     # Mise à jour du sélecteur 2, si le 1 change
     observeEvent(input$zidb_show_1, {
-      updateSelectInput(session, "zidb_show_2", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_1)
+      if (length(zidb_files()) > 0) {
+        updateSelectInput(session, "zidb_show_2", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_1)
+      } else {
+        updateSelectInput(session, "zidb_show_2", NULL, choices = "[NONE]")
+      }
     })
     # Mise à jour du sélecteur 1, si le 2 change
     observeEvent(input$zidb_show_2, {
-      updateSelectInput(session, "zidb_show_1", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_2)
+      if (length(zidb_files()) > 0) {
+        updateSelectInput(session, "zidb_show_1", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_2)
+      } else {
+        updateSelectInput(session, "zidb_show_1", NULL, choices = "[NONE]")
+      }
     })
     
     # Si changement de la sélection dans visualisation
@@ -227,6 +232,13 @@ mod_page_samples_server <- function(id, all_vars){
     observe({
       if (req(input$zidb_show_2) != "[NONE]") {
         zidb_show(paste0(input$zidb_show_2, ".zidb"))
+      }
+    })
+    
+    # Si NONE : on remet à vide pour le reste des opérations
+    observe({
+      if (input$zidb_show_1 == "[NONE]" && input$zidb_show_2 == "[NONE]") {
+        zidb_show(NULL)
       }
     })
     
@@ -269,7 +281,7 @@ mod_page_samples_server <- function(id, all_vars){
     # Mise à jour de la sélection des variables
     observe({
       data_folder_path_rea()
-      updateSelectInput(session, "zidb_sum_vars", NULL, choices = "No Sample yet")
+      updateSelectInput(session, "zidb_sum_vars", NULL, choices = "[NONE]")
       if (!is.null(zidb_df())) {
         updateSelectInput(session, "zidb_sum_vars", NULL, choices = names(zidb_df()))
       }
@@ -277,7 +289,7 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Affichage // summary du ZIDB choisi
     output$zidb_summary <- renderPrint({
-      if (req(input$zidb_sum_vars)[1] != "No Sample yet") {
+      if (req(input$zidb_sum_vars)[1] != "[NONE]") {
         summary(zidb_df()[,input$zidb_sum_vars])
       }
     })
@@ -305,15 +317,6 @@ mod_page_samples_server <- function(id, all_vars){
     })
 
 # Vignettes Visualisation Server ------------------------------------------
-
-    # Affichage // ZIDB sélectionné
-    output$zidb_selected <- renderText({
-      if (length(zidb_show()) > 0) {
-        zidb_show()
-      } else {
-        "No ZIDB file yet"
-      }
-    })
     
     # Variable : vignettes max pour l'affichage
     zidb_nb_vign_max <- reactive({
@@ -337,7 +340,7 @@ mod_page_samples_server <- function(id, all_vars){
       # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
       upper_limit[length(upper_limit)] <- zidb_nb_vign_max
       
-      updateSelectInput( session, "zidb_vign_vis", "Vignettes to watch",
+      updateSelectInput( session, "zidb_vign_vis", NULL,
                          choices = paste0( lower_limit, " - ", upper_limit ))
     })
     
