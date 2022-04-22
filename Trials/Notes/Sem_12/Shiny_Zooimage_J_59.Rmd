@@ -1,0 +1,18 @@
+---
+title: "Shiny_Zooimage_J_59"
+output: html_document
+---
+
+Fichier de notes du jour 59. Vendredi 22 avril 2022. Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Je vais faire une réunion vers 10h avec M. Grosjean pour montrer les améliorations que j'ai réalisé dans mon application. \
+
+En attendant, je continue d'améliorer mon application. \
+
+J'ai dans Samples, séparé les différents blocs de metadata. \
+
+J'ai rajouté au Summary du zidb sélectionné un choix des attributs à afficher. \

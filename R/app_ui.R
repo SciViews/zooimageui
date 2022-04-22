@@ -24,26 +24,31 @@ app_ui <- function(request) {
               # Page dans laquelle je peux définir et voir le dossier qui contient mes données
               tabPanel("Settings",
                 h3("Settings"),
+                tags$hr(),
                 mod_page_settings_ui("page_settings_ui_1")
               ),
               
               tabPanel("Samples",
                 h3("Samples"),
+                tags$hr(),
                 mod_page_samples_ui("page_samples_ui_1")
               ),
               
               tabPanel("Training Sets",
                 h3("Training Sets"),
+                tags$hr(),
                 mod_page_training_sets_ui("page_training_sets_ui_1")
               ),
               
               tabPanel("Models",
                 h3("Models"),
+                tags$hr(),
                 mod_page_models_ui("page_models_ui_1")
               ),
               
               tabPanel("Results",
                 h3("Results"),
+                tags$hr(),
                 mod_page_results_ui("page_results_ui_1")
               ),
             )

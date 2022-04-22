@@ -118,7 +118,15 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   }
   
   # Deuxième test
-  test2 <- !any(!c("_", "alter", "Zooplankton other") %in% list.files(ts))
+  inside_ts <- try(list.files(ts), silent = TRUE)
+  if (inherits(inside_ts, "try-error")) {
+    res <- FALSE
+    attr(res, "error") <- "Zip file's content is wrong. Please zip only the training set's folder."
+    setwd(goin_tmp)
+    unlink("tmp", recursive = TRUE)
+    return(res)
+  }
+  test2 <- !any(!c("_", "alter", "Zooplankton other") %in% inside_ts)
   if (test2) {
     # Retour dans le bon dossier
     setwd(goin_tmp)

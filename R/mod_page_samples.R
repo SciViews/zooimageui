@@ -64,12 +64,20 @@ mod_page_samples_ui <- function(id){
         tabPanel("Metadata",
           # Affichage metadata de l'échantillon
           tags$h3("Metadata of the Sample"),
-          verbatimTextOutput(ns("zidb_metadata")),
+          tags$h4("Fraction :"),
+          verbatimTextOutput(ns("zidb_metadata_1")),
+          tags$h4("Image :"),
+          verbatimTextOutput(ns("zidb_metadata_2")),
+          tags$h4("Process :"),
+          verbatimTextOutput(ns("zidb_metadata_3")),
+          tags$h4("Subsample :"),
+          verbatimTextOutput(ns("zidb_metadata_4")),
         ),
         
         tabPanel("Summary",
           # Affichage du summary de l'échantillon
           tags$h3("Summary of the Sample"),
+          selectInput(ns("zidb_sum_vars"), NULL, choices = NULL, multiple = TRUE),
           verbatimTextOutput(ns("zidb_summary")),
         ),
         
@@ -208,13 +216,33 @@ mod_page_samples_server <- function(id, all_vars){
     })
     
     # Affichage // metadata du ZIDB choisi
-    output$zidb_metadata <- renderPrint({
-      attr(zidb_df(), "metadata")
+    output$zidb_metadata_1 <- renderPrint({
+      attr(zidb_df(), "metadata")$Fraction
+    })
+    output$zidb_metadata_2 <- renderPrint({
+      attr(zidb_df(), "metadata")$Image
+    })
+    output$zidb_metadata_3 <- renderPrint({
+      attr(zidb_df(), "metadata")$Process
+    })
+    output$zidb_metadata_4 <- renderPrint({
+      attr(zidb_df(), "metadata")$Subsample
+    })
+    
+    # Mise à jour de la sélection des variables
+    observe({
+      data_folder_path_rea()
+      updateSelectInput(session, "zidb_sum_vars", NULL, choices = "No Sample yet")
+      if (!is.null(zidb_df())) {
+        updateSelectInput(session, "zidb_sum_vars", NULL, choices = names(zidb_df()))
+      }
     })
     
     # Affichage // summary du ZIDB choisi
     output$zidb_summary <- renderPrint({
-      summary(zidb_df())
+      if (req(input$zidb_sum_vars)[1] != "No Sample yet") {
+        summary(zidb_df()[,input$zidb_sum_vars])
+      }
     })
     
     # Mise à jour du choix de la variable en x et y
