@@ -12,15 +12,15 @@ mod_page_results_ui <- function(id){
   tagList(
     tabsetPanel(
 
-# Calculations UI ---------------------------------------------------------
+# Configurations UI ---------------------------------------------------------
 
-      tabPanel("Calculations",
+      tabPanel("Configurations",
         tags$br(),
         fluidRow(
           
           sidebarPanel( width = 6,
             # Choix du script
-            tags$h4("Chose Calculations :"),
+            tags$h4("Chose Configuration"),
             selectInput(ns("calc_selected_script"), NULL, choices = NULL, width = "50%"),
             # Messages d'aide
             tags$hr(),
@@ -38,11 +38,11 @@ mod_page_results_ui <- function(id){
           
           sidebarPanel( width = 4,
             # Montre le Sample choisi
-            tags$h4("Base Sample :"),
+            tags$h4("Base Sample"),
             selectInput(ns("calc_sel_smp"), NULL, choices = NULL),
             tags$hr(),
             # Montre le Classifieur actif
-            tags$h4("Active Classifier :"),
+            tags$h4("Active Classifier"),
             textOutput(ns("calc_act_clas")),
             tags$hr(),
             # Indique si on peut passer à la suite
@@ -59,7 +59,7 @@ mod_page_results_ui <- function(id){
                
         # Visualisation des résultats
         tags$br(),
-        tags$h4("Visualisation of the Results :"),
+        tags$h4("Visualisation of the Results"),
         verbatimTextOutput(ns("vis_res_show")),
         plotOutput(ns("vis_test_plot")),
       ),
@@ -70,8 +70,8 @@ mod_page_results_ui <- function(id){
                
         # Sauvegarde des résultats
         tags$br(),
-        tags$h4("Save Results :"),
-        textInput(ns("vis_res_name"), "Name :"),
+        tags$h4("Save Results"),
+        textInput(ns("vis_res_name"), "Name"),
         shinyjs::disabled(actionButton(ns("vis_res_save"), "Save in Local")),
         # Téléchargement des résultats
         shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
@@ -192,9 +192,9 @@ mod_page_results_server <- function(id, all_vars){
     # Mise à jour du sélecteur de script
     observe({
       if (length(calc_scripts_list()) > 0) {
-        updateSelectInput(session, "calc_selected_script", NULL, choices = sub("\\.R$", "", calc_scripts_list()))
+        updateSelectInput(session, "calc_selected_script", NULL, choices = sub("\\.R$", "", calc_scripts_list()[grepl("\\.R$", calc_scripts_list())]))
       } else {
-        updateSelectInput(session, "calc_selected_script", NULL, choices = "No Calculations yet")
+        updateSelectInput(session, "calc_selected_script", NULL, choices = "No Configurations yet")
       }
     })
     
@@ -280,7 +280,7 @@ mod_page_results_server <- function(id, all_vars){
       if (!is.null(results()) && !is_results_error()) {
         input$calc_selected_script
       } else {
-        "No Calculations yet"
+        "No Configurations yet"
       }
     })
     

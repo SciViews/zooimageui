@@ -18,7 +18,7 @@ mod_page_training_sets_ui <- function(id){
       
       tabPanel("Prepare Local Training Set",
         tags$br(),
-        tags$h4("LOCAL MODE NOTE :"),
+        tags$h4("LOCAL MODE NOTE"),
         tags$p("If you are using local mode, you can
                 do it directly in your folders, without zipping
                 and unzipping."),
@@ -32,7 +32,7 @@ mod_page_training_sets_ui <- function(id){
           # Création des training sets
           sidebarPanel(
             tags$h4("Training Set Preparation"),
-            textInput(ns("ltsp_name"), "Name of the new Training Set"),
+            textInput(ns("ltsp_name"), "Name"),
             # Choix des zidbs
             selectInput(ns("ltsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
             # Choix du template ziclass
@@ -58,7 +58,7 @@ mod_page_training_sets_ui <- function(id){
                
         # Présentation
         tags$br(),
-        tags$h4("SERVER MODE NOTE :"),
+        tags$h4("SERVER MODE NOTE"),
         tags$p("In this window, you can download the unsorted 
                training set that you want to use, unzip it, 
                and then manually sort the vignettes inside the 
@@ -72,13 +72,13 @@ mod_page_training_sets_ui <- function(id){
           column(width = 5, offset = 1,
             sidebarPanel(width = 12,
               tags$h4("Training Set preparation"),
-              textInput(ns("stsp_name"), "Name of the new Training Set"),
+              textInput(ns("stsp_name"), "Name"),
               # Choix des zidbs
               selectInput(ns("stsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
               # Choix du template ziclass
               selectInput(ns("stsp_template"), "Template", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
               # Préparer le training set (désactivé de base)
-              shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download .zip")),
+              shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download")),
             ),
           ),
           
@@ -86,10 +86,10 @@ mod_page_training_sets_ui <- function(id){
             sidebarPanel(width = 12,
               tags$h4("Sorted Training Set Upload"),
               # Upload du training set trié
-              fileInput(ns("stsp_ts_up"), "Upload .zip", multiple = FALSE),
+              fileInput(ns("stsp_ts_up"), "Zipped Training Set", multiple = FALSE),
               # Message d'erreur ou de succès
               textOutput(ns("stsp_up_error")),
-              tags$h5("Existing Training Sets"),
+              tags$h4("Existing Training Sets"),
               # Montrer les ts qui existent
               verbatimTextOutput(ns("stsp_existing_show")),
               # Rafraichir la liste
@@ -176,15 +176,15 @@ mod_page_training_sets_server <- function(id, all_vars){
       # Si zidb_files() change et qu'il est non vide, alors on affiche les zidb_files()
       if (length(zidb_files()) > 0) {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Select samples", choices = sub("\\.zidb$", "",zidb_files()))
+        updateSelectInput(session, "ltsp_zidbs", label = "Samples", choices = sub("\\.zidb$", "",zidb_files()))
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Select samples", choices = sub("\\.zidb$", "",zidb_files()))
+        updateSelectInput(session, "stsp_zidbs", label = "Samples", choices = sub("\\.zidb$", "",zidb_files()))
       # Si pas, alors on affiche rien
       } else {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Select samples", choices = "No ZIDB file yet")
+        updateSelectInput(session, "ltsp_zidbs", label = "Samples", choices = "No ZIDB file yet")
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Select samples", choices = "No ZIDB file yet")
+        updateSelectInput(session, "stsp_zidbs", label = "Samples", choices = "No ZIDB file yet")
       }
     })
     
@@ -387,8 +387,8 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Affichage // Contenu du Training Set sélectionné
     output$tsv_ts_content <- renderPrint({
       # Si le training set est choisi : on affiche le contenu
-      if (req(input$input$train_set_selection1 != "No Training Set yet")) {
-        path <- fs::path(ts_folder_path(), input$input$train_set_selection1)
+      if (req(input$train_set_selection1 != "No Training Set yet")) {
+        path <- fs::path(ts_folder_path(), input$train_set_selection1)
         list.files(path)
       } else {
         "No Training Set yet"
@@ -398,9 +398,9 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     tsv_ts_classed_vign <- reactive({
       # Si data_folder_path_rea() est non vide, et que on a sélectionné un training set
-      if (data_folder_path_rea() != "" && req(input$input$train_set_selection1) != "No Training Set yet") {
+      if (data_folder_path_rea() != "" && req(input$train_set_selection1) != "No Training Set yet") {
         # Préparation du chemin
-        dir <- fs::path(ts_folder_path(), input$input$train_set_selection1)
+        dir <- fs::path(ts_folder_path(), input$train_set_selection1)
         # Comptage des vignettes totale dans le Training Set
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         # Comptage des vignettes non classées dans le Training Set
@@ -414,8 +414,8 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Chargement du Training Set si correct
     tsv_training_set <- reactive({
-      if (req(input$input$train_set_selection1) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
-        path <- fs::path(ts_folder_path(), input$input$train_set_selection1)
+      if (req(input$train_set_selection1) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
+        path <- fs::path(ts_folder_path(), input$train_set_selection1)
         train <- getTrain(path)
         # Il y a un problème avec cette version de zooimage, il faut changer
         # manuellement la class du Training Set pour qu'il soit en facteur

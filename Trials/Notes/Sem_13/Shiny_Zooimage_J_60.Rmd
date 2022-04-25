@@ -1,0 +1,20 @@
+---
+title: "Shiny_Zooimage_J_60"
+output: html_document
+---
+
+Fichier de notes du jour 60. Lundi 25 avril 2022. Présentiel. \
+
+Le jour 60 début la semaine car il y a eu un jour en moins la semaine dernière. \
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+====== Je vais tenter de teminer mes améliorations ====== \
+
+Modifications de différents affichages qui possédaient ":" \
+
+Modification du titre de l'application web \
+
+Réparation d'un problème dans la sélection d'un script pour les résults (tout était .R alors j'ai fait en sorte que on le puisse choisir que des .R) \

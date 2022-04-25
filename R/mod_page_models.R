@@ -19,7 +19,7 @@ mod_page_models_ui <- function(id){
         sidebarLayout(
             
           sidebarPanel( width = 4,
-            h4("Model :"),
+            h4("Model"),
             # Choix du script
             selectInput(ns("modcre_selected_script"), NULL, choices = NULL),
             actionButton(ns("modcre_refresh"), "Refresh Models List"),
@@ -29,14 +29,14 @@ mod_page_models_ui <- function(id){
             textOutput(ns("modcre_mod_message")),
             textOutput(ns("modcre_mod_comment")),
             # Affichage Training Set sélectionné
-            h4("Training Set :"),
+            h4("Training Set"),
             selectInput(ns("train_set_selection2"), NULL, choices = NULL),
             textOutput(ns("modcre_selected_ts")),
             # Est-ce que tout fonctionne ?
-            h4("Building Classifier :"),
+            h4("Building Classifier"),
             textOutput(ns("modcre_is_everything_ok")),
             # Choix du nom pour sauvegarde
-            h4("Save Name :"),
+            h4("Save Name"),
             textInput(ns("modcre_save_name"), NULL),
             # Création du classifieur
             shinyjs::disabled(actionButton(ns("modcre_save_classif"), "Save Classifier")),
@@ -47,7 +47,7 @@ mod_page_models_ui <- function(id){
         
           mainPanel( width = 8,
             # Scripts existants
-            h4("Active Classifier's Info :"),
+            h4("Active Classifier's Info"),
             verbatimTextOutput(ns("modcre_show_classif")),
           ),
         ),
@@ -61,23 +61,21 @@ mod_page_models_ui <- function(id){
           
           # Chargement du classifieur
           sidebarPanel(width = 4,
-            tags$h4("Load a Classifier :"),
+            tags$h4("Load a Classifier"),
             selectInput(ns("modcre_sel_sav_cla"), NULL, choices = NULL),
             actionButton(ns("sa_re"), "Refresh"),
             shinyjs::disabled(actionButton(ns("modcre_use_saved_class"), "Use Saved Classif")),
             
             # Suppression d'un classifieur sauvegardé
             tags$hr(),
-            tags$h4("Delete a Classifier :"),
+            tags$h4("Delete a Classifier"),
             selectInput(ns("modcre_sel_todel"), NULL, choices = NULL),
             shinyjs::disabled(actionButton(ns("modcre_delete"), "Delete")),
           ),
           
           # Affichage du contenu du classifieur actif
           mainPanel(
-            tags$h4("Active Classifier's Info :"),
-            textOutput(ns("load_cla_name")),
-            tags$br(),
+            tags$h4("Active Classifier's Info"),
             verbatimTextOutput(ns("load_cla_vis")),
           ),
         ),
@@ -92,21 +90,21 @@ mod_page_models_ui <- function(id){
           
           # Affichage // Summary
           tabPanel("Summary",
-            tags$h4("Summary of the Classifier :"),
+            tags$h4("Summary of the Classifier"),
             checkboxInput(ns("modvis_clas_showall"), "Show all variables"),
             verbatimTextOutput(ns("modvis_clas_sum")),
           ),
           
           # Affichage // Matrice de Confusion
           tabPanel("Confusion Matrix",
-            tags$h4("Confusion Matrix of the Classifier :"),
+            tags$h4("Confusion Matrix of the Classifier"),
             verbatimTextOutput(ns("modvis_clas_conf")),
           ),
           
           # Affichage // Plots de la Matrice de Confusion
           tabPanel("Plots",
             tags$h4("Plots of the Confusion Matrix"),
-            selectInput(ns("modvis_plot_type"), "Type of Plot :", choices = c("image", "dendrogram", "barplot", "stars")),
+            selectInput(ns("modvis_plot_type"), "Plot Type", choices = c("image", "dendrogram", "barplot", "stars")),
             plotOutput(ns("modvis_conf_plot"), height = "700px"),
           ),
         ),
@@ -462,11 +460,6 @@ mod_page_models_server <- function(id, all_vars){
     })
     
 # Load Classifier Server --------------------------------------------------
-    
-    # Affichage // Nom du classifieur actif
-    output$load_cla_name <- renderText({
-      req(modvis_clas_name())
-    })
     
     # Affichage // Classifieur
     output$load_cla_vis <- renderPrint({

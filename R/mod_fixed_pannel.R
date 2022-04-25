@@ -37,7 +37,7 @@ mod_fixed_pannel_ui <- function(id){
              
              tags$hr(),
              tags$h4("-> Results"),
-             tags$h5("Active configuration"),
+             tags$h5("Active Configuration"),
              textOutput(ns("res_calc_name")),
     )
   )

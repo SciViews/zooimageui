@@ -38,12 +38,12 @@ mod_page_samples_ui <- function(id){
             tags$br(),
             
             # Montrer les ZIDB
-            tags$h5("Already processed :"),
+            tags$h5("Already processed"),
             textOutput(ns("zidb_existing")),
           ),
           
           mainPanel(width = 9,
-            h4("Selected Sample's content :"),
+            h4("Selected Sample's content"),
             verbatimTextOutput(ns("sel_samp_cont")),
           ),
         ),

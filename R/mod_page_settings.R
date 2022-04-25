@@ -56,7 +56,7 @@ mod_page_settings_ui <- function(id){
         
         # Dossier de data à choisir :
         sidebarPanel(id = "dsf_sidebar",
-          tags$h4("Data storage folder :"),
+          tags$h4("Data storage folder"),
           textInput(ns("new_data_folder_path"), "", value = "~/"),
           tags$br(),
           
