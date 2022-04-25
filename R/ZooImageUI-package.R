@@ -10,14 +10,14 @@
 #' @name ZooImageUI-package
 #' 
 #' 
-#' @import fs
-#' @importFrom ggplot2 ggplot
+#' @importFrom fs path dir_create dir_ls
 #' @import mlearning
 #' @import rlang
 #' @importFrom shinyjs disabled disable enable
 #' @import shinythemes
+#' @importFrom stats predict
 #' @importFrom stringr str_replace_all
-#' @importFrom utils head read.csv zip unzip
+#' @importFrom utils head read.csv zip unzip capture.output
 #' @import zooimage
 #' 
 NULL

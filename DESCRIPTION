@@ -20,9 +20,9 @@ Imports:
     shiny (>= 1.7.1),
     shinyjs,
     shinythemes,
+    stats,
     stringr,
     zooimage,
-    ggplot2,
     rlang,
     utils,
     fs

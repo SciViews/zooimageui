@@ -58,18 +58,16 @@ mod_page_results_ui <- function(id){
           
           mainPanel(
             # Visualisation des résultats
-            tags$h4("Visualisation of the Results"),
-            verbatimTextOutput(ns("vis_res_show")),
-            plotOutput(ns("vis_test_plot")),
+            tags$h4("Results Visualisation"),
+            uiOutput(ns("abd_tit")),
+            verbatimTextOutput(ns("vis_res_abd")),
+            uiOutput(ns("bio_tit")),
+            verbatimTextOutput(ns("vis_res_bio")),
+            uiOutput(ns("spect_tit")),
+            verbatimTextOutput(ns("vis_res_spect")),
           ),
           
         ),
-      ),
-
-# Visualisation UI --------------------------------------------------------
-
-      tabPanel("Visualisation",
-        
       ),
 
 # Save UI ---------------------------------------------------------------
@@ -128,7 +126,9 @@ mod_page_results_server <- function(id, all_vars){
       list.files(results_folder_path())
     })
     
-# Calculation Server ------------------------------------------------------
+# Configuration Server ------------------------------------------------------
+    
+    # --- sidePanel ---
     
     # Variable : Base sample choisi
     selected_zidb <- reactive({
@@ -289,32 +289,76 @@ mod_page_results_server <- function(id, all_vars){
       }
     })
     
-# Visualisation Server ----------------------------------------------------
+    # --- Visualisation (mainPanel) ---
     
-    # Affichage // Résultat du calcul
-    output$vis_res_show <- renderPrint({
+    # Affichage // Titre Abondance
+    output$abd_tit <- renderUI({
       if (!is_results_error()) {
-        results()
-      }
-    })
-    
-    # Affichage // Test de plot
-    output$vis_test_plot <- renderPlot({
-      if (!is_results_error()) {
-        transformed_res <- t(results())
-        abd <- TRUE %in% grepl("Abd", names(results()))
-        bio <- TRUE %in% grepl("Bio", names(results()))
-        xlab <- "Classes"
-        ylab <- if (abd && !bio) {
-          "Abundance"
-        } else if (bio && !abd) {
-          "Biomass"
-        } else {
-          "Mix of Abundance and Biomass"
+        nm <- names(results())
+        if (length(nm[grepl("^Abd ", nm)]) > 0) {
+          tagList(
+            tags$h5("Abundance"),
+          )
         }
-        try(plot(transformed_res[2:nrow(transformed_res),], ylab = ylab, xlab = xlab))
       }
     })
+    
+    # Affichage // Abondance
+    output$vis_res_abd <- renderPrint({
+      if (!is_results_error()) {
+        nm <- names(results())
+        nm_abd <- nm[grepl("^Abd ", nm)]
+        smps <- res[,"Id"]
+        if (length(nm_abd) > 0) {
+          return(results()[,c("Id", nm_abd)])
+        }
+      }
+    })
+    
+    # Affichage // Titre Biomass
+    output$bio_tit <- renderUI({
+      if (!is_results_error()) {
+        nm <- names(results())
+        if (length(nm[grepl("^Bio ", nm)]) > 0) {
+          tagList(
+            tags$h5("Biomass"),
+          )
+        }
+      }
+    })
+    
+    # Affichage // Biomass
+    output$vis_res_bio <- renderPrint({
+      if (!is_results_error()) {
+        nm <- names(results())
+        nm_bio <- nm[grepl("^Bio ", nm)]
+        if (length(nm_bio) > 0) {
+          return(results()[,c("Id", nm_bio)])
+        }
+      }
+    })
+    
+    # Affichage // Titre Spectre de tailles
+    output$spect_tit <- renderUI({
+      if (!is_results_error()) {
+        if ("spectrum" %in% names(attributes(results()))) {
+          tagList(
+            tags$h5("Size Spectrum"),
+          )
+        }
+      }
+    })
+    
+    # Affichage // Spectre de tailles
+    output$vis_res_spect <- renderPrint({
+      if (!is_results_error()) {
+        if ("spectrum" %in% names(attributes(results()))) {
+          return(attr(results(), "spectrum"))
+        }
+      }
+    })
+    
+# Save Server -------------------------------------------------------------
     
     # Variable : Est-ce que le nom pour sauvegarder est correct ?
     vis_is_name_good <- reactive({

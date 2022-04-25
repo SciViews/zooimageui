@@ -37,3 +37,15 @@ J'ai déjà modifié l'affichage général de la page Results. J'ai enlevé le c
 J'ai rassemblé la visualisation et les calculs. \
 
 Je vais à présent modifier les résultats proposés. \
+
+J'ai mis au point un meilleur affichage des résultats. \
+
+L'abondance est séparée de la biomasse qui est séparée des spectres de tailles. \
+
+J'ai ajouté des titres qui apparaissent que si le résultat apparait. \
+
+J'ai essayé d'arranger un peu les dépendances. \
+
+J'ai enlevé l'ancien graphique qui était très médiocre. \
+
+Petits changements de CSS. \
