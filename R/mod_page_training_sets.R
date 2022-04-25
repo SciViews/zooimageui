@@ -342,15 +342,15 @@ mod_page_training_sets_server <- function(id, all_vars){
     observe({
       # si liste de ts non vide
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "stsp_ts_to_delete", NULL, choices = ts_list())
+        updateSelectInput(session, "stsp_ts_to_delete", NULL, choices = c("[NONE]", ts_list()), selected = "[NONE]")
       } else {
-        updateSelectInput(session, "stsp_ts_to_delete", NULL, choices = "No Training Set yet")
+        updateSelectInput(session, "stsp_ts_to_delete", NULL, choices = "[NONE]")
       }
     })
     
     # Mise à jour du bouton delete pour empêcher la suppresion quand pas possible
     observe({
-      if (req(input$stsp_ts_to_delete) != "No Training Set yet") {
+      if (req(input$stsp_ts_to_delete) != "[NONE]") {
         shinyjs::enable("stsp_delete")
       } else {
         shinyjs::disable("stsp_delete")
@@ -370,35 +370,35 @@ mod_page_training_sets_server <- function(id, all_vars){
     # Mise à jour du sélecteur de Training Set
     observe({
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "train_set_selection1", NULL, choices = ts_list())
+        updateSelectInput(session, "train_set_selection1", NULL, choices = c("[NONE]", ts_list()), selected = "[NONE]")
       } else {
-        updateSelectInput(session, "train_set_selection1", NULL, choices = "No Training Set yet")
+        updateSelectInput(session, "train_set_selection1", NULL, choices = "[NONE]")
       }
     })
     # Mise à jour du sélecteur de Training Set s'il a changé dans l'onglet models
     observeEvent(train_set_selection2(), {
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "train_set_selection1", NULL, choices = ts_list(), selected = train_set_selection2())
+        updateSelectInput(session, "train_set_selection1", NULL, choices = c("[NONE]", ts_list()), selected = train_set_selection2())
       } else {
-        updateSelectInput(session, "train_set_selection1", NULL, choices = "No Training Set yet")
+        updateSelectInput(session, "train_set_selection1", NULL, choices = "[NONE]")
       }
     })
     
     # Affichage // Contenu du Training Set sélectionné
     output$tsv_ts_content <- renderPrint({
       # Si le training set est choisi : on affiche le contenu
-      if (req(input$train_set_selection1 != "No Training Set yet")) {
+      if (req(input$train_set_selection1 != "[NONE]")) {
         path <- fs::path(ts_folder_path(), input$train_set_selection1)
         list.files(path)
       } else {
-        "No Training Set yet"
+        "No Active Training Set"
       }
     })
     
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     tsv_ts_classed_vign <- reactive({
       # Si data_folder_path_rea() est non vide, et que on a sélectionné un training set
-      if (data_folder_path_rea() != "" && req(input$train_set_selection1) != "No Training Set yet") {
+      if (data_folder_path_rea() != "" && req(input$train_set_selection1) != "[NONE]") {
         # Préparation du chemin
         dir <- fs::path(ts_folder_path(), input$train_set_selection1)
         # Comptage des vignettes totale dans le Training Set
@@ -414,7 +414,7 @@ mod_page_training_sets_server <- function(id, all_vars){
     
     # Chargement du Training Set si correct
     tsv_training_set <- reactive({
-      if (req(input$train_set_selection1) != "No Training Set yet" && req(tsv_ts_classed_vign()) != 0) {
+      if (req(input$train_set_selection1) != "[NONE]" && req(tsv_ts_classed_vign()) != 0) {
         path <- fs::path(ts_folder_path(), input$train_set_selection1)
         train <- getTrain(path)
         # Il y a un problème avec cette version de zooimage, il faut changer

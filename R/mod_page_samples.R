@@ -141,16 +141,24 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Mise à jour du sélecteur d'échantillons
     observeEvent(smps(), {
-      updateSelectInput(session, "sel_sample_folder", NULL,choices = smps())
+      if (length(smps()) > 0) {
+        updateSelectInput(session, "sel_sample_folder", NULL, choices = c("[NONE]",smps()), selected = "[NONE]")
+      } else {
+        updateSelectInput(session, "sel_sample_folder", NULL, choices = "[NONE]")
+      }
     })
     
     # Variable : pour le chemin du Sample choisi
     sample_selected_path <- reactive({
-      fs::path(data_folder_path_rea(),"Samples",input$sel_sample_folder)
+      if (req(input$sel_sample_folder) != "[NONE]") {
+        fs::path(data_folder_path_rea(),"Samples",input$sel_sample_folder)
+      } else {
+        NULL
+      }
     })
     
     sample_selected_content <- reactive ({
-      list.files(sample_selected_path())
+      list.files(req(sample_selected_path()))
     })
     
     # Affichage // Contenu de l'échantillon
@@ -174,7 +182,7 @@ mod_page_samples_server <- function(id, all_vars){
     # Création de tous les ZIDB
     observeEvent(input$zidb_make_all, {
       # Que si l'échantillon existe et n'est pas vide
-      if (length(sample_selected_content()) > 0) {
+      if (length(smps()) > 0) {
         zidbMakeAll(Samples_folder_path(), delete.source = FALSE, replace = TRUE)
       }
     })
@@ -197,8 +205,8 @@ mod_page_samples_server <- function(id, all_vars){
     # Mise à jour de la sélection d'un échantillon pour la visualisation
     observe({
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "zidb_show_1", NULL, choices = sub("\\.zidb$", "", zidb_files()))
-        updateSelectInput(session, "zidb_show_2", NULL, choices = sub("\\.zidb$", "", zidb_files()))
+        updateSelectInput(session, "zidb_show_1", NULL, choices = c("[NONE]", sub("\\.zidb$", "", zidb_files())), selected = "[NONE]")
+        updateSelectInput(session, "zidb_show_2", NULL, choices = c("[NONE]", sub("\\.zidb$", "", zidb_files())), selected = "[NONE]")
       } else {
         updateSelectInput(session, "zidb_show_1", NULL, choices = "[NONE]")
         updateSelectInput(session, "zidb_show_2", NULL, choices = "[NONE]")
@@ -207,7 +215,7 @@ mod_page_samples_server <- function(id, all_vars){
     # Mise à jour du sélecteur 2, si le 1 change
     observeEvent(input$zidb_show_1, {
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "zidb_show_2", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_1)
+        updateSelectInput(session, "zidb_show_2", NULL, choices = c("[NONE]", sub("\\.zidb$", "", zidb_files())), selected = input$zidb_show_1)
       } else {
         updateSelectInput(session, "zidb_show_2", NULL, choices = "[NONE]")
       }
@@ -215,7 +223,7 @@ mod_page_samples_server <- function(id, all_vars){
     # Mise à jour du sélecteur 1, si le 2 change
     observeEvent(input$zidb_show_2, {
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "zidb_show_1", NULL, choices = sub("\\.zidb$", "", zidb_files()), selected = input$zidb_show_2)
+        updateSelectInput(session, "zidb_show_1", NULL, choices = c("[NONE]", sub("\\.zidb$", "", zidb_files())), selected = input$zidb_show_2)
       } else {
         updateSelectInput(session, "zidb_show_1", NULL, choices = "[NONE]")
       }
@@ -225,20 +233,20 @@ mod_page_samples_server <- function(id, all_vars){
     observe({
       if (req(input$zidb_show_1) != "[NONE]") {
         zidb_show(paste0(input$zidb_show_1, ".zidb"))
-      }
+      } 
     })
     
     # Si changement de la sélection dans vignette vis
     observe({
       if (req(input$zidb_show_2) != "[NONE]") {
         zidb_show(paste0(input$zidb_show_2, ".zidb"))
-      }
+      } 
     })
     
     # Si NONE : on remet à vide pour le reste des opérations
     observe({
       if (input$zidb_show_1 == "[NONE]" && input$zidb_show_2 == "[NONE]") {
-        zidb_show(NULL)
+        zidb_show("[NONE]")
       }
     })
     
@@ -246,13 +254,17 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Variable : du chemin vers le ZIDB choisi
     zidb_selected_path <- reactive({
-      fs::path(data_folder_path_rea(),"Samples",zidb_show())
+      if (req(zidb_show()) != "[NONE]") {
+        fs::path(data_folder_path_rea(),"Samples",zidb_show())
+      }
     })
     
     # Variable : du dataframe du ZIDB choisi
     zidb_df <- reactive({
-      req(zidb_show(), data_folder_path_rea())
-      zidbDatRead(zidb_selected_path())
+      req(data_folder_path_rea())
+      if (req(zidb_show()) != "[NONE]") {
+        zidbDatRead(zidb_selected_path())
+      }
     })
     
     zidb_df_nrow <- reactive({
@@ -261,21 +273,21 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Affichage // head du ZIDB choisi
     output$zidb_datatable <- renderDataTable({
-      zidb_df()
+      req(zidb_df())
     })
     
     # Affichage // metadata du ZIDB choisi
     output$zidb_metadata_1 <- renderPrint({
-      attr(zidb_df(), "metadata")$Fraction
+      attr(req(zidb_df()), "metadata")$Fraction
     })
     output$zidb_metadata_2 <- renderPrint({
-      attr(zidb_df(), "metadata")$Image
+      attr(req(zidb_df()), "metadata")$Image
     })
     output$zidb_metadata_3 <- renderPrint({
-      attr(zidb_df(), "metadata")$Process
+      attr(req(zidb_df()), "metadata")$Process
     })
     output$zidb_metadata_4 <- renderPrint({
-      attr(zidb_df(), "metadata")$Subsample
+      attr(req(zidb_df()), "metadata")$Subsample
     })
     
     # Mise à jour de la sélection des variables
@@ -327,27 +339,33 @@ mod_page_samples_server <- function(id, all_vars){
     
     # Mise à jour du sélecteur de vignettes
     observe({
-      req(zidb_show(), data_folder_path_rea())
-      dataframe_vign <- zidbDatRead(zidb_selected_path())
-      zidb_nb_vign_max <- max(dataframe_vign["Item"])
-      
-      # vignettes de 1-25 ou 26-50, ... 1 -> borne inf / 25 -> borne sup
-      # Variable : borne supérieure 
-      upper_limit <- (1:ceiling(zidb_nb_vign_max/25))*25
-      
-      # Variable : borne inférieur
-      lower_limit <- upper_limit - 24
-      # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
-      upper_limit[length(upper_limit)] <- zidb_nb_vign_max
-      
-      updateSelectInput( session, "zidb_vign_vis", NULL,
-                         choices = paste0( lower_limit, " - ", upper_limit ))
+      req(data_folder_path_rea())
+      if (req(zidb_show()) != "[NONE]") {
+        dataframe_vign <- zidbDatRead(zidb_selected_path())
+        zidb_nb_vign_max <- max(dataframe_vign["Item"])
+        
+        # vignettes de 1-25 ou 26-50, ... 1 -> borne inf / 25 -> borne sup
+        # Variable : borne supérieure 
+        upper_limit <- (1:ceiling(zidb_nb_vign_max/25))*25
+        
+        # Variable : borne inférieur
+        lower_limit <- upper_limit - 24
+        # Mise à niveau de la dernière borne supérieure, pour qu'elle corresponde au max réel
+        upper_limit[length(upper_limit)] <- zidb_nb_vign_max
+        
+        updateSelectInput( session, "zidb_vign_vis", NULL,
+                           choices = paste0( lower_limit, " - ", upper_limit ))
+      } else {
+        updateSelectInput( session, "zidb_vign_vis", NULL, choices = "[NONE]")
+      }
     })
     
     # Variable : Chargement du ZIDB choisi
     zidb_loaded <- reactive({
-      req(zidb_show(), data_folder_path_rea)
-      zidbLink(zidb_selected_path())
+      req(data_folder_path_rea)
+      if (req(zidb_show()) != "[NONE]") {
+        zidbLink(zidb_selected_path())
+      }
     })
     
     # Variable : Noms des images
@@ -358,27 +376,31 @@ mod_page_samples_server <- function(id, all_vars){
     # Variable : Récupération des bornes inférieures et supérieures pour l'affichage
     zidb_vignettes_nb <- reactive({
       
-      splitted <- strsplit( input$zidb_vign_vis, " - ")
-      
-      # Récupération de la limite supérieure et inférieure de vignettes souhaitées
-      c( as.numeric( splitted[[1]][1] ), as.numeric( splitted[[1]][2] ) )
+      if (req(input$zidb_vign_vis) != "[NONE]") {
+        splitted <- strsplit( input$zidb_vign_vis, " - ")
+        
+        # Récupération de la limite supérieure et inférieure de vignettes souhaitées
+        c( as.numeric( splitted[[1]][1] ), as.numeric( splitted[[1]][2] ) )
+      }
     })
     
     # Affichage // plot des vignettes
     output$zidb_vignettes_plot <- renderPlot({
       
-      req( zidb_show(), zidb_vignettes_nb()) # Besoin de zidb_show et zidb_vignettes_nb pour se faire
+      req(zidb_vignettes_nb()) # Besoin de zidb_show et zidb_vignettes_nb pour se faire
       
-      from_image_nb <- zidb_vignettes_nb()[1] # Borne inf
-      to_image_nb <- zidb_vignettes_nb()[2] # Borne sup
-      
-      zidbPlotNew("Vignettes") # Création du plot
-      
-      for (i in from_image_nb:to_image_nb) # les images num i dans l'intervalle choisie
-        zidbDrawVignette( zidb_loaded()[[zidb_vignettes()[i]]],
-                          item = i - (from_image_nb - 1), nx = 5, ny = 5)
-      # A la position i moins le décalage par rapport à 1 (position dans le plot)
-      # ainsi que nb d'éléments par lignes et colonnes
+      if (req(zidb_show()) != "[NONE]") {
+        from_image_nb <- zidb_vignettes_nb()[1] # Borne inf
+        to_image_nb <- zidb_vignettes_nb()[2] # Borne sup
+        
+        zidbPlotNew("Vignettes") # Création du plot
+        
+        for (i in from_image_nb:to_image_nb) # les images num i dans l'intervalle choisie
+          zidbDrawVignette( zidb_loaded()[[zidb_vignettes()[i]]],
+                            item = i - (from_image_nb - 1), nx = 5, ny = 5)
+        # A la position i moins le décalage par rapport à 1 (position dans le plot)
+        # ainsi que nb d'éléments par lignes et colonnes
+      }
     })
     
 # Communication -----------------------------------------------------------
@@ -388,6 +410,7 @@ mod_page_samples_server <- function(id, all_vars){
       zidb_files = NULL,
       zidb_df_nrow = NULL,
       zidb_show = NULL,
+      
     )
     
     # Mise à jour des variables du paquet
@@ -395,6 +418,7 @@ mod_page_samples_server <- function(id, all_vars){
       zidb_vars$zidb_files <- zidb_files()
       zidb_vars$zidb_df_nrow <- zidb_df_nrow()
       zidb_vars$zidb_show <- zidb_show()
+      
     })
     
     # Envoi du paquet qui contient toutes les variables

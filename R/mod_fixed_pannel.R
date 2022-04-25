@@ -85,25 +85,26 @@ mod_fixed_pannel_server <- function(id, all_vars){
       if (length(smpfiles()) > 0) {
         paste0(length(zidb_files()), " / ", length(smpfiles()), " Samples ready.")
       } else {
-        "[NONE]"
+        "No Samples found"
       }
     })
     
     # Affichage // ZIDB actif pour la visualisation
     output$zidb_act_show <- renderText({
-      if (!is.null(zidb_show())) {
+      data_folder_path()
+      if (req(zidb_show()) != "[NONE]") {
         sub("\\.zidb$", "", zidb_show())
       } else {
-        "[NONE]"
+        "No Active Sample"
       }
     })
     
     # Affichage // Nombre de lignes dans le ZIDB choisi
     output$zidb_show_nrow <- renderText({
-      if (length(zidb_files()) > 0) {
+      if (length(zidb_files()) > 0 && req(zidb_show() != "[NONE]")) {
         paste0(zidb_df_nrow(), " items in the sample")
       } else {
-        "No ZIDB file yet"
+        NULL
       }
     })
     
@@ -111,13 +112,17 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Affichage // Training set choisi pour visualisation
     output$ts_sel_show <- renderText({
-      ts_sel()
+      if (req(ts_sel()) != "[NONE]") {
+        ts_sel()
+      } else {
+        "No Active Training Set"
+      }
     })
     
     # Affiche le nombre de vignettes classées par rapport au nombre total du training set.
     # Si tout est en ordre, soit si un training set est sélectionné
     output$ts_prog_show <- renderText({
-      if (data_folder_path() != "" && req(ts_sel()) != "No Training Set yet") {
+      if (data_folder_path() != "" && req(ts_sel()) != "[NONE]") {
         # Variable : dossier
         dir <- fs::path(ts_folder_path(), ts_sel())
         # Calcul du nombre de vignettes au total dans le dossier
@@ -131,7 +136,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
         # classed_rate <- (ts_sorted_vign/ts_total_vign) * 100
         paste("Sorted : ", ts_sorted_vign, " / ",ts_total_vign)
       } else {
-        "No Training Set yet"
+        NULL
       }
     })
     
@@ -143,7 +148,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
       if (!is.null(mod_clas_name())) {
         mod_clas_name()
       } else {
-        "No active Classifier"
+        "No Active Classifier"
       }
     })
     

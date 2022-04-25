@@ -105,7 +105,7 @@ mod_page_models_ui <- function(id){
           tabPanel("Plots",
             tags$h4("Plots of the Confusion Matrix"),
             # Un switch changera Confusion Matrix (=image), Dendrogram (=dendrogram), Precision vs Recall (=barplot), Groups Comparison (=stars)
-            selectInput(ns("modvis_plot_type"), "Plot Type", choices = c("Confusion Matrix", "Dendrogram", "Precision vs Recall", "Groups Comparison")),
+            selectInput(ns("modvis_plot_type"), "Type", choices = c("Confusion Matrix", "Dendrogram", "Precision vs Recall", "Groups Comparison")),
             plotOutput(ns("modvis_conf_plot"), height = "700px"),
           ),
         ),
@@ -161,34 +161,34 @@ mod_page_models_server <- function(id, all_vars){
     observe({
       # Si il y a des scripts :
       if (length(scripts_list()) > 0) {
-        updateSelectInput(session, "modcre_selected_script", NULL, choices = sub("\\.R$", "", scripts_list()[grepl("\\.R$", scripts_list())]))
+        updateSelectInput(session, "modcre_selected_script", NULL, choices = c("[NONE]", sub("\\.R$", "", scripts_list()[grepl("\\.R$", scripts_list())])), selected = "[NONE]")
       # Si pas :
       } else {
-        updateSelectInput(session, "modcre_selected_script", NULL, choices = "No Model yet")
+        updateSelectInput(session, "modcre_selected_script", NULL, choices = "[NONE]")
       }
     })
     
     # Mise à jour du sélecteur de Training Set
     observe({
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "train_set_selection2", NULL, choices = ts_list() )
+        updateSelectInput(session, "train_set_selection2", NULL, choices = c("[NONE]", ts_list()), selected = "[NONE]")
       } else {
-        updateSelectInput(session, "train_set_selection2", NULL, choices = "No Model yet" )
+        updateSelectInput(session, "train_set_selection2", NULL, choices = "[NONE]" )
       }
     })
     # Mise à jour du sélecteur de Training Set s'il a changé dans l'onglet TS
     observeEvent(train_set_selection1(), {
       if (length(ts_list()) > 0) {
-        updateSelectInput(session, "train_set_selection2", NULL, choices = ts_list(), selected = train_set_selection1())
+        updateSelectInput(session, "train_set_selection2", NULL, choices = c("[NONE]", ts_list()), selected = train_set_selection1())
       } else {
-        updateSelectInput(session, "train_set_selection2", NULL, choices = "No Model yet" )
+        updateSelectInput(session, "train_set_selection2", NULL, choices = "[NONE]" )
       }
     })
     
     # Variable pour savoir combien de vignettes sont classées afin d'empêcher la récupération si aucune
     modcre_ts_classed_vign <- reactive({
       # Commentaire en page Training Sets
-      if (data_folder_path_rea() != "" && req(input$train_set_selection2) != "No Training Set yet") {
+      if (data_folder_path_rea() != "" && req(input$train_set_selection2) != "[NONE]") {
         dir <- fs::path(ts_folder_path(), input$train_set_selection2)
         ts_total_vign <- length(fs::dir_ls(dir, glob = "*.jpg", recurse = TRUE))
         ts_unsorted_vign <- try(length(fs::dir_ls(fs::path(dir, "_"), glob = "*.jpg", recurse = TRUE)), silent = TRUE)
@@ -200,7 +200,7 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable charger le training set si possible
     ts_training_set <- reactive ({
-      if (req(input$train_set_selection2) != "No Training Set yet" && req(modcre_ts_classed_vign()) != 0) {
+      if (req(input$train_set_selection2) != "[NONE]" && req(modcre_ts_classed_vign()) != 0) {
         path <- fs::path(isolate(ts_folder_path()), input$train_set_selection2)
         train <- try(getTrain(path), silent = TRUE)
         # Il y a un problème avec cette version de zooimage, il faut changer
@@ -228,7 +228,7 @@ mod_page_models_server <- function(id, all_vars){
     
     # Variable : nom du script sélectionné
     modcre_selected_script <- reactive ({
-      if (req(input$modcre_selected_script) != "No Model yet") {
+      if (req(input$modcre_selected_script) != "[NONE]") {
         paste0(input$modcre_selected_script, ".R")
       } else {
         NULL
@@ -362,16 +362,16 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour de la sélection d'un classifieur sauvegardé
     observe({
       if (length(modcre_saved_classif_list()) > 0) {
-        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = sub("\\.RData$", "", modcre_saved_classif_list()))
+        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = c("[NONE]", sub("\\.RData$", "", modcre_saved_classif_list())), selected = "[NONE]")
       } else {
-        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = "No Saved Classif yet")
+        updateSelectInput(session, "modcre_sel_sav_cla", NULL, choices = "[NONE]")
       }
     })
     
     # Mise à jour du bouton pour utiliser le classifieur sauvegardé
     observe({
       shinyjs::disable("modcre_use_saved_class")
-      if (req(input$modcre_sel_sav_cla) != "No Saved Classif yet") {
+      if (req(input$modcre_sel_sav_cla) != "[NONE]") {
         shinyjs::enable("modcre_use_saved_class")
       }
     })
@@ -431,16 +431,16 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour de la sélection du classifieur à supprimer
     observe({
       if (length(modcre_saved_classif_list()) > 0) {
-        updateSelectInput(session, "modcre_sel_todel", NULL, choices = sub("\\.RData$", "", modcre_saved_classif_list()))
+        updateSelectInput(session, "modcre_sel_todel", NULL, choices = c("[NONE]", sub("\\.RData$", "", modcre_saved_classif_list())), selected = "[NONE]")
       } else {
-        updateSelectInput(session, "modcre_sel_todel", NULL, choices = "No Saved Classif yet")
+        updateSelectInput(session, "modcre_sel_todel", NULL, choices = "[NONE]")
       }
     })
     
     # Mise à jour du bouton pour supprimer un classif sauvegardé
     observe({
       shinyjs::disable("modcre_delete")
-      if (req(input$modcre_sel_todel) != "No Saved Classif yet") {
+      if (req(input$modcre_sel_todel) != "[NONE]") {
         shinyjs::enable("modcre_delete")
       }
     })

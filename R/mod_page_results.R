@@ -197,9 +197,9 @@ mod_page_results_server <- function(id, all_vars){
     # Mise à jour du sélecteur de script
     observe({
       if (length(calc_scripts_list()) > 0) {
-        updateSelectInput(session, "calc_selected_script", NULL, choices = sub("\\.R$", "", calc_scripts_list()[grepl("\\.R$", calc_scripts_list())]))
+        updateSelectInput(session, "calc_selected_script", NULL, choices = c("[NONE]", sub("\\.R$", "", calc_scripts_list()[grepl("\\.R$", calc_scripts_list())])), selected = "[NONE]")
       } else {
-        updateSelectInput(session, "calc_selected_script", NULL, choices = "No Configurations yet")
+        updateSelectInput(session, "calc_selected_script", NULL, choices = "[NONE]")
       }
     })
     
@@ -308,7 +308,6 @@ mod_page_results_server <- function(id, all_vars){
       if (!is_results_error()) {
         nm <- names(results())
         nm_abd <- nm[grepl("^Abd ", nm)]
-        smps <- res[,"Id"]
         if (length(nm_abd) > 0) {
           return(results()[,c("Id", nm_abd)])
         }
@@ -319,7 +318,8 @@ mod_page_results_server <- function(id, all_vars){
     output$bio_tit <- renderUI({
       if (!is_results_error()) {
         nm <- names(results())
-        if (length(nm[grepl("^Bio ", nm)]) > 0) {
+        nm_bio <- nm[grepl("^Bio ", nm)]
+        if (length(nm_bio) > 0) {
           tagList(
             tags$h5("Biomass"),
           )

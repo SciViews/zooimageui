@@ -108,3 +108,7 @@ form h2 {
 /* ======= */
 /* Results */
 /* ======= */
+
+pre#page_results_ui_1-vis_dl_name_good {
+  width: 50%;
+}
