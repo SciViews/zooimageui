@@ -56,3 +56,5 @@ Je vais maintenant essayer de mettre les sélecteur sur [NONE] de base. \
 J'ai réussis à mettre au point le [NONE] pour la page Samples \
 
 J'ai réussis à mettre cela au point pour toutes les autres pages. \
+
+Ajout de l'affichage du contenu des différents dossiers dans la page de settings. \

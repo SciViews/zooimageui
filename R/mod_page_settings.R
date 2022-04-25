@@ -41,9 +41,24 @@ mod_page_settings_ui <- function(id){
       
       # Affichage du contenu du dossier Samples si il existe
       tags$hr(),
+      tags$br(),
       tags$h4("Content of your \"Samples\" folder"),
       verbatimTextOutput(ns("Samples_show")),
       
+      # Affichage du contenu du dossier Samples si il existe
+      tags$br(),
+      tags$h4("Content of your \"Training_Sets\" folder"),
+      verbatimTextOutput(ns("ts_show")),
+      
+      # Affichage du contenu du dossier Samples si il existe
+      tags$br(),
+      tags$h4("Content of your \"Models\" folder"),
+      verbatimTextOutput(ns("mod_show")),
+      
+      # Affichage du contenu du dossier Samples si il existe
+      tags$br(),
+      tags$h4("Content of your \"Results\" folder"),
+      verbatimTextOutput(ns("res_show")),
       
       ns = ns,
     ),
@@ -148,9 +163,43 @@ mod_page_settings_server <- function(id){
       find_samples(smpfiles())
     })
     
+    # Affichage // Contenu du dossier Samples
     output$Samples_show <- renderPrint({
       if (length(smps()) > 0) {
         smps()
+      } else {
+        "Folder Empty"
+      }
+    })
+    
+    # Affichage // Contenu du dossier Training_Sets
+    output$ts_show <- renderPrint({
+      path <- fs::path(data_folder_path_rea(),"Training_Sets")
+      tss <- list.files(path)
+      if (length(tss) > 0) {
+        tss
+      } else {
+        "Folder Empty"
+      }
+    })
+    
+    # Affichage // Contenu du dossier Models
+    output$mod_show <- renderPrint({
+      path <- fs::path(data_folder_path_rea(),"Models")
+      mods <- list.files(path)
+      if (length(mods) > 0) {
+        mods
+      } else {
+        "Folder Empty"
+      }
+    })
+    
+    # Affichage // Contenu du dossier Results
+    output$res_show <- renderPrint({
+      path <- fs::path(data_folder_path_rea(),"Results")
+      ress <- list.files(path)
+      if (length(ress) > 0) {
+        ress
       } else {
         "Folder Empty"
       }
