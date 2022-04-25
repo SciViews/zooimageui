@@ -104,7 +104,8 @@ mod_page_models_ui <- function(id){
           # Affichage // Plots de la Matrice de Confusion
           tabPanel("Plots",
             tags$h4("Plots of the Confusion Matrix"),
-            selectInput(ns("modvis_plot_type"), "Plot Type", choices = c("image", "dendrogram", "barplot", "stars")),
+            # Un switch changera Confusion Matrix (=image), Dendrogram (=dendrogram), Precision vs Recall (=barplot), Groups Comparison (=stars)
+            selectInput(ns("modvis_plot_type"), "Plot Type", choices = c("Confusion Matrix", "Dendrogram", "Precision vs Recall", "Groups Comparison")),
             plotOutput(ns("modvis_conf_plot"), height = "700px"),
           ),
         ),
@@ -402,6 +403,12 @@ mod_page_models_server <- function(id, all_vars){
       modcre_classif(classifier)
       saved_cla(saved_cla()+1) # Fait réagir spécifiquement
     })
+    # Si le chemin des données devient vide : classif mis à NULL
+    observeEvent(data_folder_path_rea(), {
+      if (data_folder_path_rea() == "") {
+        modcre_classif(NULL)
+      }
+    })
     
     # Affichage // Classifieur
     output$modcre_show_classif <- renderPrint({
@@ -482,6 +489,27 @@ mod_page_models_server <- function(id, all_vars){
       # Enlève le .R par expression régulière
       modvis_clas_name(input$modcre_sel_sav_cla)
     })
+    # Nom du classif NULL si classif NULL
+    observeEvent(data_folder_path_rea(), {
+      if (data_folder_path_rea() == "" && is.null(modcre_classif())) {
+        modvis_clas_name(NULL)
+      }
+    })
+    
+    # Variable : Taux d'erreurs du classifieur
+    modvis_err_rate <- reactive({
+      if (!is.null(modcre_classif())) {
+        # Je récupère le taux d'erreurs
+        err_rate <- attr(summary(modcre_classif()), "stats")["error"]
+        # J'enlève le nom
+        names(err_rate) <- NULL
+        # Je le met en pourcentage
+        err_rate <- round(err_rate, 4) * 100
+        return(paste0("Error Rate : ",err_rate, " %"))
+      } else {
+        return(NULL)
+      }
+    })
     
     # Affichage // Summary du classifieur
     output$modvis_clas_sum <- renderPrint({
@@ -502,7 +530,14 @@ mod_page_models_server <- function(id, all_vars){
     # Affichage // Plot de Matrice de Confusion
     output$modvis_conf_plot <- renderPlot({
       req(data_folder_path_rea())
-      plot(req(modcre_classif_conf()), type = input$modvis_plot_type)
+      # Changement des noms en ceux utilisables par plot
+      plot_type <- switch (input$modvis_plot_type,
+        "Confusion Matrix" = "image",
+        "Dendrogram" = "dendrogram",
+        "Precision vs Recall" = "barplot",
+        "Groups Comparison" = "stars"
+      )
+      plot(req(modcre_classif_conf()), type = plot_type)
     })
     
 # Communication -----------------------------------------------------------
@@ -510,18 +545,20 @@ mod_page_models_server <- function(id, all_vars){
     # Préparation des variables dans un paquet
     models_vars <- reactiveValues(
       modvis_clas_name = NULL,
+      modvis_err_rate = NULL,
       modcre_classif = NULL,
       
-      # Test
+      # Com TS/Mod
       train_set_selection2 = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       models_vars$modvis_clas_name <- modvis_clas_name()
+      models_vars$modvis_err_rate <- modvis_err_rate()
       models_vars$modcre_classif <- modcre_classif()
       
-      # Test
+      # Com TS/Mod
       models_vars$train_set_selection2 <- input$train_set_selection2
     })
     

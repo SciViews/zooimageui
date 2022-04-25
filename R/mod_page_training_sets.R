@@ -440,7 +440,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       ts_list = NULL,
       ts_sel = NULL,
       
-      # Test
+      # Come TS/Mod
       train_set_selection1 = NULL,
     )
     
@@ -450,7 +450,7 @@ mod_page_training_sets_server <- function(id, all_vars){
       training_sets_vars$ts_list <- ts_list()
       training_sets_vars$ts_sel <- input$train_set_selection1
       
-      # Test
+      # Com TS/Mod
       training_sets_vars$train_set_selection1 <- input$train_set_selection1
     })
     

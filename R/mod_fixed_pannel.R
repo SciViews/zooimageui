@@ -34,6 +34,7 @@ mod_fixed_pannel_ui <- function(id){
              tags$h4("-> Models"),
              tags$h5("Active Classifier"),
              textOutput(ns("mod_act_clas")),
+             textOutput(ns("mod_er_ra")),
              
              tags$hr(),
              tags$h4("-> Results"),
@@ -67,6 +68,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # models_vars
     mod_clas_name <- reactive({ all_vars$models_vars$modvis_clas_name })
+    mod_err_rate <- reactive({ all_vars$models_vars$modvis_err_rate })
     
     # results_vars
     calc_name <- reactive({ all_vars$results_vars$calc_name })
@@ -137,10 +139,21 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # Affichage // Classifieur actif
     output$mod_act_clas <- renderText({
+      data_folder_path()
       if (!is.null(mod_clas_name())) {
         mod_clas_name()
       } else {
         "No active Classifier"
+      }
+    })
+    
+    # Affichage // Error Rate du Classif
+    output$mod_er_ra <- renderText({
+      data_folder_path()
+      if (!is.null(mod_err_rate())) {
+        mod_err_rate()
+      } else {
+        NULL
       }
     })
     

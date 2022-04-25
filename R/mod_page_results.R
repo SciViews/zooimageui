@@ -18,28 +18,28 @@ mod_page_results_ui <- function(id){
         tags$br(),
         fluidRow(
           
-          sidebarPanel( width = 6,
+          sidebarPanel( width = 4,
             # Choix du script
             tags$h4("Chose Configuration"),
-            selectInput(ns("calc_selected_script"), NULL, choices = NULL, width = "50%"),
+            fluidRow(
+              column( width = 7,
+                # Choix du script
+                selectInput(ns("calc_selected_script"), NULL, choices = NULL),
+              ),
+              column( width = 5,
+                # Boutons pour rafraichir la liste de scripts et pour faire les calculs
+                actionButton(ns("calc_refresh"), "Refresh"),
+              ),
+            ),
             # Messages d'aide
-            tags$hr(),
             textOutput(ns("calc_res_message")),
             uiOutput(ns("calc_comment_hr")),
             textOutput(ns("calc_res_comment")),
             tags$hr(),
-            # Boutons pour rafraichir la liste de scripts et pour faire les calculs
-            actionButton(ns("calc_refresh"), "Refresh"),
-            shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate")),
-            tags$br(),
-            # Affichage d'un message d'erreur si le script plante
-            textOutput(ns("calc_error")),
-          ),
-          
-          sidebarPanel( width = 4,
+            
             # Montre le Sample choisi
-            tags$h4("Base Sample"),
-            selectInput(ns("calc_sel_smp"), NULL, choices = NULL),
+            tags$h4("Samples ready ?"),
+            textOutput(ns("calc_smp_ok")),
             tags$hr(),
             # Montre le Classifieur actif
             tags$h4("Active Classifier"),
@@ -48,6 +48,19 @@ mod_page_results_ui <- function(id){
             # Indique si on peut passer à la suite
             tags$h4("Data ready ?"),
             textOutput(ns("calc_is_data_ready")),
+            
+            tags$hr(),
+            shinyjs::disabled(actionButton(ns("calc_use_script"), "Calculate")),
+            tags$br(),
+            # Affichage d'un message d'erreur si le script plante
+            textOutput(ns("calc_error")),
+          ),
+          
+          mainPanel(
+            # Visualisation des résultats
+            tags$h4("Visualisation of the Results"),
+            verbatimTextOutput(ns("vis_res_show")),
+            plotOutput(ns("vis_test_plot")),
           ),
           
         ),
@@ -56,12 +69,7 @@ mod_page_results_ui <- function(id){
 # Visualisation UI --------------------------------------------------------
 
       tabPanel("Visualisation",
-               
-        # Visualisation des résultats
-        tags$br(),
-        tags$h4("Visualisation of the Results"),
-        verbatimTextOutput(ns("vis_res_show")),
-        plotOutput(ns("vis_test_plot")),
+        
       ),
 
 # Save UI ---------------------------------------------------------------
@@ -122,21 +130,20 @@ mod_page_results_server <- function(id, all_vars){
     
 # Calculation Server ------------------------------------------------------
     
-    # --- SidebarPanel ---
-    
-    # Mise à jour de la sélection de l'échantillon
-    observe({
+    # Variable : Base sample choisi
+    selected_zidb <- reactive({
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "calc_sel_smp", NULL, choices = sub("\\.zidb$", "", zidb_files()))
-      } else {
-        updateSelectInput(session, "calc_sel_smp", NULL, choices = "No ZIDB file yet")
+        # On prend d'office le premier
+        zidb_files()[1]
       }
     })
     
-    # Variable : Base sample choisi
-    selected_zidb <- reactive({
-      if (req(input$calc_sel_smp) != "No ZIDB file yet") {
-        paste0(input$calc_sel_smp, ".zidb")
+    # Affichage // Samples ready ?
+    output$calc_smp_ok <- renderText({
+      if (!is.null(selected_zidb())) {
+        paste0("Samples Ready (",length(zidb_files()),")")
+      } else {
+        "No Samples yet"
       }
     })
     
@@ -186,8 +193,6 @@ mod_page_results_server <- function(id, all_vars){
         res <- predict(mod_classif(), res, class.only = FALSE)
       }
     })
-    
-    # --- MainPanel ---
     
     # Mise à jour du sélecteur de script
     observe({

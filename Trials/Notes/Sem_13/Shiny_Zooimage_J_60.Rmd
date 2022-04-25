@@ -18,3 +18,22 @@ Modifications de différents affichages qui possédaient ":" \
 Modification du titre de l'application web \
 
 Réparation d'un problème dans la sélection d'un script pour les résults (tout était .R alors j'ai fait en sorte que on le puisse choisir que des .R) \
+
+Pour les models, dans la visualisation, j'ai changé la sélectio afin qu'elle soit plus claire. Un switch change ensuite les valeurs. \
+
+Je vais à présent essayer d'afficher plus d'infos sur le classifieur dans le panneau fixe. \
+
+J'ai fait en sorte qu'on ait l'info du taux d'erreurs dans le panneau fixe. \
+J'ai également changé différents affichages. \
+
+J'ai réparé diverses fonctions et variables réactive (models) afin qu'elles renvoient NULL au bon moment et force l'actualisation du reste. \
+Pour la fonction de vérification de script, elle vérifie les bons noms à présent. \
+Le choix du script n'est maintenant plus possible qu'entre des fichiers .R \
+
+Je vais à présent tenter de modifier la page Results. \
+
+J'ai déjà modifié l'affichage général de la page Results. J'ai enlevé le choix de l'échantillon de base. \
+
+J'ai rassemblé la visualisation et les calculs. \
+
+Je vais à présent modifier les résultats proposés. \
