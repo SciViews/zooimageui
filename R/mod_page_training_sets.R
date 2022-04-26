@@ -62,44 +62,41 @@ mod_page_training_sets_ui <- function(id){
         tags$p("In this window, you can download the unsorted 
                training set that you want to use, unzip it, 
                and then manually sort the vignettes inside the 
-               good folders. You can then zip the sorted training set 
+               good folders."),
+        tags$p("You can then zip the sorted training set 
                folder (and only this folder), and upload it to 
                continue."),
         tags$br(),
         
         fluidRow(
           
-          column(width = 5, offset = 1,
-            sidebarPanel(width = 12,
-              tags$h4("Training Set preparation"),
-              textInput(ns("stsp_name"), "Name"),
-              # Choix des zidbs
-              selectInput(ns("stsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
-              # Choix du template ziclass
-              selectInput(ns("stsp_template"), "Template", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
-              # Préparer le training set (désactivé de base)
-              shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download")),
-            ),
+          sidebarPanel(width = 5,
+            tags$h4("Training Set preparation"),
+            textInput(ns("stsp_name"), "Name"),
+            # Choix des zidbs
+            selectInput(ns("stsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
+            # Choix du template ziclass
+            selectInput(ns("stsp_template"), "Template", choices = c("[Detailed]", "[Basic]", "[Very detailed]")),
+            # Préparer le training set (désactivé de base)
+            shinyjs::disabled(downloadButton(ns("stsp_ts_dl"), "Prepare and Download")),
           ),
           
-          column(width = 5,
-            sidebarPanel(width = 12,
-              tags$h4("Sorted Training Set Upload"),
-              # Upload du training set trié
-              fileInput(ns("stsp_ts_up"), "Zipped Training Set", multiple = FALSE),
-              # Message d'erreur ou de succès
-              textOutput(ns("stsp_up_error")),
-              tags$h4("Existing Training Sets"),
-              # Montrer les ts qui existent
-              verbatimTextOutput(ns("stsp_existing_show")),
-              # Rafraichir la liste
-              actionButton(ns("stsp_refresh"), "Refresh"),
-              tags$br(),
-              tags$h4("Training Set Delete"),
-              # Suppression d'un training set
-              selectInput(ns("stsp_ts_to_delete"), NULL, choices = NULL),
-              shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
-            ),
+          sidebarPanel(width = 5,
+            tags$h4("Sorted Training Set Upload"),
+            # Upload du training set trié
+            fileInput(ns("stsp_ts_up"), "Zipped Training Set", multiple = FALSE),
+            # Message d'erreur ou de succès
+            textOutput(ns("stsp_up_error")),
+            tags$h4("Existing Training Sets"),
+            # Montrer les ts qui existent
+            verbatimTextOutput(ns("stsp_existing_show")),
+            # Rafraichir la liste
+            actionButton(ns("stsp_refresh"), "Refresh"),
+            tags$br(),
+            tags$h4("Training Set Delete"),
+            # Suppression d'un training set
+            selectInput(ns("stsp_ts_to_delete"), NULL, choices = NULL),
+            shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
           ),
         ),
       ),
@@ -111,6 +108,7 @@ mod_page_training_sets_ui <- function(id){
                tags$h4("Active Training Set"),
                selectInput(ns("train_set_selection1"), NULL, choices = NULL),
                actionButton(ns("tsv_ref)"), "Refresh"),
+               tags$hr(),
                tags$h4("Training Set's Content"),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),

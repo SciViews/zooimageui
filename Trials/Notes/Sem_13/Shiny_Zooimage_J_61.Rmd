@@ -1,0 +1,30 @@
+---
+title: "Shiny_Zooimage_J_61"
+output: html_document
+---
+
+Notes du jour 61. Mardi 26 avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai réalise quelques réglages d'affichage, principalement en page Training Sets. \
+
+Je suis également entrain de réparer un message d'erreurs de la page Models. \
+
+Je vais essayer de jeter un oeil aux messages d'erreurs. \
+
+J'ai essayé de changer mes scripts pour qu'ils fassent tous un processSampleAll mais j'ai des problèmes avec la Biomass. \
+
+J'ai donc modifié deux scripts (ceux qui utilisent biomass, mais pas les autres). \
+
+J'ai ajouté un sélecteur de samples dans la page results pour sélectionner les échantillons dont on veut calculer le résultat. \
+
+J'ai ajouté l'utilisation de cette liste dans le cas d'un processSampleAll. \
+
+J'ai fait en sorte que le bouton pour faire le calcul s'actualise directement. \
+
+Modifications de la page Settings pour qu'elle ait les bons titres. \
+
+Changements de messages d'erreurs pour la fonction upload et vérification de script pour results. \

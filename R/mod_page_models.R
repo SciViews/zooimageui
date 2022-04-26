@@ -237,10 +237,16 @@ mod_page_models_server <- function(id, all_vars){
     
     # Test 2 ! d'éxécution du script (modèle) choisi (renvoie vrai ou faux)
     modcre_is_mod_correct <- reactive({
-      req(modcre_selected_script(), data_folder_path_rea())
+      req(data_folder_path_rea())
       
-      # Vérification de mon modèle
-      is_script_good_model(models_folder_path(), modcre_selected_script())
+      if (!is.null(modcre_selected_script())) {
+        # Vérification de mon modèle
+        is_script_good_model(models_folder_path(), modcre_selected_script())
+      } else {
+        res <- FALSE
+        attr(res, "message") <- "No model selected. Please select a model above."
+        return(res)
+      }
     })
     
     # Affichage // Message lié au modèle choisi

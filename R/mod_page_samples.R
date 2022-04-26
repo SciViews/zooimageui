@@ -23,7 +23,7 @@ mod_page_samples_ui <- function(id){
           sidebarPanel(width = 3,
             
             # Choix du Sample
-            tags$h5("Sample Folder"),
+            tags$h4("Sample Folder"),
             selectInput(ns("sel_sample_folder"), NULL,
                 choices = "No Samples"),
             
@@ -38,7 +38,7 @@ mod_page_samples_ui <- function(id){
             tags$br(),
             
             # Montrer les ZIDB
-            tags$h5("Already processed"),
+            tags$h4("Already processed"),
             textOutput(ns("zidb_existing")),
           ),
           

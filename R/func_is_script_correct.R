@@ -16,7 +16,7 @@ is_script_good_model <- function(models_folder_path, selected_script) {
   # Tout d'abord, test du nom du fichier : si ne ressemble pas à un script R, on arrête avec message d'erreur
   if ( selected_script == "No Model yet" || !grepl(".R", selected_script)) {
     res <- FALSE
-    attr(res, "message") <- "Selected Model doesn't have .R extension"
+    attr(res, "message") <- "Selected Model isn't an R script"
     return(res)
   } else {
     # Ensuite, si jamais le nom est bon :

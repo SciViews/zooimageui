@@ -16,7 +16,7 @@ is_script_good_results <- function(results_folder_path, selected_script) {
   # Tout d'abord, test du nom du fichier : si ne ressemble pas à un script R, on arrête avec message d'erreur
   if ( selected_script == "[NONE].R" || !grepl(".R", selected_script)) {
     res <- FALSE
-    attr(res, "message") <- "Selected Calculation doesn't have .R extension"
+    attr(res, "message") <- "Selected Configuration isn't an R script"
     return(res)
   } else {
     # Ensuite, si jamais le nom est bon :
@@ -29,14 +29,14 @@ is_script_good_results <- function(results_folder_path, selected_script) {
     # Test si une fonction get_results est récupérée / existe
     if (!exists("get_results")) {
       res <- FALSE
-      attr(res, "message") <- "Selected Calculation doesn't return a function called get_results"
+      attr(res, "message") <- "Selected Configuration doesn't return a function called get_results"
       return(res)
       # Test si la fonction a un argument data
       # formals récupère les arguments de la fonction, names pour avoir les noms
       # et on vérifie si "data" n'est pas dedans. (le any n'a pas d'utilité ici)
-    } else if (any(!c("data","data_folder_path", "Classif") %in% names(formals(get_results)))) {
+    } else if (any(!c("data","data_folder_path", "Classif", "zidb_files") %in% names(formals(get_results)))) {
       res <- FALSE
-      attr(res, "message") <- "Selected Calculation doesn't have a data or data_folder_path or Classif argument"
+      attr(res, "message") <- "Selected Configuration doesn't have a data or data_folder_path or Classif or zidb_files argument"
       return(res)
       # Enfin, si ça passe, alors le modèle est bon
     } else {

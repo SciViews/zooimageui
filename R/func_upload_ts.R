@@ -44,7 +44,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # TEST : Erreur ? Stop et renvoie FALSE + message
   if (inherits(oldir, "try-error")) {
     res <- FALSE
-    attr(res, "error") <- attr(oldir, "condition") # Pourrait être plus clair
+    attr(res, "error") <- "Error while trying to set new working directory. Working directory path may be wrong."
     return(res)
   }
   
@@ -66,7 +66,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   tmp_folder <- try(fs::dir_create("tmp"), silent = TRUE)
   if (inherits(tmp_folder, "try-error")) {
     res <- FALSE
-    attr(res, "error") <- "Error by creating tmp folder. Data folder path may be wrong."
+    attr(res, "error") <- "Error by creating tmp folder. Working directory path may be wrong."
     return(res)
   }
   
@@ -74,7 +74,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   goin_tmp <- try(setwd("tmp"), silent = TRUE)
   if (inherits(goin_tmp, "try-error")) {
     res <- FALSE
-    attr(res, "error") <- "Error when trying to enter in tmp folder. Data folder path may be wrong."
+    attr(res, "error") <- "Error while trying to enter in tmp folder. Working directory path may be wrong."
     unlink("tmp", recursive = TRUE)
     return(res)
   }
@@ -84,7 +84,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # TEST : Erreur ? Stop et renvoie FALSE + message
   if (inherits(fc_res, "try-error")) {
     res <- FALSE
-    attr(res, "error") <- attr(fc_res, "condition")
+    attr(res, "error") <- "Error while trying to copy input file in tmp folder. Working directory path may be wrong."
     setwd(goin_tmp)
     unlink("tmp", recursive = TRUE)
     return(res)
@@ -95,7 +95,7 @@ upload_ts <- function(upload_input, ts_folder_path, existing_ts) {
   # TEST : Erreur ? Stop et renvoie FALSE + message
   if (inherits(unzip_res, "try-error")) {
     res <- FALSE
-    attr(res, "error") <- attr(unzip_res, "condition")
+    attr(res, "error") <- "Error while trying to unzip the input file. Please, enter a zipped file."
     setwd(goin_tmp)
     unlink("tmp", recursive = TRUE)
     return(res)

@@ -40,9 +40,10 @@ mod_page_results_ui <- function(id){
             # Montre le Sample choisi
             tags$h4("Samples ready ?"),
             textOutput(ns("calc_smp_ok")),
+            selectInput(ns("calc_smps_selector"), "(Optionnal) Chose samples :", choices = NULL, multiple = TRUE),
             tags$hr(),
             # Montre le Classifieur actif
-            tags$h4("Active Classifier"),
+            tags$h4("Active Classifier ?"),
             textOutput(ns("calc_act_clas")),
             tags$hr(),
             # Indique si on peut passer à la suite
@@ -147,6 +148,26 @@ mod_page_results_server <- function(id, all_vars){
       }
     })
     
+    # Mise à jour du sélecteur d'échantillons pour le processSampleAll
+    observe({
+      data_folder_path_rea()
+      if (length(zidb_files()) > 0) {
+        updateSelectInput(session, "calc_smps_selector", "(Optionnal) Chose samples :", choices = sub("\\.zidb$", "", zidb_files()))
+      } else {
+        updateSelectInput(session, "calc_smps_selector", "(Optionnal) Chose samples :", choices = NULL)
+      }
+    })
+    
+    # Variable : Sélection précise des échantillons pour le processSampleAll
+    multiple_samples <- reactive({
+      req(data_folder_path_rea())
+      if (!is.null(input$calc_smps_selector)) {
+        paste0(input$calc_smps_selector,".zidb")
+      } else {
+        NULL
+      }
+    })
+    
     # Affichage // classifieur actif
     output$calc_act_clas <- renderText({
       if (!is.null(mod_clas_name())) {
@@ -239,6 +260,7 @@ mod_page_results_server <- function(id, all_vars){
     
     # Mise à jour du bouton pour faire les calculs
     observe({
+      res_made()
       if (calc_is_script_good() && calc_are_smp_clas_correct()) {
         shinyjs::enable("calc_use_script")
       } else {
@@ -248,23 +270,27 @@ mod_page_results_server <- function(id, all_vars){
     
     # --- Global ---
     
+    # Variable : Réactiver le bouton
+    res_made <- reactiveVal(0)
+    
     # Variable : Résultat des calculs
     results <- eventReactive(input$calc_use_script, {
       req(data_folder_path_rea(), calc_dat())
       
       # Désactivation du bouton
       shinyjs::disable("calc_use_script")
-      res <- try(calc_results()(calc_dat(), smp_folder_path(), mod_classif()), silent = TRUE)
+      res <- try(calc_results()(calc_dat(), smp_folder_path(), mod_classif(), multiple_samples()), silent = TRUE)
       if (inherits(res, "try-error")) {
         res <- paste0("Error in Calculation script : ", attr(res, "condition"))
         class(res) <- "try-error"
+        # Actualisation du bouton
+        res_made(res_made()+1)
         return(res)
       } else {
+        # Actualisation du bouton
+        res_made(res_made()+1)
         return(res)
       }
-      
-      # Réactivation du bouton
-      shinyjs::enable("calc_use_script")
     })
     is_results_error <- reactive({
       inherits(results(), "try-error")
