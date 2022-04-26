@@ -503,15 +503,18 @@ mod_page_models_server <- function(id, all_vars){
     })
     
     # Variable : Taux d'erreurs du classifieur
-    modvis_err_rate <- reactive({
+    modvis_err_rate_in_class <- reactive({
       if (!is.null(modcre_classif())) {
+        # Je récupère le summary du classif
+        sum_class <- summary(modcre_classif())
         # Je récupère le taux d'erreurs
-        err_rate <- attr(summary(modcre_classif()), "stats")["error"]
+        err_rate <- attr(sum_class, "stats")["error"]
         # J'enlève le nom
         names(err_rate) <- NULL
         # Je le met en pourcentage
         err_rate <- round(err_rate, 4) * 100
-        return(paste0("Error Rate : ",err_rate, " %"))
+        nb_class <- length(attr(sum_class, "row.names"))
+        return(paste0("Error Rate : ",err_rate, " % for ", nb_class, " Classes"))
       } else {
         return(NULL)
       }
@@ -551,7 +554,7 @@ mod_page_models_server <- function(id, all_vars){
     # Préparation des variables dans un paquet
     models_vars <- reactiveValues(
       modvis_clas_name = NULL,
-      modvis_err_rate = NULL,
+      modvis_err_rate_in_class = NULL,
       modcre_classif = NULL,
       
       # Com TS/Mod
@@ -561,7 +564,7 @@ mod_page_models_server <- function(id, all_vars){
     # Mise à jour des variables dans le paquet
     observe({
       models_vars$modvis_clas_name <- modvis_clas_name()
-      models_vars$modvis_err_rate <- modvis_err_rate()
+      models_vars$modvis_err_rate_in_class <- modvis_err_rate_in_class()
       models_vars$modcre_classif <- modcre_classif()
       
       # Com TS/Mod

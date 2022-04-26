@@ -40,7 +40,8 @@ mod_page_results_ui <- function(id){
             # Montre le Sample choisi
             tags$h4("Samples ready ?"),
             textOutput(ns("calc_smp_ok")),
-            selectInput(ns("calc_smps_selector"), "(Optionnal) Chose samples :", choices = NULL, multiple = TRUE),
+            tags$br(),
+            selectInput(ns("calc_smps_selector"), "Chose samples :", choices = NULL, multiple = TRUE),
             tags$hr(),
             # Montre le Classifieur actif
             tags$h4("Active Classifier ?"),
@@ -152,16 +153,16 @@ mod_page_results_server <- function(id, all_vars){
     observe({
       data_folder_path_rea()
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "calc_smps_selector", "(Optionnal) Chose samples :", choices = sub("\\.zidb$", "", zidb_files()))
+        updateSelectInput(session, "calc_smps_selector", "Chose samples :", choices = c("All", sub("\\.zidb$", "", zidb_files())), selected = "All")
       } else {
-        updateSelectInput(session, "calc_smps_selector", "(Optionnal) Chose samples :", choices = NULL)
+        updateSelectInput(session, "calc_smps_selector", "Chose samples :", choices = NULL)
       }
     })
     
     # Variable : Sélection précise des échantillons pour le processSampleAll
     multiple_samples <- reactive({
       req(data_folder_path_rea())
-      if (!is.null(input$calc_smps_selector)) {
+      if (!is.null(input$calc_smps_selector) && input$calc_smps_selector[1] != "All") {
         paste0(input$calc_smps_selector,".zidb")
       } else {
         NULL
@@ -306,12 +307,21 @@ mod_page_results_server <- function(id, all_vars){
     })
     
     # Variable : Nom du script choisi
-    calc_name <- reactive({
+    calc_name <- eventReactive(input$calc_use_script, {
       req(data_folder_path_rea())
       if (!is.null(results()) && !is_results_error()) {
         input$calc_selected_script
       } else {
         "No Configurations yet"
+      }
+    })
+    
+    # Variable : Nombre d'échantillons dans les résultats :
+    nb_smp_in_res <- eventReactive(results(), {
+      if (!is.null(results()) && !is_results_error()) {
+        paste0("Calculated Samples : ",length(attr(results(), "row.names")))
+      } else {
+        NULL
       }
     })
     
@@ -463,11 +473,13 @@ mod_page_results_server <- function(id, all_vars){
     # Préparation des variables dans un paquet
     results_vars <- reactiveValues(
       calc_name = NULL,
+      nb_smp_in_res = NULL,
     )
     
     # Mise à jour des variables dans le paquet
     observe({
       results_vars$calc_name <- calc_name()
+      results_vars$nb_smp_in_res <- nb_smp_in_res()
     })
     
     # Envoi du packet qui contient toutes les variables

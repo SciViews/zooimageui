@@ -109,7 +109,7 @@ mod_page_training_sets_ui <- function(id){
                selectInput(ns("train_set_selection1"), NULL, choices = NULL),
                actionButton(ns("tsv_ref)"), "Refresh"),
                tags$hr(),
-               tags$h4("Training Set's Content"),
+               tags$h4("Training Set's Objects"),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
@@ -318,6 +318,16 @@ mod_page_training_sets_server <- function(id, all_vars){
       return(result)
     })
     
+    # ReactiveVal pour charger le TS uploadé
+    new_ts_up <- reactiveVal(FALSE)
+    observe({
+      if (req(stsp_is_uploaded())) {
+        new_ts_up(TRUE)
+      } else {
+        new_ts_up(FALSE)
+      }
+    })
+    
     # Affichage // Message d'erreur lors de l'upload ou Done ! si fonctionne
     output$stsp_up_error <- renderText({
       if (!stsp_is_uploaded()) {
@@ -381,13 +391,22 @@ mod_page_training_sets_server <- function(id, all_vars){
         updateSelectInput(session, "train_set_selection1", NULL, choices = "[NONE]")
       }
     })
+    # Si on upload, sélectionne le nouveau training set
+    observe({
+      if (new_ts_up() == TRUE) {
+        updateSelectInput(session, "train_set_selection1", NULL, choices = c("[NONE]", ts_list()), selected = attr(stsp_is_uploaded(), "name"))
+        new_ts_up(FALSE)
+      }
+    })
     
     # Affichage // Contenu du Training Set sélectionné
     output$tsv_ts_content <- renderPrint({
       # Si le training set est choisi : on affiche le contenu
       if (req(input$train_set_selection1 != "[NONE]")) {
         path <- fs::path(ts_folder_path(), input$train_set_selection1)
-        list.files(path)
+        res <- list.files(path)
+        res <- sub("_dat[0-9A-Za-z]\\.RData$", "   ", res[grepl("\\.RData$", res)])
+        return(noquote(res))
       } else {
         "No Active Training Set"
       }

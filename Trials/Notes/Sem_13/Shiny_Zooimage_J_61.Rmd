@@ -28,3 +28,13 @@ J'ai fait en sorte que le bouton pour faire le calcul s'actualise directement. \
 Modifications de la page Settings pour qu'elle ait les bons titres. \
 
 Changements de messages d'erreurs pour la fonction upload et vérification de script pour results. \
+
+
+
+J'ai rajouté une petite information par rapport au classifieur. \
+
+J'ai rajouté l'information du nombres d'échantillons pour les résultats, et également un choix all pour la sélection d'échantillons. \
+
+Je vais modifier l'affichage du contenu du training set choix (page TS) \
+
+Ajout d'un système qui sélectionne le training set uploadé directement. \

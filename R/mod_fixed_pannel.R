@@ -40,6 +40,7 @@ mod_fixed_pannel_ui <- function(id){
              tags$h4("-> Results"),
              tags$h5("Active Configuration"),
              textOutput(ns("res_calc_name")),
+             textOutput(ns("res_nb_smp")),
     )
   )
 }
@@ -68,10 +69,11 @@ mod_fixed_pannel_server <- function(id, all_vars){
     
     # models_vars
     mod_clas_name <- reactive({ all_vars$models_vars$modvis_clas_name })
-    mod_err_rate <- reactive({ all_vars$models_vars$modvis_err_rate })
+    mod_err_rate_in_class <- reactive({ all_vars$models_vars$modvis_err_rate_in_class })
     
     # results_vars
     calc_name <- reactive({ all_vars$results_vars$calc_name })
+    nb_smp_in_res <- reactive({ all_vars$results_vars$nb_smp_in_res })
     
     # Settings ----------------------------------------------------------------
     
@@ -155,8 +157,8 @@ mod_fixed_pannel_server <- function(id, all_vars){
     # Affichage // Error Rate du Classif
     output$mod_er_ra <- renderText({
       data_folder_path()
-      if (!is.null(mod_err_rate())) {
-        mod_err_rate()
+      if (!is.null(mod_err_rate_in_class())) {
+        mod_err_rate_in_class()
       } else {
         NULL
       }
@@ -170,6 +172,13 @@ mod_fixed_pannel_server <- function(id, all_vars){
         calc_name()
       } else {
         "No made Calculation"
+      }
+    })
+    
+    # Affichage // Nombre d'échantillons dans les résultats
+    output$res_nb_smp <- renderText({
+      if (!is.null(nb_smp_in_res())) {
+        nb_smp_in_res()
       }
     })
     
