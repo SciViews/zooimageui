@@ -38,3 +38,5 @@ J'ai rajouté l'information du nombres d'échantillons pour les résultats, et �
 Je vais modifier l'affichage du contenu du training set choix (page TS) \
 
 Ajout d'un système qui sélectionne le training set uploadé directement. \
+
+Ajout de la sauvegarde d'un Working directory, et du chargement de celui-ci. \
