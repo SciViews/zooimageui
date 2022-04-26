@@ -114,7 +114,7 @@ mod_page_training_sets_ui <- function(id){
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
                # Affichage des classes et du nombre d'éléments dans celles-ci
-               tags$h4("Visualisation of the Training Set's Classes from Depth :"),
+               tags$h4("Items per Classes from Depth :"),
                selectInput(ns("tsv_depth"), NULL, choices = c(1:5), selected = 5),
                verbatimTextOutput(ns("tsv_classes")),
       )
