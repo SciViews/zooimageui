@@ -11,3 +11,5 @@ knitr::opts_chunk$set(echo = TRUE)
 
 J'ai refait une vérification afin de faire les denières légères modifs. \
 Principalement de l'affichage (entre autre du CSS) \
+
+Ajout d'une page de contact. \

@@ -51,6 +51,12 @@ app_ui <- function(request) {
                 tags$hr(),
                 mod_page_results_ui("page_results_ui_1")
               ),
+              
+              tabPanel("Contact",
+                h3("Contact"),
+                tags$hr(),
+                mod_page_contact_ui("page_contact_ui_1")
+              ),
             )
           )
         )
