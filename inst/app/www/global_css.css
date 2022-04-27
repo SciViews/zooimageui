@@ -49,6 +49,17 @@ h4#fixed_pannel_title {
 /* Colonne de droite */
 /* ================= */
 
+span.navbar-brand {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+ul#ziui {
+  font-size: 18px;
+  position: relative;
+  left: 10%;
+}
+
 #right_col { 
   margin: 0px;
   padding: 0px;

@@ -19,7 +19,7 @@ app_ui <- function(request) {
         
         column(width = 10, id = "right_col",
           tags$div(id = "right_col_div",
-            navbarPage("ZooImage-UI v1.0",
+            navbarPage("ZooImage-UI v1.0", id = "ziui",
                        
               # Page dans laquelle je peux définir et voir le dossier qui contient mes données
               tabPanel("Settings",

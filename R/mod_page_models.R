@@ -244,7 +244,7 @@ mod_page_models_server <- function(id, all_vars){
         is_script_good_model(models_folder_path(), modcre_selected_script())
       } else {
         res <- FALSE
-        attr(res, "message") <- "No model selected. Please select a model above."
+        attr(res, "message") <- "No model selected. Please select a model above"
         return(res)
       }
     })

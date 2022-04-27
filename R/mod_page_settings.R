@@ -43,23 +43,33 @@ mod_page_settings_ui <- function(id){
       # Affichage du contenu du dossier Samples si il existe
       tags$hr(),
       tags$br(),
-      tags$h4("Content of \"Samples\" "),
-      verbatimTextOutput(ns("Samples_show")),
       
-      # Affichage du contenu du dossier Samples si il existe
-      tags$br(),
-      tags$h4("Content of \"Training_Sets\" "),
-      verbatimTextOutput(ns("ts_show")),
+      fluidRow(
+        sidebarPanel(width = 6,
+          tags$h4("Content of \"Samples\" "),
+          verbatimTextOutput(ns("Samples_show")),
+        ),
       
-      # Affichage du contenu du dossier Samples si il existe
-      tags$br(),
-      tags$h4("Content of \"Models\" "),
-      verbatimTextOutput(ns("mod_show")),
+        sidebarPanel(width = 6,
+          # Affichage du contenu du dossier Samples si il existe
+          tags$h4("Content of \"Training_Sets\" "),
+          verbatimTextOutput(ns("ts_show")),
+        ),
+      ),
       
-      # Affichage du contenu du dossier Samples si il existe
-      tags$br(),
-      tags$h4("Content of \"Results\" "),
-      verbatimTextOutput(ns("res_show")),
+      fluidRow(
+        sidebarPanel(width = 6,
+          # Affichage du contenu du dossier Samples si il existe
+          tags$h4("Content of \"Models\" "),
+          verbatimTextOutput(ns("mod_show")),
+        ),
+        
+        sidebarPanel(width = 6,
+          # Affichage du contenu du dossier Samples si il existe
+          tags$h4("Content of \"Results\" "),
+          verbatimTextOutput(ns("res_show")),
+        ),
+      ),
       
       ns = ns,
     ),
@@ -85,6 +95,8 @@ mod_page_settings_ui <- function(id){
         
         # Affichage du contenu du dossier choisi en direct.
         mainPanel(
+          tags$h4("Working Directory must have :"),
+          verbatimTextOutput(ns("must_have")),
           tags$h4("Folder content"),
           verbatimTextOutput(ns("choosing_folder_content")),
         )
@@ -137,7 +149,6 @@ mod_page_settings_server <- function(id){
       old_path <<- isolate(data_folder_path_rea()) # Sauvegarde de l'ancien chemin
       
       data_folder_path_rea("") # change la var en "" et fait réagir le reste
-      print(data_folder_path_rea()) # pour imprimer dans la console le résultat (contrôle)
     })
     
     # Montrer le contenu du data_folder
@@ -168,7 +179,7 @@ mod_page_settings_server <- function(id){
     # Affichage // Contenu du dossier Samples
     output$Samples_show <- renderPrint({
       if (length(smps()) > 0) {
-        smps()
+        noquote(smps())
       } else {
         "Folder Empty"
       }
@@ -179,7 +190,7 @@ mod_page_settings_server <- function(id){
       path <- fs::path(data_folder_path_rea(),"Training_Sets")
       tss <- list.files(path)
       if (length(tss) > 0) {
-        tss
+        noquote(tss)
       } else {
         "Folder Empty"
       }
@@ -190,7 +201,7 @@ mod_page_settings_server <- function(id){
       path <- fs::path(data_folder_path_rea(),"Models")
       mods <- list.files(path)
       if (length(mods) > 0) {
-        mods
+        noquote(mods)
       } else {
         "Folder Empty"
       }
@@ -201,7 +212,7 @@ mod_page_settings_server <- function(id){
       path <- fs::path(data_folder_path_rea(),"Results")
       ress <- list.files(path)
       if (length(ress) > 0) {
-        ress
+        noquote(ress)
       } else {
         "Folder Empty"
       }
@@ -242,13 +253,16 @@ mod_page_settings_server <- function(id){
     # Si on appuie sur le bouton "Save new path" : On sauvegarde le nouveau chemin
     observeEvent(input$set_new_data_folder_path, {
       data_folder_path_rea(input$new_data_folder_path) # change la var en le nouveau chemin et fait réagir le reste
-      print(data_folder_path_rea()) # pour imprimer dans la console le résultat (contrôle)
     })
     
     # Si on veut reprendre le chemin précédant
     observeEvent(input$get_server_folder_back, {
       data_folder_path_rea(old_path)
-      print(data_folder_path_rea())
+    })
+    
+    # Affichage de ce que le dossier de travail doit contenir
+    output$must_have <- renderPrint({
+      c("Samples", "Training_Sets", "Models", "Results")
     })
     
     # Affichage du contenu du dossier en cours de choix

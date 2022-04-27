@@ -171,7 +171,7 @@ mod_fixed_pannel_server <- function(id, all_vars){
       if (!is.null(calc_name())) {
         calc_name()
       } else {
-        "No made Calculation"
+        "No Active Configuration"
       }
     })
     

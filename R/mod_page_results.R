@@ -20,7 +20,7 @@ mod_page_results_ui <- function(id){
           
           sidebarPanel( width = 4,
             # Choix du script
-            tags$h4("Chose Configuration"),
+            tags$h4("Configuration"),
             fluidRow(
               column( width = 7,
                 # Choix du script

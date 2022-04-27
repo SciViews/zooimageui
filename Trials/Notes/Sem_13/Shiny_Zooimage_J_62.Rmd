@@ -1,0 +1,13 @@
+---
+title: "Shiny_Zooimage_J_62"
+output: html_document
+---
+
+Fichier de notes du jour 62. Mercredi 27 avril 2022. Présentiel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+J'ai refait une vérification afin de faire les denières légères modifs. \
+Principalement de l'affichage (entre autre du CSS) \
