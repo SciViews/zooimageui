@@ -12,17 +12,32 @@ mod_page_contact_ui <- function(id){
   tagList(
     
     tags$br(),
-    sidebarPanel(width = 6,
-                 
-      tags$h4("Creator of the App :"),
-      tags$p("Lecocq Martin"),
-      tags$h4("Email Address :"),
-      tags$p("martin.lecocq@std.heh.be"),
-      tags$h4("Context :"),
-      tags$p("Internship at UMONS' ECONUM lab, in Mons"),
-      tags$h4("Supervisor :"),
-      tags$p("Prof. Philippe Grosjean"),
-      tags$p("philippe.grosjean@umons.ac.be"),
+    fluidRow(
+      sidebarPanel(width = 6,
+                   
+        tags$h4("Creator of the App"),
+        tags$p("Lecocq Martin"),
+        tags$h4("Email Address"),
+        tags$p("martin.lecocq@std.heh.be"),
+        tags$h4("School & Study"),
+        tags$p("Haute École en Hainaut : Biotechnologie (option Bioinformatique)"),
+        tags$h4("Context"),
+        tags$p("Internship at University of Mons (UMONS) - Faculty of Science - Unit of NumEco"),
+        tags$h4("Supervisor"),
+        tags$p("Prof. Philippe Grosjean"),
+        tags$p("philippe.grosjean@umons.ac.be"),
+      ),
+      
+      sidebarPanel(width = 6,
+        tags$h4("ZooImageUI, interface of ZooImage"),
+        tags$div(id = "explanation",
+               "This web interface was made to provide a visual and interactive
+               interface to the program ZooImage. With this application, any
+               biologist that wants to make research about plankton using the 
+               ZooImage program can do it without having to learn R language. With
+               this simple interface, it's easy to understand how to perform the
+               different steps of the process of ZooImage.")
+      ),
     ),
   )
 }
