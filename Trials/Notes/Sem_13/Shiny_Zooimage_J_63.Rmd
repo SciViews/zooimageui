@@ -1,0 +1,15 @@
+---
+title: "Shiny_Zooimage_J_63"
+output: html_document
+---
+
+Fichier de notes du jour 63. Jeudi 28 avril 2022. Distanciel.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Changement de la page contact. \
+=> Tournée vers l'entreprise \
+
+
