@@ -79,17 +79,19 @@ mod_page_results_ui <- function(id){
                
         # Sauvegarde des résultats
         tags$br(),
-        tags$h4("Save Results"),
-        textInput(ns("vis_res_name"), "Name"),
-        shinyjs::disabled(actionButton(ns("vis_res_save"), "Local Save")),
-        # Téléchargement des résultats
-        shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
-        tags$br(),
-        tags$br(),
-        # Messages lié à la sauvegarde et au téléchargement
-        verbatimTextOutput(ns("vis_dl_name_good")),
-        uiOutput(ns("vis_title")),
-        textOutput(ns("vis_res_save_worked")),
+        sidebarPanel( width = 6,
+          tags$h4("Save Results"),
+          textInput(ns("vis_res_name"), "Name", width = "70%"),
+          shinyjs::disabled(actionButton(ns("vis_res_save"), "Local Save")),
+          # Téléchargement des résultats
+          shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
+          tags$br(),
+          tags$br(),
+          # Messages lié à la sauvegarde et au téléchargement
+          verbatimTextOutput(ns("vis_dl_name_good")),
+          uiOutput(ns("vis_title")),
+          textOutput(ns("vis_res_save_worked")),
+        ),
       ),
       
     )
