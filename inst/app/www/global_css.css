@@ -125,10 +125,14 @@ pre#page_results_ui_1-vis_dl_name_good {
 }
 
 /* ======= */
-/* Results */
+/* Contact */
 /* ======= */
 
 div#explanation {
   padding: 6px;
   text-align: justify;
+}
+
+div#license {
+  padding: 6px;
 }

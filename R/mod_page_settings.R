@@ -30,7 +30,6 @@ mod_page_settings_ui <- function(id){
           
           # Si on veut changer le dossier :
           actionButton(ns("rm_data_folder_path"), "Change data folder"),
-          actionButton(ns("save_folder_path"), "Save Working Directory"),
         ),
         
         # Montre le contenu
@@ -89,7 +88,7 @@ mod_page_settings_ui <- function(id){
           # Enregistrer le new_data_folder_path dans data_folder_path_rea()
           actionButton(ns("set_new_data_folder_path"), "Set new path"),
           actionButton(ns("get_server_folder_back"), "Cancel"),
-          actionButton(ns("get_saved_work_dir"), "Set saved Working Directory"),
+          actionButton(ns("reset_folder_path"), "Reset path"),
           tags$br(),
         ),
         
@@ -168,10 +167,12 @@ mod_page_settings_server <- function(id){
       fs::path(data_folder_path_rea(),"/Samples")
     })
     
+    # Liste des fichiers (ou dossiers) dans le dossier Samples
     smpfiles <- reactive({
       list.files(Samples_folder_path())
     })
     
+    # Liste des échantillons dans le dossier Samples
     smps <- reactive ({
       find_samples(smpfiles())
     })
@@ -218,10 +219,15 @@ mod_page_settings_server <- function(id){
       }
     })
     
-    # Sauvegarde du working dir
-    observeEvent(input$save_folder_path, {
+    # ===== DEUXIEME PANNEAU CONDITIONNEL : si le folder path n'existe pas =====
+    # Si on appuie sur le bouton "Save new path" : On sauvegarde le nouveau chemin et on l'active
+    observeEvent(input$set_new_data_folder_path, {
       # On supprime la variable work_dirs si elle existe
       if (exists("work_dirs")) { rm(work_dirs) }
+      
+      data_folder_path_rea(input$new_data_folder_path) # change la var en le nouveau chemin et fait réagir le reste
+      
+      # Si le chemin n'est pas vide on le sauvegarde
       if (data_folder_path_rea() != "") {
         # Récupère le chemin
         work_dirs <- data_folder_path_rea()
@@ -232,32 +238,27 @@ mod_page_settings_server <- function(id){
       }
     })
     
-    # Chargement du working dir sauvegardé
-    observeEvent(input$get_saved_work_dir, {
-      # On supprime la variable work_dirs si elle existe
-      if (exists("work_dirs")) { rm(work_dirs) }
-      # On essaie de charger le possible .RData
-      test <- try(load(file = "work_dirs.RData"), silent = TRUE)
-      # Si ça marche pas, on arrête
-      if (!inherits(test, "try-error")) {
-        # Si non, on regarde si la variable qui contient le chemin existe et on
-        # utilise sa valeur
-        if (exists("work_dirs")) {
-          data_folder_path_rea(work_dirs)
-          rm(work_dirs)
-        }
-      }
-    })
-    
-    # ===== DEUXIEME PANNEAU CONDITIONNEL : si le folder path n'existe pas =====
-    # Si on appuie sur le bouton "Save new path" : On sauvegarde le nouveau chemin
-    observeEvent(input$set_new_data_folder_path, {
-      data_folder_path_rea(input$new_data_folder_path) # change la var en le nouveau chemin et fait réagir le reste
-    })
-    
     # Si on veut reprendre le chemin précédant
     observeEvent(input$get_server_folder_back, {
       data_folder_path_rea(old_path)
+    })
+    
+    # Si on veut remettre le chemin du server (et ça le sauvegarde)
+    observeEvent(input$reset_folder_path, {
+      # On supprime la variable work_dirs si elle existe
+      if (exists("work_dirs")) { rm(work_dirs) }
+      
+      data_folder_path_rea(Sys.getenv("ZOOIMAGE_DATA_DIR"))
+      
+      # Si le chemin n'est pas vide on le sauvegarde
+      if (data_folder_path_rea() != "") {
+        # Récupère le chemin
+        work_dirs <- data_folder_path_rea()
+        # On sauvegarde le chemin dans un objet .RData
+        save(work_dirs, file = "work_dirs.RData")
+        # On le supprime
+        rm(work_dirs)
+      }
     })
     
     # Affichage de ce que le dossier de travail doit contenir

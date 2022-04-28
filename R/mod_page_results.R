@@ -60,12 +60,13 @@ mod_page_results_ui <- function(id){
           
           mainPanel(
             # Visualisation des résultats
-            tags$h4("Results Visualisation"),
+            tags$h4("Results"),
             uiOutput(ns("abd_tit")),
             verbatimTextOutput(ns("vis_res_abd")),
             uiOutput(ns("bio_tit")),
             verbatimTextOutput(ns("vis_res_bio")),
             uiOutput(ns("spect_tit")),
+            uiOutput(ns("spect_smp_sel")),
             verbatimTextOutput(ns("vis_res_spect")),
           ),
           
@@ -80,7 +81,7 @@ mod_page_results_ui <- function(id){
         tags$br(),
         tags$h4("Save Results"),
         textInput(ns("vis_res_name"), "Name"),
-        shinyjs::disabled(actionButton(ns("vis_res_save"), "Save in Local")),
+        shinyjs::disabled(actionButton(ns("vis_res_save"), "Local Save")),
         # Téléchargement des résultats
         shinyjs::disabled(downloadButton(ns("vis_res_dl"), "Download")),
         tags$br(),
@@ -162,7 +163,7 @@ mod_page_results_server <- function(id, all_vars){
     # Variable : Sélection précise des échantillons pour le processSampleAll
     multiple_samples <- reactive({
       req(data_folder_path_rea())
-      if (!is.null(input$calc_smps_selector) && input$calc_smps_selector[1] != "All") {
+      if (!is.null(input$calc_smps_selector) && !("All" %in% input$calc_smps_selector)) {
         paste0(input$calc_smps_selector,".zidb")
       } else {
         NULL
@@ -275,8 +276,19 @@ mod_page_results_server <- function(id, all_vars){
     res_made <- reactiveVal(0)
     
     # Variable : Résultat des calculs
-    results <- eventReactive(input$calc_use_script, {
-      req(data_folder_path_rea(), calc_dat())
+    results <- eventReactive({
+      input$calc_use_script
+      data_folder_path_rea()
+      }, {
+      
+      if (data_folder_path_rea() == "") {
+        res <- "Error : No Working Directory set. Please set it in settings"
+        class(res) <- "try-error"
+        res_made(res_made()+1)
+        return(res)
+      }
+      
+      req(calc_dat())
       
       # Désactivation du bouton
       shinyjs::disable("calc_use_script")
@@ -307,8 +319,10 @@ mod_page_results_server <- function(id, all_vars){
     })
     
     # Variable : Nom du script choisi
-    calc_name <- eventReactive(input$calc_use_script, {
-      req(data_folder_path_rea())
+    calc_name <- eventReactive({
+      input$calc_use_script
+      data_folder_path_rea()
+      }, {
       if (!is.null(results()) && !is_results_error()) {
         input$calc_selected_script
       } else {
@@ -385,11 +399,23 @@ mod_page_results_server <- function(id, all_vars){
       }
     })
     
+    # Affichage // Sélection de l'échantillon à afficher
+    output$spect_smp_sel <- renderUI({
+      if (!is_results_error()) {
+        if ("spectrum" %in% names(attributes(results()))) {
+          tagList(
+            selectInput(ns("spe_sel_smp"), NULL, choices = results()$Id),
+          )
+        }
+      }
+    })
+    
     # Affichage // Spectre de tailles
     output$vis_res_spect <- renderPrint({
       if (!is_results_error()) {
         if ("spectrum" %in% names(attributes(results()))) {
-          return(attr(results(), "spectrum"))
+          spec <- attr(results(), "spectrum")
+          return(spec[[req(input$spe_sel_smp)]])
         }
       }
     })

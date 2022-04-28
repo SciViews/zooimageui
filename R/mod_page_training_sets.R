@@ -71,7 +71,7 @@ mod_page_training_sets_ui <- function(id){
         fluidRow(
           
           sidebarPanel(width = 5,
-            tags$h4("Training Set preparation"),
+            tags$h4("Training Set Preparation"),
             textInput(ns("stsp_name"), "Name"),
             # Choix des zidbs
             selectInput(ns("stsp_zidbs"), label = "" , choices = NULL, multiple = TRUE),
@@ -93,7 +93,7 @@ mod_page_training_sets_ui <- function(id){
             # Rafraichir la liste
             actionButton(ns("stsp_refresh"), "Refresh"),
             tags$br(),
-            tags$h4("Training Set Delete"),
+            tags$h4("Delete Training Set"),
             # Suppression d'un training set
             selectInput(ns("stsp_ts_to_delete"), NULL, choices = NULL),
             shinyjs::disabled(actionButton(ns("stsp_delete"), "Delete"))
@@ -109,12 +109,12 @@ mod_page_training_sets_ui <- function(id){
                selectInput(ns("train_set_selection1"), NULL, choices = NULL),
                actionButton(ns("tsv_ref)"), "Refresh"),
                tags$hr(),
-               tags$h4("Training Set's Objects"),
+               tags$h4("Training Set's Samples"),
                # Affichage du contenu du Training Set choisi
                verbatimTextOutput(ns("tsv_ts_content")),
                tags$hr(),
                # Affichage des classes et du nombre d'éléments dans celles-ci
-               tags$h4("Items per Classes from Depth :"),
+               tags$h4("Items per Classes from Depth"),
                selectInput(ns("tsv_depth"), NULL, choices = c(1:5), selected = 5),
                verbatimTextOutput(ns("tsv_classes")),
       )

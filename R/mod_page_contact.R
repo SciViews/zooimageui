@@ -18,7 +18,7 @@ mod_page_contact_ui <- function(id){
         tags$h4("Company"),
         tags$p("University of Mons (UMONS)"),
         tags$p("Faculty of Science"),
-        tags$p("Department of Numerical Ecology"),
+        tags$p(style = "font-weight: bold;","Department of Numerical Ecology"),
         tags$h4("Websites"),
         tags$a(href = "https://web.umons.ac.be/econ/en/home/" , "UMONS - Numerical Ecology"),
         tags$br(),
@@ -41,7 +41,7 @@ mod_page_contact_ui <- function(id){
                this simple interface, it's easy to understand how to perform the
                different steps of the process of ZooImage."),
         tags$br(),
-        tags$div("Licence of ZooImageUI : GPL2"),
+        tags$div(id = "license", "License of ZooImageUI : GPL2"),
       ),
     ),
   )

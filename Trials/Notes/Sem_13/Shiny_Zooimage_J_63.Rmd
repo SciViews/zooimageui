@@ -12,4 +12,19 @@ knitr::opts_chunk$set(echo = TRUE)
 Changement de la page contact. \
 => Tournée vers l'entreprise \
 
+Chagement des différents titres. \
 
+Changement de la sauvegarde du chemin de dossier de travail. \
+Se fait automatiquement au changement de ce dernier. \
+Au lancemenent de l'app, le reprend directement. \
+On peut également reset afin de récupérer le chemin initial. \
+
+Je vais à présent faire en sorte que on puisse choisir l'échantillon pour les spectres de taille. \
+
+J'ai réussis à mettre au point la sélection de l'échantillon à visualiser. \
+
+J'ai également fait en sorte que le All ne fasse pas bugger les résultats. \
+
+J'ai également fait en sorte que quand on change de dossier, les résultats deviennent NULL. \
+
+J'ai enlevé un bug quand cela essaie de charger un working dir path sauvegardé. \
