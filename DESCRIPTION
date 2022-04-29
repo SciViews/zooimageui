@@ -1,6 +1,6 @@
 Package: ZooImageUI
 Title: User Interface For ZooImage
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person(given = "Martin",
            family = "Lecocq",
