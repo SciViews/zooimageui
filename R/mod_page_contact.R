@@ -22,7 +22,7 @@ mod_page_contact_ui <- function(id){
         tags$h4("Websites"),
         tags$a(href = "https://web.umons.ac.be/econ/en/home/" , "UMONS - Numerical Ecology"),
         tags$br(),
-        tags$a(href = "https://www.sciviews.org/", "SciViews"),
+        tags$a(href = "https://www.sciviews.org/software/zooimage/", "SciViews"),
         tags$h4("Head of the Department"),
         tags$p("Prof. Philippe Grosjean"),
         tags$p("philippe.grosjean@umons.ac.be"),
@@ -41,7 +41,7 @@ mod_page_contact_ui <- function(id){
                this simple interface, it's easy to understand how to perform the
                different steps of the process of ZooImage."),
         tags$br(),
-        tags$div(id = "license", "License of ZooImageUI : GPL2"),
+        tags$div(id = "license", "License of ZooImageUI : GPL>=2"),
       ),
     ),
   )
