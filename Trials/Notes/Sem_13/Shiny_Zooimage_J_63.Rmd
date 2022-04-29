@@ -31,3 +31,6 @@ J'ai enlevé un bug quand cela essaie de charger un working dir path sauvegardé
 
 
 Ajouter : Select one or more (select multiple)
+
+
+!!! Versionning avec new.md

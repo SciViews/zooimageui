@@ -41,7 +41,7 @@ mod_page_results_ui <- function(id){
             tags$h4("Samples ready ?"),
             textOutput(ns("calc_smp_ok")),
             tags$br(),
-            selectInput(ns("calc_smps_selector"), "Chose samples :", choices = NULL, multiple = TRUE),
+            selectInput(ns("calc_smps_selector"), "Chose samples (one or more)", choices = NULL, multiple = TRUE),
             tags$hr(),
             # Montre le Classifieur actif
             tags$h4("Active Classifier ?"),
@@ -156,9 +156,9 @@ mod_page_results_server <- function(id, all_vars){
     observe({
       data_folder_path_rea()
       if (length(zidb_files()) > 0) {
-        updateSelectInput(session, "calc_smps_selector", "Chose samples :", choices = c("All", sub("\\.zidb$", "", zidb_files())), selected = "All")
+        updateSelectInput(session, "calc_smps_selector", "Chose samples (one or more)", choices = c("All", sub("\\.zidb$", "", zidb_files())), selected = "All")
       } else {
-        updateSelectInput(session, "calc_smps_selector", "Chose samples :", choices = NULL)
+        updateSelectInput(session, "calc_smps_selector", "Chose samples (one or more)", choices = NULL)
       }
     })
     

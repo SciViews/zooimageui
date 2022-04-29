@@ -174,15 +174,15 @@ mod_page_training_sets_server <- function(id, all_vars){
       # Si zidb_files() change et qu'il est non vide, alors on affiche les zidb_files()
       if (length(zidb_files()) > 0) {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Samples", choices = sub("\\.zidb$", "",zidb_files()))
+        updateSelectInput(session, "ltsp_zidbs", label = "Samples (one or more)", choices = sub("\\.zidb$", "",zidb_files()))
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Samples", choices = sub("\\.zidb$", "",zidb_files()))
+        updateSelectInput(session, "stsp_zidbs", label = "Samples (one or more)", choices = sub("\\.zidb$", "",zidb_files()))
       # Si pas, alors on affiche rien
       } else {
         # Local
-        updateSelectInput(session, "ltsp_zidbs", label = "Samples", choices = "No ZIDB file yet")
+        updateSelectInput(session, "ltsp_zidbs", label = "Samples (one or more)", choices = "No ZIDB file yet")
         # Server
-        updateSelectInput(session, "stsp_zidbs", label = "Samples", choices = "No ZIDB file yet")
+        updateSelectInput(session, "stsp_zidbs", label = "Samples (one or more)", choices = "No ZIDB file yet")
       }
     })
     
