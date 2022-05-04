@@ -12,9 +12,9 @@ mod_page_results_ui <- function(id){
   tagList(
     tabsetPanel(
 
-# Configurations UI ---------------------------------------------------------
+# Calculations UI ---------------------------------------------------------
 
-      tabPanel("Configurations",
+      tabPanel("Calculations",
         tags$br(),
         fluidRow(
           
