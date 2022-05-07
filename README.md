@@ -8,7 +8,7 @@ You can first source "install.R" to be sure that all required R packages are ins
 Here is the project to create a golem package of a shiny application.
 The purpose of this package is to create a User Interface for ZooImage.
 => The data used as training can be downloaded on this link : https://filedn.com/lzGVgfOGxb6mHFQcRn9ueUb/zooimage/zi_data.zip
-You can then put the data in your working directory.
+You can then put the data (unzipped) in your working directory.
 
 Application Version : 1.0.0  
 
