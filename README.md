@@ -6,8 +6,10 @@ Lecocq Martin, learning about ZooImage and shiny to create a user interface for 
 
 Here is the project to create a golem package of a shiny application.
 The purpose of this package is to create a User Interface for ZooImage.
-=> The data used as training in ~/shared/data/zooimage_data/ can be downloaded by using the script in Trials/R/data_download.R 
-Then, put the data where you need it to be.
+=> The data used as training can be downloaded on this link : https://filedn.com/lzGVgfOGxb6mHFQcRn9ueUb/zooimage/zi_data.zip
+You can then put the data in your working directory.
+
+Application Version : 1.0.0  
 
 
 In the Trials folder, there are all my old folders and files in which I made tests of Shiny apps for ZooImage, and tests of ZooImage.
