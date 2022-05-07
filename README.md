@@ -3,6 +3,7 @@ New user interface for ZooImage using Shiny
 
 Lecocq Martin, learning about ZooImage and shiny to create a user interface for ZooImage
 
+You can first source "install.R" to be sure that all required R packages are installed.
 
 Here is the project to create a golem package of a shiny application.
 The purpose of this package is to create a User Interface for ZooImage.
