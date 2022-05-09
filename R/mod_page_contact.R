@@ -32,7 +32,7 @@ mod_page_contact_ui <- function(id){
       ),
       
       sidebarPanel(width = 8,
-        tags$h4("ZooImageUI, interface of ZooImage"),
+        tags$h4("ZooImageUI, interface for ZooImage"),
         tags$div(id = "explanation",
                "This web interface was made to provide a visual and interactive
                interface to the program ZooImage. With this application, any

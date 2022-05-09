@@ -2,8 +2,7 @@
 # File for global pre-processing for the shiny app
 #
 
-# Libraries
-library(ZooImageUI)
+library(zooimageui)
 
 if (exists("work_dirs")) { try(rm(work_dirs), silent = TRUE) }
 if ("work_dirs.RData" %in% list.files()) {

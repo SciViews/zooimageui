@@ -1,4 +1,4 @@
-#' Correctify Training Set Name
+#' Check Training Set Name
 #'
 #' Check if the name is already used, or null, and if not, take off the special chars from the name. If yes, return NULL.
 #'

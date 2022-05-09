@@ -1,4 +1,4 @@
 library(testthat)
-library(ZooImageUI)
+library(zooimageui)
 
-test_check("ZooImageUI")
+test_check("zooimageui")

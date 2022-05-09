@@ -18,7 +18,7 @@ TRUE if the script is good or FALSE if it isn't. Plus a message explaining what 
 Try different parameters of a script to check if it is correct to make results.
 }
 \examples{
-folder_path <- system.file("example", package = "ZooImageUI")
+folder_path <- system.file("example", package = "zooimageui")
 is_correct <- is_script_good_results(folder_path, "ex1_zoo_abundance.R")
 
 }

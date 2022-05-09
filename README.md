@@ -1,26 +1,54 @@
-# zooimage-ui
-New user interface for ZooImage using Shiny
+# zooimageui - A Shiny interface for zooimage
 
-Lecocq Martin, learning about ZooImage and shiny to create a user interface for ZooImage
+<!-- badges: start -->
 
-You can first source "install.R" to be sure that all required R packages are installed.
+[![R-CMD-check](https://github.com/SciViews/zooimageui/workflows/R-CMD-check/badge.svg)](https://github.com/SciViews/zooimageui/actions) [![Win Build Status](https://ci.appveyor.com/api/projects/status/github/SciViews/zooimageui?branch=main&svg=true)](https://ci.appveyor.com/project/phgrosjean/zooimageui) [![Coverage Status](https://img.shields.io/codecov/c/github/SciViews/zooimageui/main.svg)](https://codecov.io/github/SciViews/zooimageui?branch=main) [![CRAN Status](https://www.r-pkg.org/badges/version/zooimageui)](https://cran.r-project.org/package=zooimageui) [![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Life cycle stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 
-Here is the project to create a golem package of a shiny application.
-The purpose of this package is to create a User Interface for ZooImage.
-=> The data used as training can be downloaded on this link : https://filedn.com/lzGVgfOGxb6mHFQcRn9ueUb/zooimage/zi_data.zip
-You can then put the data (unzipped) in your working directory.
+<!-- badges: end -->
 
-Application Version : 1.0.0  
+A Shiny interface to ZooImage that allows to use main features (create samples, training sets and classifiers, view content of all these objects and calculate results).
 
+## Installation
 
-In the Trials folder, there are all my old folders and files in which I made tests of Shiny apps for ZooImage, and tests of ZooImage.
+You can install the latest development version of {zooimageui}. Make sure you have the {remotes} R package installed:
 
-  In the folder "Notes/", you will fin all of my notes and tests made during learning
+``` r
+install.packages("remotes")
+```
 
-  In the folder "TI_Test_app/", you will find my first tests of app for ZooImage
+Use `install_github()` to install the {zooimageui} package from Github (source from **main** branch will be recompiled on your machine):
 
-  In the folder "R", you will find a script called "data_loading.R" which you can use to download the samples (that are too big for github)
-  
-  In the folder "Sortable_Test_App/" you will find a test app to try to use sortable (r package for shiny (drag and drop))
-  
-  In the folder "ZI_Tests/" you will find the place where I trained and learned ZooImage, and the files used to do so.
+``` r
+remotes::install_github("SciViews/zooimageui")
+```
+
+R should install all required dependencies automatically, and then it should compile and install {zooimageui}.
+
+Latest devel version of {zooimageui} (source + Windows binaries for the latest stable version of R at the time of compilation) is also available from [appveyor](https://ci.appveyor.com/project/phgrosjean/zooimageui/build/artifacts).
+
+## Further explore {zooimageui}
+
+You can get further help about this package this way: Make the {zooimageui} package available in your R session:
+
+``` r
+library("zooimageui")
+```
+
+Start the Shiny interface:
+
+``` r
+run_app()
+```
+
+Get help about this package:
+
+``` r
+library(help = "zooimageui")
+help("zooimageui-package")
+```
+
+For further instructions, please, refer to these help pages at <https://www.sciviews.org/zooimageui/>.
+
+## Code of Conduct
+
+Please note that the {svSocket} project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

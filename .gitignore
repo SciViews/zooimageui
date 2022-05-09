@@ -38,6 +38,16 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+# Locally generated pkgdown site
+docs
+docs/
+
+# Mac files
+.DS_Store
+doc
+Meta
+
+
 # ZooImage
 Trials/ZI_Test_App/www/Samples/
 Trials/ZI_Test_App/www/Training\ set/

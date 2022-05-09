@@ -1,12 +1,12 @@
 #' Save the Results
 #' 
-#' Save Results of ZooImageUI in .txt and .RData files.
+#' Save Results of {zooimageui} in .txt and .RData files.
 #'
-#' @param data_folder_path Folder containing all the data for ZooImageUI.
+#' @param data_folder_path Folder containing all the data for {zooimageui}.
 #' @param name Name of the files for saving.
 #' @param res Results to save.
 #'
-#' @return TRUE if the save worked, FALSE if it didn't. Plus a message if there is an error.
+#' @return `TRUE` if the save worked, `FALSE` if it didn't. Plus a message if there is an error.
 #' @export
 #'
 #' @examples

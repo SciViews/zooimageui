@@ -2,7 +2,7 @@
 % Please edit documentation in R/func_cor_ts_name.R
 \name{cor_ts_name}
 \alias{cor_ts_name}
-\title{Correctify Training Set Name}
+\title{Check Training Set Name}
 \usage{
 cor_ts_name(ts_name, ts_list)
 }

@@ -3,7 +3,7 @@ title: "Shiny_Zooimage_J_30"
 output: html_document
 ---
 
-Fichier de notes du jour 30. Vendredi 11 Mars 2022.   Distanciel.
+Fichier de notes du jour 30. Vendredi 11 Mars 2022. Distanciel.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -11,21 +11,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ========================================== Idées finales de titre de stage ==========================================
 
- - Une interface web réalisée en Shiny et R pour l’étude du plancton avec le programme ZooImage
- 
- - Conception et réalisation d’une interface web en Shiny et R pour l’étude du plancton avec le programme ZooImage
+-   Une interface web réalisée en Shiny et R pour l'étude du plancton avec le programme ZooImage
+
+-   Conception et réalisation d'une interface web en Shiny et R pour l'étude du plancton avec le programme ZooImage
 
 =====================================================================================================================
 
-Après avoir passé une grosse partie de la matinée à essayer de faire un affichage conditionnel avec golem \
-- en essayant avec conditional panel (problème modules gèrent ça différement et je n'y arrive pas pour le moment) \
-- en essayant avec if et else (problème : qu'une seule chose peut en sortir / un seul résultat) \
+Après avoir passé une grosse partie de la matinée à essayer de faire un affichage conditionnel avec golem\
+- en essayant avec conditional panel (problème modules gèrent ça différement et je n'y arrive pas pour le moment)\
+- en essayant avec if et else (problème : qu'une seule chose peut en sortir / un seul résultat)\
 
 Je vais donc plutôt passer à autre chose en attendant, je vais essayer de recréer ce que j'avais fait pour l'app ZooImage mais donc ici avec les modules.
 
 Je me demande comment on peut définir des variables globales pour le package golem.
 
-J'ai essayé d'introduire des variables globales en les mettant dans le fichier de package ZooImageUI-package.R mais ça ne fait rien.
+J'ai essayé d'introduire des variables globales en les mettant dans le fichier de package zooimageui-package.R mais ça ne fait rien.
 
 Peut-être que je peux faire un fichier global.R ?
 
@@ -35,31 +35,28 @@ De toute la matinée, j'ai fait pas mal de tests, sur golem, pour tester : de fa
 
 ====== Résumé/Questions :
 
- - Comment je pourrais faire mes affichages conditionnels (avec les modules) ? Est-ce que ce que je voulais faire est inutile ?
- 
- - Comment fixer des variables globales ?
- 
- - roxygen, qu'est-ce qu'il faut documenter, comment et quand ?
- 
- - Data de test pour le package ? => échantillons de test de ZooImage ? Comment ?
+-   Comment je pourrais faire mes affichages conditionnels (avec les modules) ? Est-ce que ce que je voulais faire est inutile ?
 
+-   Comment fixer des variables globales ?
+
+-   roxygen, qu'est-ce qu'il faut documenter, comment et quand ?
+
+-   Data de test pour le package ? =\> échantillons de test de ZooImage ? Comment ?
 
 ====== Après midi :
- 
- Je vais essayer de faire des recherches pour mieux comprendre comment utiliser des variables globales. \
- Comment fonctionnent les paramètres que on fournit à run_app \
- 
- J'ai préparé les données de test de ZooImage dans ~/shared/data/zooimage_data/
- 
- Visionnage d'une très courte vidéo qui parle de roxygen : juste appris rapidement les fondements ultra essentiels d'un package (8min)
- 
 
- J'ai fait quoi ? :
- 
- - Mis mes données de test de ZooImage dans ~/shared/data/zooimage_data \
- - Créé une fonction qui va chercher mes noms de dossiers "sample" dans une liste de noms de fichiers et dossiers \
- - dans run_app, j'ai créé deux nouvelles variables : smpfiles et smps, dont la première va chercher les fichiers et dossiers qui se trouvent dans \
- ~/shared/data/zooimage_data/Samples \
- et la seconde va dans la liste de ces fichiers et dossiers, resortir ceux (les dossiers) qui sont des échantillons \
- - fait un test, dans un module, pour afficher les résultats, voir si ces variables donnent bien ce qu'elles sont sensé donner. \
- 
+Je vais essayer de faire des recherches pour mieux comprendre comment utiliser des variables globales.\
+Comment fonctionnent les paramètres que on fournit à run_app\
+
+J'ai préparé les données de test de ZooImage dans \~/shared/data/zooimage_data/
+
+Visionnage d'une très courte vidéo qui parle de roxygen : juste appris rapidement les fondements ultra essentiels d'un package (8min)
+
+J'ai fait quoi ? :
+
+-   Mis mes données de test de ZooImage dans \~/shared/data/zooimage_data\
+-   Créé une fonction qui va chercher mes noms de dossiers "sample" dans une liste de noms de fichiers et dossiers\
+-   dans run_app, j'ai créé deux nouvelles variables : smpfiles et smps, dont la première va chercher les fichiers et dossiers qui se trouvent dans\
+    \~/shared/data/zooimage_data/Samples\
+    et la seconde va dans la liste de ces fichiers et dossiers, resortir ceux (les dossiers) qui sont des échantillons\
+-   fait un test, dans un module, pour afficher les résultats, voir si ces variables donnent bien ce qu'elles sont sensé donner.\

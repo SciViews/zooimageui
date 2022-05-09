@@ -1,13 +1,13 @@
-#' ZooImageUI
+#' zooimageui
 #' 
-#' It is a web app to make an interface to the program ZooImage.
+#' A web app to make an interface for the {zooimage} package.
 #' 
 #' @section Application Shiny:
 #' 
 #' - To launch the Shiny application : use [run_app()]
 #' 
 #' @docType package
-#' @name ZooImageUI-package
+#' @name zooimageui-package
 #' 
 #' 
 #' @importFrom fs path dir_create dir_ls

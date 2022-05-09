@@ -7,14 +7,9 @@
 #' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options 
-run_app <- function(
-  onStart = NULL,
-  options = list(), 
-  enableBookmarking = NULL,
-  uiPattern = "/",
-  ...
-) {
-  source(system.file("global.R",package = "ZooImageUI"))
+run_app <- function(onStart = NULL, options = list(), enableBookmarking = NULL,
+uiPattern = "/", ...) {
+  source(system.file("global.R",package = "zooimageui"))
   with_golem_options(
     app = shinyApp(
       ui = app_ui,
@@ -24,8 +19,6 @@ run_app <- function(
       enableBookmarking = enableBookmarking, 
       uiPattern = uiPattern
     ), 
-    golem_opts = list(
-      ...
-    )
+    golem_opts = list(...)
   )
 }

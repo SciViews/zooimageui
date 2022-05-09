@@ -1,6 +1,6 @@
 #' Zip the Results
 #' 
-#' Zip Results of ZooImageUI in .txt and .RData files.
+#' Zip Results of {zooimageui} in .txt and .RData files.
 #'
 #' @param data_folder_path Path to data folder.
 #' @param name Name of the files for downloading.

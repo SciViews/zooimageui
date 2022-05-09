@@ -14,7 +14,7 @@ upload_ts(upload_input, ts_folder_path, existing_ts)
 \item{existing_ts}{List of the existing training sets}
 }
 \value{
-TRUE if it worked, FALSE if an error occured
+TRUE if it worked, FALSE if an error occurred
 }
 \description{
 Get the zipped training set from upload, unzip it, unlink the zip file.

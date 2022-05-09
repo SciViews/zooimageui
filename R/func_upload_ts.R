@@ -6,7 +6,7 @@
 #' @param ts_folder_path Path to folder to put ts in
 #' @param existing_ts List of the existing training sets
 #'
-#' @return TRUE if it worked, FALSE if an error occured
+#' @return TRUE if it worked, FALSE if an error occurred
 #' @export
 #'
 #' @examples

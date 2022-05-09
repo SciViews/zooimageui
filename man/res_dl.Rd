@@ -19,7 +19,7 @@ res_dl(data_folder_path, name, res, file)
 A zip file containing the .txt and .RData files.
 }
 \description{
-Zip Results of ZooImageUI in .txt and .RData files.
+Zip Results of {zooimageui} in .txt and .RData files.
 }
 \examples{
 # To Do...

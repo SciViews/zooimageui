@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' folder_path <- system.file("example", package = "ZooImageUI")
+#' folder_path <- system.file("example", package = "zooimageui")
 #' is_correct <- is_script_good_model(folder_path, "ex1_mlRforest.R")
 #' 
 is_script_good_model <- function(models_folder_path, selected_script) {
