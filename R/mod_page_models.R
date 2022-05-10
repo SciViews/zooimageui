@@ -264,6 +264,8 @@ mod_page_models_server <- function(id, all_vars){
     # Variable : fonction du modèle
     modcre_model <- reactive({
       if (req(modcre_is_mod_correct())) {
+        get_classif <- NULL # Trick to avoid a note in R CMD check
+        rm(get_classif)
         # Chemin du script
         script_path <- fs::path(models_folder_path(), modcre_selected_script())
         # Source du script pour récupérer la fonction

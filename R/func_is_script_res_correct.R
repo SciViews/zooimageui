@@ -21,6 +21,8 @@ is_script_good_results <- function(results_folder_path, selected_script) {
   } else {
     # Ensuite, si jamais le nom est bon :
     
+    get_results <- NULL # Trick to avoid a note in R CMD check
+    
     # Supprime la possible ancienne fonction et source le nouveau script
     if (exists("get_results")) { rm(get_results) }
     script_path <- fs::path(results_folder_path, selected_script)

@@ -21,6 +21,8 @@ is_script_good_model <- function(models_folder_path, selected_script) {
   } else {
     # Ensuite, si jamais le nom est bon :
     
+    get_classif <- NULL # Trick to avoid a note in R CMD check
+    
     # Supprime la possible ancienne fonction et source le nouveau script
     if (exists("get_classif")) { rm(get_classif) }
     script_path <- fs::path(models_folder_path, selected_script)

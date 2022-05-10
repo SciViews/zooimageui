@@ -254,6 +254,8 @@ mod_page_results_server <- function(id, all_vars){
     # Variable : fonction du modèle
     calc_results <- reactive({
       if (req(calc_is_script_good())) {
+        get_results <- NULL # Trick to avoid a note in R CMD check
+        rm(get_results)
         # Chemin du script
         script_path <- fs::path(results_folder_path(), paste0(input$calc_selected_script, ".R"))
         # Source du script pour récupérer la fonction

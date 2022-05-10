@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/SciViews/zooimageui/workflows/R-CMD-check/badge.svg)](https://github.com/SciViews/zooimageui/actions) [![Win Build Status](https://ci.appveyor.com/api/projects/status/github/SciViews/zooimageui?branch=main&svg=true)](https://ci.appveyor.com/project/phgrosjean/zooimageui) [![Coverage Status](https://img.shields.io/codecov/c/github/SciViews/zooimageui/main.svg)](https://codecov.io/github/SciViews/zooimageui?branch=main) [![CRAN Status](https://www.r-pkg.org/badges/version/zooimageui)](https://cran.r-project.org/package=zooimageui) [![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Life cycle stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
+[![R-CMD-check](https://github.com/SciViews/zooimageui/workflows/R-CMD-check/badge.svg)](https://github.com/SciViews/zooimageui/actions) [![CRAN Status](https://www.r-pkg.org/badges/version/zooimageui)](https://cran.r-project.org/package=zooimageui) [![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Life cycle stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 
 <!-- badges: end -->
 
