@@ -1,0 +1,8 @@
+---
+title: "End"
+output: html_document
+---
+
+La création de mon projet de stage est terminée... Pour le moment !
+
+zooimageui voit le jour !
