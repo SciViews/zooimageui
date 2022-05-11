@@ -64,7 +64,7 @@ usethis::use_github()
 # GitHub Actions
 usethis::use_github_action() 
 # Build pkgdow website
-usethis::use_github_action("pkgdown") 
+usethis::use_github_action("pkgdown") # Use pkgdown::build_site() to test it
 # Chose one of the three
 # See https://usethis.r-lib.org/reference/use_github_action.html
 usethis::use_github_action_check_release() 
